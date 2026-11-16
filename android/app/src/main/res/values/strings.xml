@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- The name under the launcher icon: Arabic in every language. -->
-    <string name="app_name">تبيان</string>
+    <!-- The name under the launcher icon: Tibyan here, تبيان in values-ar (matches the store listing per language). -->
+    <string name="app_name">Tibyan</string>
     <!-- Static shortcut: its English label lets launcher search find the app by "Tibyan" or "Quran". -->
     <string name="shortcut_mushaf_short">Tibyan – Quran</string>
     <string name="shortcut_mushaf_long">Tibyan – Quran (Mushaf)</string>
