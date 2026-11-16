@@ -6,6 +6,13 @@ All notable changes to Tibyan are recorded here. The format follows
 
 ## [Unreleased]
 
+## [0.8.7] (build 56) - 2026-11-16
+
+Android only (Google Play and Huawei AppGallery); the other platforms stay where they are.
+
+### Changed
+- Android: app name localized. The launcher shows «تبيان» on Arabic phones and «Tibyan» in every other language, matching the store listing (AppGallery rule 1.20). The Wear OS app follows the same rule.
+
 ## [0.8.7] (build 55) - 2026-11-11
 
 iOS and macOS only (replaces build 54 on the App Store); the other platforms stay where they are.
