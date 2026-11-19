@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -412,8 +413,27 @@ class MushafPage extends ConsumerStatefulWidget {
   /// the turn visibly stopped. Bakes wait for the turn to settle.
   static final turning = ValueNotifier<bool>(false);
 
-  /// Completes once no page is being turned.
-  static Future<void> settled() {
+  /// Completes once no page is being turned and the screen has stopped
+  /// drawing (the turn's last frames and what animates after it), or after
+  /// two seconds of waiting, so a page never stays unbaked.
+  static Future<void> settled() async {
+    final until = DateTime.now().add(const Duration(seconds: 2));
+    while (DateTime.now().isBefore(until)) {
+      await _notTurning();
+      if (!SchedulerBinding.instance.hasScheduledFrame &&
+          SchedulerBinding.instance.schedulerPhase == SchedulerPhase.idle) {
+        // One quiet beat more: a frame scheduled right after this one.
+        await Future<void>.delayed(const Duration(milliseconds: 60));
+        if (!turning.value && !SchedulerBinding.instance.hasScheduledFrame) {
+          return;
+        }
+      } else {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    }
+  }
+
+  static Future<void> _notTurning() {
     if (!turning.value) return Future.value();
     final done = Completer<void>();
     void check() {
