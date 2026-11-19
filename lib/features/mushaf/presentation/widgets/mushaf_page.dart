@@ -406,6 +406,26 @@ class MushafPage extends ConsumerStatefulWidget {
   static int debugLayouts = 0;
   static int debugBakes = 0;
 
+  /// True while the reader's finger (or the fling after it) turns a page.
+  /// Baking a page runs on the raster thread, the one that draws the
+  /// frames: started mid-turn, it held that thread 40-50 ms on a phone and
+  /// the turn visibly stopped. Bakes wait for the turn to settle.
+  static final turning = ValueNotifier<bool>(false);
+
+  /// Completes once no page is being turned.
+  static Future<void> settled() {
+    if (!turning.value) return Future.value();
+    final done = Completer<void>();
+    void check() {
+      if (turning.value) return;
+      turning.removeListener(check);
+      done.complete();
+    }
+
+    turning.addListener(check);
+    return done.future;
+  }
+
   /// Empties the shared pages (tests, a memory warning).
   static void clearBaked() {
     for (final (art, marker) in _baked.values) {
@@ -478,7 +498,8 @@ class _MushafPageState extends ConsumerState<MushafPage> {
       return;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted) return;
+      await MushafPage.settled();
+      if (!mounted || _artKey != key) return;
       Future<ui.Image> render(void Function(Canvas, bool, int) draw) async {
         final recorder = ui.PictureRecorder();
         final canvas = Canvas(recorder)..scale(dpr);
