@@ -61,56 +61,68 @@ class _Card extends ConsumerWidget {
     final look = context.look;
     final mb = (bytes / (1024 * 1024)).ceil();
     final policy = ref.read(cellularPolicyProvider.notifier);
-    return Semantics(
-      liveRegion: true,
-      child: Material(
-        color: look.surface,
-        elevation: 6,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.signal_cellular_alt, color: look.goldText),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      l.cellularPausedTitle,
-                      style: TextStyle(
-                        color: look.ink,
-                        fontWeight: FontWeight.w600,
+    return Dismissible(
+      key: const ValueKey('cellular-banner'),
+      direction: DismissDirection.horizontal,
+      onDismissed: (_) => policy.dismiss(),
+      child: Semantics(
+        liveRegion: true,
+        child: Material(
+          color: look.surface,
+          elevation: 6,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.signal_cellular_alt, color: look.goldText),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        l.cellularPausedTitle,
+                        style: TextStyle(
+                          color: look.ink,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Text(
-                bytes > 0
-                    ? l.cellularPausedBody('$mb')
-                    : l.cellularPausedBodyNoSize,
-                style: TextStyle(color: look.sub),
-              ),
-              const SizedBox(height: 4),
-              Wrap(
-                alignment: WrapAlignment.end,
-                spacing: 8,
-                children: [
-                  TextButton(
-                    onPressed: policy.dismiss,
-                    child: Text(l.cellularWait),
-                  ),
-                  FilledButton(
-                    onPressed: policy.allowForNow,
-                    child: Text(l.cellularContinue),
-                  ),
-                ],
-              ),
-            ],
+                    IconButton(
+                      onPressed: policy.dismiss,
+                      icon: Icon(Icons.close, color: look.sub),
+                      tooltip: MaterialLocalizations.of(context)
+                          .closeButtonTooltip,
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  bytes > 0
+                      ? l.cellularPausedBody('$mb')
+                      : l.cellularPausedBodyNoSize,
+                  style: TextStyle(color: look.sub),
+                ),
+                const SizedBox(height: 4),
+                Wrap(
+                  alignment: WrapAlignment.end,
+                  spacing: 8,
+                  children: [
+                    TextButton(
+                      onPressed: policy.dismiss,
+                      child: Text(l.cellularWait),
+                    ),
+                    FilledButton(
+                      onPressed: policy.allowForNow,
+                      child: Text(l.cellularContinue),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
