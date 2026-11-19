@@ -411,12 +411,24 @@ class MushafPage extends ConsumerStatefulWidget {
   /// Baking a page runs on the raster thread, the one that draws the
   /// frames: started mid-turn, it held that thread 40-50 ms on a phone and
   /// the turn visibly stopped. Bakes wait for the turn to settle.
-  static final turning = ValueNotifier<bool>(false);
+  static final turning = ValueNotifier<bool>(false)
+    ..addListener(() => _lastTurn = DateTime.now());
+
+  /// When [turning] last changed: a bake right after a turn waits for the
+  /// screen to go quiet; one with no turn about (a page opened) does not.
+  static DateTime? _lastTurn;
 
   /// Completes once no page is being turned and the screen has stopped
   /// drawing (the turn's last frames and what animates after it), or after
   /// two seconds of waiting, so a page never stays unbaked.
   static Future<void> settled() async {
+    bool recent() {
+      final t = _lastTurn;
+      return t != null &&
+          DateTime.now().difference(t) < const Duration(seconds: 1);
+    }
+
+    if (!turning.value && !recent()) return;
     final until = DateTime.now().add(const Duration(seconds: 2));
     while (DateTime.now().isBefore(until)) {
       await _notTurning();
@@ -424,7 +436,8 @@ class MushafPage extends ConsumerStatefulWidget {
           SchedulerBinding.instance.schedulerPhase == SchedulerPhase.idle) {
         // One quiet beat more: a frame scheduled right after this one.
         await Future<void>.delayed(const Duration(milliseconds: 60));
-        if (!turning.value && !SchedulerBinding.instance.hasScheduledFrame) {
+        if (!turning.value &&
+            (!SchedulerBinding.instance.hasScheduledFrame || !recent())) {
           return;
         }
       } else {
