@@ -5380,6 +5380,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get storePrivacyExit => 'خروج';
 
   @override
+  String get khatmaActGroup => 'جماعية';
+
+  @override
+  String get khatmaActReports => 'التقارير';
+
+  @override
+  String get khatmaActJournal => 'التدبر';
+
+  @override
   String get cellularDownloadsToggle => 'التحميل عبر بيانات الجوال';
 
   @override

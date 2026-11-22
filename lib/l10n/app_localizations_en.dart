@@ -5320,6 +5320,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get storePrivacyExit => 'Exit';
 
   @override
+  String get khatmaActGroup => 'Group';
+
+  @override
+  String get khatmaActReports => 'Reports';
+
+  @override
+  String get khatmaActJournal => 'Journal';
+
+  @override
   String get cellularDownloadsToggle => 'Download over mobile data';
 
   @override
