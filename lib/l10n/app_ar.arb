@@ -4034,5 +4034,8 @@
     }
   },
   "citiesSourceTitle": "قائمة المدن",
-  "citiesSourceBody": "GeoNames (geonames.org)، تحت رخصة المشاع الإبداعي CC BY 4.0."
+  "citiesSourceBody": "GeoNames (geonames.org)، تحت رخصة المشاع الإبداعي CC BY 4.0.",
+  "adhanTest": "جرّب الأذان",
+  "adhanTestBody": "تجربة الأذان",
+  "adhanTestScheduled": "يبدأ الأذان بعد ١٠ ثوانٍ، كما في التنبيه الحقيقي."
 }

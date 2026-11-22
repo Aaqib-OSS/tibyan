@@ -12,11 +12,13 @@ import android.content.IntentFilter
 import android.content.pm.ServiceInfo
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.media.RingtoneManager
 import android.media.session.MediaSession
 import android.media.session.PlaybackState
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 
 /**
  * Plays the adhan (then the dua, when chosen) as a media-playback
@@ -30,6 +32,8 @@ class AdhanService : Service() {
     private var queue: List<String> = emptyList()
     private var index = 0
     private var screenOff: BroadcastReceiver? = null
+    private var preview = false
+    private var toneTried = false
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -42,6 +46,8 @@ class AdhanService : Service() {
         val title = intent?.getStringExtra("title") ?: ""
         val body = intent?.getStringExtra("body") ?: ""
         val payload = intent?.getStringExtra("payload") ?: ""
+        preview = intent?.getBooleanExtra("preview", false) ?: false
+        toneTried = false
         val notification = notification(title, body, payload)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(
@@ -52,12 +58,9 @@ class AdhanService : Service() {
         } else {
             startForeground(NOTIFICATION_ID, notification)
         }
-        if (files.isEmpty()) {
-            finish()
-            return START_NOT_STICKY
-        }
         releasePlayer()
-        queue = files
+        // An alert with nothing on the device still sounds: the tone.
+        queue = if (files.isEmpty()) listOf(TONE) else files
         index = 0
         startSession(title)
         listenScreenOff()
@@ -157,6 +160,29 @@ class AdhanService : Service() {
 
     private fun playCurrent() {
         val src = queue.getOrNull(index) ?: return finish()
+        if (src == TONE) return playTone()
+        // Alerts play downloaded files only; a link (or a missing file)
+        // falls back to the tone. The library's preview may stream.
+        val remote = src.startsWith("http://") || src.startsWith("https://")
+        if ((remote && !preview) || (!remote && !java.io.File(src).isFile)) {
+            Log.w(TAG, "adhan source not playable: $src")
+            return if (index == 0) playTone() else finish()
+        }
+        start(src, isTone = false)
+    }
+
+    private fun playTone() {
+        if (toneTried) return finish()
+        toneTried = true
+        val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            ?: return finish()
+        queue = listOf(TONE)
+        index = 0
+        start(uri.toString(), isTone = true)
+    }
+
+    private fun start(src: String, isTone: Boolean) {
+        releasePlayer()
         try {
             val p = MediaPlayer()
             p.setAudioAttributes(
@@ -165,21 +191,29 @@ class AdhanService : Service() {
                     .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                     .build(),
             )
-            if (src.startsWith("http")) p.setDataSource(this, Uri.parse(src)) else p.setDataSource(src)
+            if (isTone) {
+                p.setDataSource(this, Uri.parse(src))
+            } else {
+                // A path or (preview) an http link: never through the
+                // ContentResolver.
+                p.setDataSource(src)
+            }
             p.setOnCompletionListener {
                 index++
                 releasePlayer()
-                if (index < queue.size) playCurrent() else finish()
+                if (!isTone && index < queue.size) playCurrent() else finish()
             }
-            p.setOnErrorListener { _, _, _ ->
-                finish()
+            p.setOnErrorListener { _, what, extra ->
+                Log.e(TAG, "adhan playback error $what/$extra: $src")
+                if (isTone || preview) finish() else playTone()
                 true
             }
             p.setOnPreparedListener { it.start() }
             player = p
             p.prepareAsync()
         } catch (e: Exception) {
-            finish()
+            Log.e(TAG, "adhan source failed: $src", e)
+            if (isTone || preview) finish() else playTone()
         }
     }
 
@@ -231,12 +265,22 @@ class AdhanService : Service() {
         const val CHANNEL = "app.tibyan.adhan"
         const val NOTIFICATION_ID = 7400
         const val ACTION_STOP = "app.tibyan.ADHAN_STOP"
+        private const val TAG = "TibyanAdhan"
+        private const val TONE = "tone:"
 
         /** Told when the adhan starts and stops (the app's screen). */
         var onPlaying: ((Boolean) -> Unit)? = null
 
-        fun start(ctx: Context, files: List<String>, title: String, body: String, payload: String) {
+        fun start(
+            ctx: Context,
+            files: List<String>,
+            title: String,
+            body: String,
+            payload: String,
+            preview: Boolean = false,
+        ) {
             val i = Intent(ctx, AdhanService::class.java)
+                .putExtra("preview", preview)
                 .putStringArrayListExtra("files", ArrayList(files))
                 .putExtra("title", title)
                 .putExtra("body", body)

@@ -49,6 +49,7 @@ class PrayerNative(
                         call.argument<String>("title") ?: "",
                         call.argument<String>("body") ?: "",
                         call.argument<String>("payload") ?: "",
+                        call.argument<Boolean>("preview") ?: false,
                     )
                     result.success(null)
                 }
@@ -59,6 +60,12 @@ class PrayerNative(
                 "schedule" -> {
                     val alerts = call.argument<List<Map<String, Any?>>>("alerts") ?: emptyList()
                     AdhanAlarms.replace(ctx, alerts)
+                    result.success(null)
+                }
+                "test" -> {
+                    // «جرّب الأذان»: the same exact alarm and service as a
+                    // real alert, a few seconds from now.
+                    AdhanAlarms.test(ctx, call.arguments as Map<String, Any?>)
                     result.success(null)
                 }
                 "canExact" -> result.success(AdhanAlarms.canExact(ctx))
@@ -198,6 +205,38 @@ object AdhanAlarms {
         }
         prefs.edit().putString(KEY, now.toString()).apply()
         arm(ctx, now)
+    }
+
+    const val TEST_ID = 9399
+
+    fun test(ctx: Context, alert: Map<String, Any?>) {
+        val o = JSONObject()
+        o.put("id", TEST_ID)
+        o.put("at", (alert["at"] as Number).toLong())
+        o.put("title", alert["title"] as? String ?: "")
+        o.put("body", alert["body"] as? String ?: "")
+        o.put("payload", alert["payload"] as? String ?: "")
+        o.put("files", JSONArray((alert["files"] as? List<*>) ?: emptyList<String>()))
+        val am = ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        if (canExact(ctx)) {
+            am.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                o.getLong("at"),
+                intent(ctx, TEST_ID, o),
+            )
+        } else {
+            // No exact alarms: the app is in front, so start it directly.
+            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                val files = o.getJSONArray("files")
+                AdhanService.start(
+                    ctx,
+                    (0 until files.length()).map { files.getString(it) },
+                    o.optString("title"),
+                    o.optString("body"),
+                    o.optString("payload"),
+                )
+            }, (o.getLong("at") - System.currentTimeMillis()).coerceAtLeast(0))
+        }
     }
 
     /** Sets every stored alarm still to come (after a reboot too). */

@@ -88,6 +88,7 @@ class PrayerNative {
     required String title,
     String body = '',
     String payload = '',
+    bool preview = false,
   }) async {
     if (files.isEmpty) return;
     if (_mobileOrMac) {
@@ -97,6 +98,9 @@ class PrayerNative {
         'title': title,
         'body': body,
         'payload': payload,
+        // Only the library's preview may stream from the server; an
+        // alert plays downloaded files (or the tone).
+        'preview': preview,
       });
       return;
     }
@@ -141,6 +145,11 @@ class PrayerNative {
     await _call<void>('schedule', {
       'alerts': [for (final a in alerts) a.toMap()],
     });
+  }
+
+  /// Android: «جرّب الأذان» through the adhan alarm and service.
+  Future<void> testAdhan(NativeAdhan a) async {
+    if (Platform.isAndroid) await _call<void>('test', a.toMap());
   }
 
   /// Android 12+: whether exact alarms are allowed (the adhan service

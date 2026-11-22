@@ -69,4 +69,19 @@ void main() {
       'tibyan://prayer',
     );
   });
+
+  group('which recording an adhan plays', () {
+    test('the chosen muezzin when downloaded', () {
+      expect(
+        adhanSlugFor('ali_mahmoud', {'ali_mahmoud'}.contains),
+        'ali_mahmoud',
+      );
+    });
+    test('the default one when the chosen is not downloaded', () {
+      expect(adhanSlugFor('ali_mahmoud', {'refaat'}.contains), 'refaat');
+    });
+    test('none (the tone) when neither is on the device', () {
+      expect(adhanSlugFor('ali_mahmoud', <String>{}.contains), isNull);
+    });
+  });
 }

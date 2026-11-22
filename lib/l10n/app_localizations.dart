@@ -9829,6 +9829,24 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'GeoNames (geonames.org)، تحت رخصة المشاع الإبداعي CC BY 4.0.'**
   String get citiesSourceBody;
+
+  /// No description provided for @adhanTest.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرّب الأذان'**
+  String get adhanTest;
+
+  /// No description provided for @adhanTestBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجربة الأذان'**
+  String get adhanTestBody;
+
+  /// No description provided for @adhanTestScheduled.
+  ///
+  /// In ar, this message translates to:
+  /// **'يبدأ الأذان بعد ١٠ ثوانٍ، كما في التنبيه الحقيقي.'**
+  String get adhanTestScheduled;
 }
 
 class _AppLocalizationsDelegate

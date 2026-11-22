@@ -77,6 +77,17 @@ String alertPayload(PlannedAlert a) => a.kind == AlertKind.atTime
   };
 }
 
+/// Which downloaded recording an adhan plays: the chosen muezzin when it
+/// is on the device, else the default one when it is, else none (the
+/// alert then sounds the gentle tone). Never a server link.
+String? adhanSlugFor(String chosen, bool Function(String slug) installed) {
+  if (installed(chosen)) return chosen;
+  if (installed(PrayerSettings.defaultMuezzin)) {
+    return PrayerSettings.defaultMuezzin;
+  }
+  return null;
+}
+
 /// Schedules the prayer alerts on the device. Nothing runs in the
 /// background to keep them: they are planned [prayerDaysAhead] days ahead
 /// and planned again whenever the app opens or a setting changes.
@@ -111,16 +122,16 @@ class PrayerAlarms {
   /// The files the adhan plays (the cut or the whole adhan, then the dua
   /// when chosen), or none when the recording is not on the device.
   Future<List<String>> adhanFiles(PrayerSettings s, {bool? full}) async {
-    if (!adhan.isInstalled(s.muezzin)) return const [];
+    final slug = adhanSlugFor(s.muezzin, adhan.isInstalled);
+    if (slug == null) return const [];
     final whole = full ?? s.length == AdhanLength.full;
-    final main = await adhan.fileOf(
-      s.muezzin,
-      whole ? 'full.m4a' : 'short.m4a',
-    );
+    final main = await adhan.fileOf(slug, whole ? 'full.m4a' : 'short.m4a');
+    if (!await main.exists()) return const [];
+    final dua = await adhan.fileOf(duaSlug, 'dua_shaarawy.m4a');
     return [
       main.path,
-      if (s.duaAfter && adhan.isInstalled(duaSlug))
-        (await adhan.fileOf(duaSlug, 'dua_shaarawy.m4a')).path,
+      if (s.duaAfter && adhan.isInstalled(duaSlug) && await dua.exists())
+        dua.path,
     ];
   }
 
@@ -198,7 +209,8 @@ class PrayerAlarms {
   }) async {
     final when = now ?? DateTime.now();
     final apple = _apple;
-    final adhanReady = adhan.isInstalled(s.muezzin);
+    final slug = adhanSlugFor(s.muezzin, adhan.isInstalled);
+    final adhanReady = slug != null;
     final plan = planAlerts(
       settings: s,
       now: when,
@@ -223,7 +235,7 @@ class PrayerAlarms {
       return plan;
     }
     final files = await adhanFiles(s);
-    final appleSound = apple ? await _appleSound(s.muezzin) : null;
+    final appleSound = apple && slug != null ? await _appleSound(slug) : null;
     for (final a in plan) {
       final t = alertTexts(l, a, place);
       if (Platform.isAndroid &&
@@ -271,5 +283,57 @@ class PrayerAlarms {
     }
     await native.scheduleAdhans(natives);
     return plan;
+  }
+
+  /// How long after «جرّب الأذان» the test alert fires.
+  static const testDelay = Duration(seconds: 10);
+
+  /// «جرّب الأذان»: the chosen adhan (full or short, then the dua when on)
+  /// through the same path as a real alert, [testDelay] from now. Android:
+  /// the exact alarm and the adhan service. Apple: a notification with the
+  /// short cut as its sound (heard in front too). Desktop: the app plays
+  /// it. Returns when it is scheduled.
+  Future<void> testAdhan(
+    PrayerSettings s,
+    AppLocalizations l, {
+    required Future<void> Function() playInApp,
+  }) async {
+    final at = DateTime.now().add(testDelay);
+    final files = await adhanFiles(s);
+    final title = l.prayerAdhanNow(prayerName(l, PrayerKind.maghrib));
+    final body = l.adhanTestBody;
+    if (Platform.isAndroid) {
+      await native.testAdhan(
+        NativeAdhan(
+          id: prayerTestId,
+          at: at,
+          title: title,
+          body: body,
+          files: files,
+          payload: 'tibyan://prayer',
+        ),
+      );
+      return;
+    }
+    if (_apple) {
+      final fln = await plugin();
+      final slug = adhanSlugFor(s.muezzin, adhan.isInstalled);
+      final sound = slug == null ? null : await _appleSound(slug);
+      final darwin = DarwinNotificationDetails(
+        sound: sound,
+        presentSound: true,
+      );
+      await fln?.zonedSchedule(
+        id: prayerTestId,
+        scheduledDate: tz.TZDateTime.from(at.toUtc(), tz.UTC),
+        notificationDetails: NotificationDetails(iOS: darwin, macOS: darwin),
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        title: title,
+        body: body,
+        payload: 'tibyan://prayer',
+      );
+      return;
+    }
+    Timer(testDelay, () => unawaited(playInApp()));
   }
 }

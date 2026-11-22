@@ -2145,5 +2145,8 @@
   "adhanSourcesTitle": "Adhan library",
   "adhanSourcesBody": "The adhan and dua recordings come from Tibyan's library, under a Creative Commons licence, {license}.",
   "citiesSourceTitle": "City list",
-  "citiesSourceBody": "GeoNames (geonames.org), under a Creative Commons licence, CC BY 4.0."
+  "citiesSourceBody": "GeoNames (geonames.org), under a Creative Commons licence, CC BY 4.0.",
+  "adhanTest": "Try the adhan",
+  "adhanTestBody": "Adhan test",
+  "adhanTestScheduled": "The adhan starts in 10 seconds, as a real alert would."
 }

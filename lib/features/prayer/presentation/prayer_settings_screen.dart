@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/ui/app_toast.dart';
 import '../../../core/ui/look_kit.dart';
 import '../../../core/ui/responsive.dart';
 import '../../../l10n/app_localizations.dart';
@@ -259,6 +260,31 @@ class PrayerSettingsScreen extends ConsumerWidget {
                           );
                         }
                       },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                      child: OutlinedButton.icon(
+                        key: const ValueKey('prayer-test-adhan'),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(48),
+                        ),
+                        icon: const Icon(Icons.play_circle_outline),
+                        label: Text(l.adhanTest),
+                        onPressed: () async {
+                          final messenger = ScaffoldMessenger.maybeOf(context);
+                          await ref
+                              .read(prayerAlarmsProvider)
+                              .testAdhan(
+                                s,
+                                l,
+                                playInApp: () async => PrayerRuntime.instance
+                                    ?.playAdhan(PrayerKind.maghrib),
+                              );
+                          messenger?.showSnackBar(
+                            appToast(content: Text(l.adhanTestScheduled)),
+                          );
+                        },
+                      ),
                     ),
                     header(l.prayerSectionExtra),
                     SwitchListTile(

@@ -5812,4 +5812,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get citiesSourceBody =>
       'GeoNames (geonames.org), under a Creative Commons licence, CC BY 4.0.';
+
+  @override
+  String get adhanTest => 'Try the adhan';
+
+  @override
+  String get adhanTestBody => 'Adhan test';
+
+  @override
+  String get adhanTestScheduled =>
+      'The adhan starts in 10 seconds, as a real alert would.';
 }

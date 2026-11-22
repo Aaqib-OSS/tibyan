@@ -68,14 +68,7 @@ class PrayerRuntime {
     AdhanDownloads.displayName = _l.adhanLibraryTitle;
     _c.listen(prayerSettingsProvider, (_, _) => schedule());
     final adhan = _c.read(adhanDownloadsProvider);
-    var installed = adhan.isInstalled(_c.read(prayerSettingsProvider).muezzin);
-    adhan.changes.addListener(() {
-      final now = adhan.isInstalled(_c.read(prayerSettingsProvider).muezzin);
-      if (now != installed) {
-        installed = now;
-        schedule();
-      }
-    });
+    adhan.changes.addListener(schedule);
     AppLifecycleListener(
       onResume: () {
         _front = true;

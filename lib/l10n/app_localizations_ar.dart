@@ -5874,4 +5874,14 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get citiesSourceBody =>
       'GeoNames (geonames.org)، تحت رخصة المشاع الإبداعي CC BY 4.0.';
+
+  @override
+  String get adhanTest => 'جرّب الأذان';
+
+  @override
+  String get adhanTestBody => 'تجربة الأذان';
+
+  @override
+  String get adhanTestScheduled =>
+      'يبدأ الأذان بعد ١٠ ثوانٍ، كما في التنبيه الحقيقي.';
 }

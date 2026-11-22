@@ -9,6 +9,9 @@ import 'package:tibyan/core/downloads/background_downloads.dart';
 import 'package:tibyan/core/downloads/cellular_policy.dart';
 import 'package:tibyan/features/prayer/data/adhan_catalog.dart';
 import 'package:tibyan/features/prayer/data/adhan_downloads.dart';
+import 'package:tibyan/features/prayer/domain/prayer_settings.dart';
+import 'package:tibyan/features/prayer/services/prayer_alarms.dart';
+import 'package:tibyan/features/prayer/services/prayer_native.dart';
 
 import '../../downloads/background_downloads_test.dart' show FakeDownloader;
 
@@ -177,5 +180,34 @@ void main() {
       expect(pendingOf(downloads.tasks.value.values).count, 0);
       expect(a.stateOf('refaat').phase, AdhanPhase.paused);
     });
+  });
+
+  test('alerts get downloaded file paths, never server links', () async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    final a = make();
+    final dir = await a.dirOf('refaat');
+    await dir.create(recursive: true);
+    for (final f in adhanFilesFor(apple: false)) {
+      await File(p.join(dir.path, f)).writeAsString('x');
+    }
+    await a.refresh();
+    final alarms = PrayerAlarms(
+      plugin: () async => null,
+      native: PrayerNative(),
+      adhan: a,
+    );
+    // Ali Mahmoud chosen but not downloaded: Refaat's file plays.
+    final files = await alarms.adhanFiles(
+      const PrayerSettings(muezzin: 'ali_mahmoud'),
+    );
+    expect(files, [p.join(dir.path, 'full.m4a')]);
+    expect(files.every((f) => !f.startsWith('http')), isTrue);
+    final short = await alarms.adhanFiles(
+      const PrayerSettings(length: AdhanLength.short),
+    );
+    expect(short.single, endsWith('short.m4a'));
+    // Nothing on the device: no files (the tone).
+    await a.delete('refaat');
+    expect(await alarms.adhanFiles(const PrayerSettings()), isEmpty);
   });
 }
