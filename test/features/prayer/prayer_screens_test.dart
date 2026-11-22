@@ -242,4 +242,53 @@ void main() {
       greaterThanOrEqualTo(48),
     );
   });
+
+  testWidgets('the times rows show each prayer\'s adhan summary', (
+    tester,
+  ) async {
+    final (container, _) = await setUpScreen(tester, const PrayerTimesScreen());
+    Finder summary(String p) => find.byKey(ValueKey('prayer-summary-$p'));
+    expect(tester.widget<Text>(summary('fajr')).data, 'حسب العام');
+    expect(summary('shuruq'), findsNothing);
+    await container
+        .read(prayerSettingsProvider.notifier)
+        .setCustom(
+          PrayerKind.maghrib,
+          const PrayerAdhan(muezzin: 'minshawi', length: AdhanLength.short),
+        );
+    await container
+        .read(prayerSettingsProvider.notifier)
+        .setSound(PrayerKind.isha, AlertSound.tone);
+    await settle(tester);
+    expect(
+      tester.widget<Text>(summary('maghrib')).data,
+      'محمد صديق المنشاوي · حتى «حي على الصلاة»',
+    );
+    expect(tester.widget<Text>(summary('isha')).data, 'نغمة هادئة');
+    expect(
+      find.bySemanticsLabel(RegExp('المغرب .*محمد صديق المنشاوي')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('the summary fits at 200% text', (tester) async {
+    final (container, _) = await setUpScreen(
+      tester,
+      const PrayerTimesScreen(),
+      textScale: 2,
+    );
+    await container
+        .read(prayerSettingsProvider.notifier)
+        .setCustom(
+          PrayerKind.fajr,
+          const PrayerAdhan(
+            muezzin: 'abdulbasit',
+            length: AdhanLength.short,
+            volume: 0.5,
+          ),
+        );
+    await settle(tester);
+    expect(tester.takeException(), isNull);
+    expect(find.byKey(const ValueKey('prayer-summary-fajr')), findsOneWidget);
+  });
 }
