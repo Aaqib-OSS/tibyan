@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
+import '../../../core/platform/app_store.dart';
 import '../../../core/ui/responsive.dart';
 import 'prayer_native.dart';
 
@@ -118,6 +119,11 @@ class PrayerDesktop with TrayListener, WindowListener {
     try {
       if (Platform.isMacOS) return await native.setMacLoginItem(on);
       final exe = Platform.resolvedExecutable;
+      if (Platform.isWindows && appStore == 'msstore') {
+        // The Store package declares a StartupTask (pubspec msix_config):
+        // Windows runs it at login; the user manages it in Task Manager.
+        return true;
+      }
       if (Platform.isWindows) {
         const key = r'HKCU\Software\Microsoft\Windows\CurrentVersion\Run';
         final r = on

@@ -17,6 +17,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
+import 'features/prayer/domain/prayer_settings.dart' show PrayerSettings;
+import 'features/prayer/prayer_providers.dart' show prayerSettingsKey;
 import 'features/prayer/data/adhan_downloads.dart';
 import 'features/prayer/presentation/prayer_times_screen.dart'
     show prayerTimesLocation;
@@ -60,7 +62,7 @@ import 'features/mushaf/presentation/widgets/illuminated_frame.dart'
 import 'features/tasmee/data/background_model_download.dart';
 import 'l10n/app_localizations.dart';
 
-Future<void> main() async {
+Future<void> main([List<String> args = const []]) async {
   WidgetsFlutterBinding.ensureInitialized();
   startupMark('binding');
   if (const bool.fromEnvironment('PROF')) {
@@ -92,7 +94,14 @@ Future<void> main() async {
   startupMark('theme+flags');
   final prefs = await SharedPreferences.getInstance();
   // On the desktop: the window's size and place, as last left.
-  await DesktopWindow.init(prefs, title: 'Tibyan');
+  // Started at login (`--tray`, the Store build's StartupTask and the Run
+  // key / autostart entry): hidden in the tray, when the tray is on.
+  final prayerPrefs = PrayerSettings.decode(prefs.getString(prayerSettingsKey));
+  await DesktopWindow.init(
+    prefs,
+    title: 'Tibyan',
+    hidden: args.contains('--tray') && prayerPrefs.enabled && prayerPrefs.tray,
+  );
   startupMark('prefs+window');
   final content = await ContentDatabase.openBundled(rootBundle);
   final packRoot = await getApplicationSupportDirectory();

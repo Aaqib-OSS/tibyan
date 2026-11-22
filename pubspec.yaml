@@ -113,6 +113,12 @@ msix_config:
   # microphone: tasmee and hifz voice recording work on Windows.
   capabilities: internetClient, microphone
   store: true
+  # «مواقيت الصلاة»: opens at login hidden in the tray so the adhan plays
+  # (the user can turn it off in Task Manager › Startup apps).
+  startup_task:
+    task_id: TibyanTray
+    enabled: true
+    parameters: --tray
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
