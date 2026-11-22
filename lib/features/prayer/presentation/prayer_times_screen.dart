@@ -16,6 +16,7 @@ import 'hijri_calendar_screen.dart' show hijriCalendarLocation;
 import 'prayer_alert_sheet.dart';
 import 'prayer_enable.dart';
 import 'prayer_widgets.dart';
+import 'qibla_screen.dart' show qiblaLocation;
 
 const prayerTimesLocation = '/prayer';
 
@@ -82,6 +83,12 @@ class _PrayerTimesScreenState extends ConsumerState<PrayerTimesScreen> {
             LookTopBar(
               title: l.prayerTimesTitle,
               actions: [
+                IconButton(
+                  key: const ValueKey('prayer-qibla'),
+                  tooltip: l.qiblaOpen,
+                  onPressed: () => context.push(qiblaLocation),
+                  icon: const Icon(Icons.explore_outlined),
+                ),
                 IconButton(
                   key: const ValueKey('prayer-settings'),
                   tooltip: l.prayerSettingsTitle,

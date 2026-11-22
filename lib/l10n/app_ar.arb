@@ -4129,5 +4129,60 @@
         "type": "String"
       }
     }
-  }
+  },
+  "qiblaTitle": "القبلة",
+  "qiblaOpen": "اتجاه القبلة",
+  "qiblaFrom": "من {place}",
+  "@qiblaFrom": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaDegrees": "{deg}° من الشمال الحقيقي",
+  "@qiblaDegrees": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaDistance": "المسافة إلى الكعبة: {km} كم",
+  "@qiblaDistance": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaAligned": "أنت متجه إلى القبلة",
+  "qiblaTurnRight": "استدر يمينًا {deg}°",
+  "@qiblaTurnRight": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaTurnLeft": "استدر يسارًا {deg}°",
+  "@qiblaTurnLeft": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaCalibrate": "حرّك الهاتف في الهواء على شكل الرقم 8 عدة مرات لمعايرة البوصلة.",
+  "qiblaInterference": "دقة البوصلة منخفضة: ابتعد عن المعادن والأجهزة الكهربائية وأغطية الهاتف المغناطيسية.",
+  "qiblaNoSensor": "لا توجد بوصلة في هذا الجهاز.",
+  "qiblaStaticSteps": "حدّد اتجاه الشمال (بخريطة أو بوصلة)، ثم استدر {deg}° باتجاه عقارب الساعة.",
+  "@qiblaStaticSteps": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaNoPlace": "اختر مدينتك أولًا لمعرفة اتجاه القبلة."
 }
