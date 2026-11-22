@@ -215,6 +215,7 @@ class AppSettings {
     this.fasilPlace = FasilPlace.top,
     this.fasilMaterial = FasilMaterial.silk,
     this.fasilTassel = true,
+    this.cellularDownloads = false,
   });
 
   final String styleId;
@@ -432,6 +433,10 @@ class AppSettings {
   /// A tassel at the ribbon's end.
   final bool fasilTassel;
 
+  /// Downloads may use mobile data without asking. Off: they wait for
+  /// Wi‑Fi and the reader is asked first (phones only).
+  final bool cellularDownloads;
+
   /// The player style in effect: [PlayerStyle.auto] is the normal bar, or
   /// the pill while focus mode is on.
   PlayerStyle get effectivePlayerStyle => playerStyle != PlayerStyle.auto
@@ -504,6 +509,7 @@ class AppSettings {
     FasilPlace? fasilPlace,
     FasilMaterial? fasilMaterial,
     bool? fasilTassel,
+    bool? cellularDownloads,
   }) => AppSettings(
     styleId: styleId ?? this.styleId,
     mode: mode ?? this.mode,
@@ -571,6 +577,7 @@ class AppSettings {
     fasilPlace: fasilPlace ?? this.fasilPlace,
     fasilMaterial: fasilMaterial ?? this.fasilMaterial,
     fasilTassel: fasilTassel ?? this.fasilTassel,
+    cellularDownloads: cellularDownloads ?? this.cellularDownloads,
   );
 
   /// Resolves the colour mode. A dark device maps to Night (never pure

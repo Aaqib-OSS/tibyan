@@ -2010,5 +2010,22 @@
   "tafsirGoToVerse": "Go to verse",
   "tafsirChooseTexts": "Choose tafsirs",
   "tafsirShareText": "Share text",
-  "tafsirPlayVerse": "Play this verse"
+  "tafsirPlayVerse": "Play this verse",
+  "khatmaActGroup": "Group",
+  "khatmaActReports": "Reports",
+  "khatmaActJournal": "Journal",
+  "cellularDownloadsToggle": "Download over mobile data",
+  "cellularDownloadsHint": "When off, downloads wait for Wi‑Fi and the app asks before using mobile data",
+  "cellularPausedTitle": "Downloads paused: you're on mobile data",
+  "cellularPausedBody": "About {size} MB left. They continue on their own once you're on Wi‑Fi.",
+  "cellularPausedBodyNoSize": "They continue on their own once you're on Wi‑Fi.",
+  "cellularContinue": "Continue on mobile data",
+  "cellularWait": "Wait for Wi‑Fi",
+  "@cellularPausedBody": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  }
 }

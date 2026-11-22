@@ -32,7 +32,6 @@ import '../../../core/settings/settings_controller.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/reveal.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../assistant/assistant_screen.dart';
 import '../../books/books_providers.dart';
 import '../../books/presentation/asbab_section.dart';
 import '../../books/presentation/book_section.dart';
@@ -396,16 +395,20 @@ class _MushafScreenState extends ConsumerState<MushafScreen>
   }
 
   /// A tap on the page, its frame or the space around it: clears the
-  /// selection, or shows and hides the menus. In focus mode it only hides
-  /// what is shown (the tools, the menus); with nothing shown it does
-  /// nothing.
+  /// selection, or shows and hides the menus. In focus mode it hides what
+  /// is shown (the tools, the menus); with nothing shown it opens «القائمة»
+  /// (touch reading off: a tap on a verse then reads nothing).
   void _onPageTap() {
     if (_multi) return;
     if (_selA != null) {
       setState(() => _selA = _selB = null);
     } else if (_focus) {
-      if (_focusTools) _setFocusTools(false);
-      _setChrome(false);
+      if (_focusTools || _chrome) {
+        if (_focusTools) _setFocusTools(false);
+        _setChrome(false);
+      } else if (!_touchReading) {
+        unawaited(_openFocusMenu(_page, null));
+      }
     } else {
       _setChrome(!_chrome);
     }
@@ -511,9 +514,9 @@ class _MushafScreenState extends ConsumerState<MushafScreen>
                       then(() => screen.push('/mushaf/index')),
                     ),
                     (
-                      assistantIcon,
-                      l.assistantTitle,
-                      then(() => screen.push(assistantLocation)),
+                      railIcon(RailItem.listen),
+                      l.sectionListen,
+                      then(_listenFromPage),
                     ),
                     (
                       Icons.home_outlined,
@@ -748,7 +751,9 @@ class _MushafScreenState extends ConsumerState<MushafScreen>
         ref.read(pageAyahsProvider(page).future),
         ref.read(frameInfoProvider(page).future),
       ).wait.timeout(const Duration(seconds: 2));
-    } on Object catch (_) {}
+    } on Object catch (_) {
+      // Slow or failed loads: reveal the page anyway after the wait.
+    }
     for (var i = 0; i < 3 && mounted; i++) {
       await WidgetsBinding.instance.endOfFrame;
     }
@@ -810,6 +815,8 @@ class _MushafScreenState extends ConsumerState<MushafScreen>
 
   @override
   void dispose() {
+    _turnPos?.isScrollingNotifier.removeListener(_onTurning);
+    MushafPage.turning.value = false;
     final shot = _placeholder;
     _placeholder = null;
     shot?.$2.dispose();
@@ -956,9 +963,30 @@ class _MushafScreenState extends ConsumerState<MushafScreen>
   /// so it starts there.
   int get _first => ref.read(editionProvider) == MushafEdition.shamarly ? 1 : 0;
 
+  /// The pager position whose turns [MushafPage.turning] follows.
+  ScrollPosition? _turnPos;
+
+  void _onTurning() =>
+      MushafPage.turning.value = _turnPos?.isScrollingNotifier.value ?? false;
+
+  /// Follows the pager's position (a new controller brings a new one), so
+  /// page bakes wait until a turn settles.
+  void _watchTurns() {
+    final c = _controller;
+    final pos = c != null && c.hasClients ? c.position : null;
+    if (identical(pos, _turnPos)) return;
+    _turnPos?.isScrollingNotifier.removeListener(_onTurning);
+    _turnPos = pos;
+    pos?.isScrollingNotifier.addListener(_onTurning);
+    _onTurning();
+  }
+
   @override
   Widget build(BuildContext context) {
     MushafScreen.debugBuildCount++;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _watchTurns();
+    });
     if (!ref.watch(pagesInstalledProvider)) return const DownloadScreen();
     _window = (
       size: MediaQuery.sizeOf(context),
@@ -1802,9 +1830,9 @@ class _MushafScreenState extends ConsumerState<MushafScreen>
                               () => context.push('/mushaf/index'),
                             ),
                             (
-                              assistantIcon,
-                              l.assistantTitle,
-                              () => context.push(assistantLocation),
+                              railIcon(RailItem.listen),
+                              l.sectionListen,
+                              _listenFromPage,
                             ),
                             (
                               Icons.home_rounded,
@@ -3049,7 +3077,9 @@ class _MushafScreenState extends ConsumerState<MushafScreen>
         ),
         applyMemory: false,
       );
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('mushaf: saving review result failed: $e');
+    }
   }
 
   /// What reveal by reciting can do in this edition, on this device.
