@@ -368,12 +368,12 @@ void _startKhatma(ProviderContainer container) {
       container.read(launchTargetProvider).value = true;
       await container.read(appRouterReadyProvider).future;
       unawaited(
-        openOverHome(
-          container.read(appRouterProvider),
-          uri.path == '/adhan'
-              ? '$prayerTimesLocation/adhan?${uri.query}'
-              : prayerTimesLocation,
-        ),
+        openOverHome(container.read(appRouterProvider), switch (uri.path) {
+          '/adhan' => '$prayerTimesLocation/adhan?${uri.query}',
+          // An occasion reminder: the Hijri calendar.
+          '/hijri' => '$prayerTimesLocation/hijri',
+          _ => prayerTimesLocation,
+        }),
       );
       return;
     }

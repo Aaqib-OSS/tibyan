@@ -23,6 +23,7 @@ class _Recording extends NoReminders {
     required String body,
     required String payload,
     required String channel,
+    String channelId = khatmaChannelId,
   }) async {
     texts[id] = (title, body, payload);
     await super.scheduleOnce(
@@ -32,6 +33,7 @@ class _Recording extends NoReminders {
       body: body,
       payload: payload,
       channel: channel,
+      channelId: channelId,
     );
   }
 }

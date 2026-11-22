@@ -16,6 +16,7 @@ import '../domain/prayer_settings.dart';
 import '../prayer_providers.dart';
 import 'prayer_alarms.dart';
 import 'prayer_desktop.dart';
+import 'occasion_reminders.dart';
 import 'prayer_native.dart';
 import '../../adhkar/adhkar_providers.dart';
 import '../../adhkar/services/adhkar_reminders.dart';
@@ -153,6 +154,15 @@ class PrayerRuntime {
             .sync(_c.read(adhkarSettingsProvider), _l);
       } catch (e) {
         debugPrint('adhkar reminders: $e');
+      }
+      try {
+        await syncOccasionReminders(
+          _c.read(reminderSchedulerProvider),
+          _c.read(prayerSettingsProvider),
+          _l,
+        );
+      } catch (e) {
+        debugPrint('occasion reminders: $e');
       }
     });
   }

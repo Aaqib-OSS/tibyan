@@ -17,6 +17,10 @@ typedef ReminderNotice = ({
   String payload,
 });
 
+/// The Android channel of the khatma reminders (and one-off ones by
+/// default).
+const khatmaChannelId = 'app.tibyan.khatma';
+
 /// Schedules the khatma reminders on the device.
 abstract interface class ReminderScheduler {
   /// Replaces every scheduled khatma reminder with [notices].
@@ -40,6 +44,7 @@ abstract interface class ReminderScheduler {
     required String body,
     required String payload,
     required String channel,
+    String channelId = khatmaChannelId,
   });
 
   /// Cancels the one-off reminder [id].
@@ -84,7 +89,14 @@ class NoReminders implements ReminderScheduler {
     required String body,
     required String payload,
     required String channel,
-  }) async => once[id] = at;
+    String channelId = khatmaChannelId,
+  }) async {
+    once[id] = at;
+    onceChannels[id] = channelId;
+  }
+
+  /// Each one-off reminder's Android channel (tests).
+  final onceChannels = <int, String>{};
 
   @override
   Future<void> cancelOnce(int id) async => once.remove(id);
@@ -294,6 +306,7 @@ class LocalReminderScheduler implements ReminderScheduler {
     required String body,
     required String payload,
     required String channel,
+    String channelId = khatmaChannelId,
   }) async {
     if (!_supported) return;
     await _init();
@@ -303,7 +316,7 @@ class LocalReminderScheduler implements ReminderScheduler {
       scheduledDate: tz.TZDateTime.from(at, tz.local),
       notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails(
-          'app.tibyan.khatma',
+          channelId,
           channel,
           icon: 'ic_stat_tibyan',
           color: const Color(0xFF0F6660),
