@@ -112,6 +112,17 @@ void main() {
       find.byKey(const ValueKey('prayer-dua')),
     );
     expect(dua.value, isFalse);
+    // Android: «when the phone is in use», a notification by default.
+    final notify = find.byKey(const ValueKey('prayer-inuse-notify'));
+    await tester.scrollUntilVisible(notify, 200);
+    expect(tester.widget<RadioListTile<InUseAdhan>>(notify).checked, isTrue);
+    await tester.tap(find.byKey(const ValueKey('prayer-inuse-short')));
+    await settle(tester);
+    expect(container.read(prayerSettingsProvider).inUse, InUseAdhan.short);
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('prayer-shuruq')),
+      200,
+    );
     await tester.tap(find.byKey(const ValueKey('prayer-shuruq')));
     await settle(tester);
     expect(container.read(prayerSettingsProvider).shuruqAlert, isTrue);

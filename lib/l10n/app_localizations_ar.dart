@@ -5925,4 +5925,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adhanVolumePreview => 'معاينة المستوى';
+
+  @override
+  String get adhanPlay => 'تشغيل الأذان';
+
+  @override
+  String get adhanInUseTitle => 'عندما يكون الهاتف قيد الاستخدام';
+
+  @override
+  String get adhanInUseNote =>
+      'أي عندما تكون الشاشة مفتوحة وغير مقفلة، أو يعمل فيديو أو صوت آخر. أثناء المكالمات يصل إشعار صامت فقط مع زر «تشغيل الأذان».';
+
+  @override
+  String get adhanInUseNotify => 'إشعار فقط';
+
+  @override
+  String get adhanInUseShort => '«حي على الصلاة» فقط';
+
+  @override
+  String get adhanInUseFull => 'الأذان كاملًا';
 }

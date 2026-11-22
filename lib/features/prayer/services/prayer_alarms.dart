@@ -106,7 +106,14 @@ class PrayerAlarms {
     required this.plugin,
     required this.native,
     required this.adhan,
+    this.readLate,
+    this.writeLate,
   });
+
+  /// The late alerts that already fired (kept on the device), so a plan
+  /// made again within their minute never fires them twice.
+  final Set<String> Function()? readLate;
+  final Future<void> Function(Set<String>)? writeLate;
 
   /// The shared notifications plugin, or null where there is none.
   final Future<FlutterLocalNotificationsPlugin?> Function() plugin;
@@ -216,7 +223,13 @@ class PrayerAlarms {
       now: when,
       adhanReady: adhanReady,
       limit: apple ? appleMaxPrayerAlerts : null,
+      lateFired: readLate?.call() ?? const {},
     );
+    if (plan.any((a) => a.late)) {
+      await writeLate?.call(
+        recordLate(readLate?.call() ?? const {}, plan, when),
+      );
+    }
     final place = s.place;
     final fln = await plugin();
     if (fln != null) {
@@ -235,6 +248,7 @@ class PrayerAlarms {
       return plan;
     }
     final files = await adhanFiles(s);
+    final shortFiles = await adhanFiles(s, full: false);
     final appleSound = apple && slug != null ? await _appleSound(slug) : null;
     for (final a in plan) {
       final t = alertTexts(l, a, place);
@@ -253,6 +267,10 @@ class PrayerAlarms {
             payload: alertPayload(a),
             volume: s.adhanVolume,
             stopLabel: l.adhanStop,
+            playLabel: l.adhanPlay,
+            prayerAt: a.prayerAt,
+            shortFiles: shortFiles,
+            inUse: s.inUse.name,
           ),
         );
         continue;
