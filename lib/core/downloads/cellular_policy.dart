@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 
 import 'package:background_downloader/background_downloader.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -25,9 +24,6 @@ NetKind netKindOf(List<ConnectivityResult> results) {
   }
   return NetKind.other;
 }
-
-bool get _inFlutterTest =>
-    !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
 
 /// Phones only: desktops have no mobile data to save.
 bool get cellularPolicyApplies =>
@@ -117,9 +113,7 @@ class CellularPolicy extends Notifier<CellularState> {
 
   @override
   CellularState build() {
-    // Widget tests have no connectivity plugin (its stream would report a
-    // MissingPluginException into every test that builds the app).
-    if (!cellularPolicyApplies || _inFlutterTest) return const CellularState();
+    if (!cellularPolicyApplies) return const CellularState();
     final connectivity = Connectivity();
     _sub = connectivity.onConnectivityChanged.listen(_onNet);
     ref.onDispose(() => _sub?.cancel());

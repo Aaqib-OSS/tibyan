@@ -25,6 +25,11 @@
          in the system settings; without it a notification is shown). -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <!-- androidx.credentials (via google_sign_in_android) pulls in
+         androidx.biometric, which adds these. The app never shows a
+         biometric prompt itself; Google sign-in runs its own UI. -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" tools:node="remove"/>
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" tools:node="remove"/>
     <application
         android:label="@string/app_name"
         android:name="${applicationName}"

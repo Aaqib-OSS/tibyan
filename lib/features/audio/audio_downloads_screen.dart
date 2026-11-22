@@ -18,6 +18,10 @@ import 'recitation.dart';
 import 'reciter_avatar.dart';
 import '../../core/ui/meta_separator.dart';
 
+/// Forgets the reciter last chosen on the listening screen (tests).
+@visibleForTesting
+void resetListenChoice() => _AudioDownloadsScreenState._last = null;
+
 /// «الاستماع»: choose a reciter, play any surah (from the device, or
 /// streamed), and download surahs for listening offline. Surahs saved
 /// while listening are listed as downloaded. The player's controls show
@@ -113,18 +117,9 @@ class _AudioDownloadsScreenState extends ConsumerState<AudioDownloadsScreen> {
             _ReciterPicker(
               all: all,
               chosen: reciter,
-              onChoose: (r) {
-                setState(() => _chosen = _last = r.id);
-                // Listening already: the new reciter carries on (the same
-                // surah, from the same verse within the mushaf's riwaya).
-                if (!playing.active || playing.clip != null) return;
-                final riwaya = ref.read(editionProvider).riwaya;
-                if (r.riwaya == riwaya.name && !playing.foreign) {
-                  c.changeReciter(r.id);
-                } else {
-                  c.play(playing.surah, reciter: r);
-                }
-              },
+              // Choosing a reciter only browses its list: what is playing
+              // carries on, untouched, until a surah of this list is played.
+              onChoose: (r) => setState(() => _chosen = _last = r.id),
             ),
             // The reciter's line scrolls with the surahs, so large text
             // keeps the list on the screen.
@@ -184,6 +179,7 @@ class _AudioDownloadsScreenState extends ConsumerState<AudioDownloadsScreen> {
                         final current =
                             playing.active &&
                             playing.clip == null &&
+                            playing.reciterId == reciter.id &&
                             playing.surah == n;
                         return ListTile(
                           key: ValueKey('listen-surah-$n'),
