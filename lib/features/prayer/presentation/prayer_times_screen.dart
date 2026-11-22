@@ -329,6 +329,10 @@ class _TimesList extends ConsumerWidget {
           : (settings.shuruqAlert ? AlertSound.tone : null);
       final name = prayerName(l, p);
       final time = formatPrayerTime(l, day[p], place);
+      // The same summary as «أذان كل صلاة» in the settings.
+      final summary = obligatory
+          ? prayerAdhanSummary(l, settings.customOf(p))
+          : null;
       final style = TextStyle(
         fontSize: 16,
         fontWeight: current ? FontWeight.w700 : FontWeight.w400,
@@ -344,13 +348,37 @@ class _TimesList extends ConsumerWidget {
             children: [
               Expanded(
                 child: Semantics(
-                  label: '$name $time',
+                  label: summary == null
+                      ? '$name $time'
+                      : '$name $time · $summary',
                   excludeSemantics: true,
-                  child: Row(
-                    children: [
-                      Expanded(child: Text(name, style: style)),
-                      Text(time, style: style),
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(name, style: style),
+                              if (summary != null)
+                                Text(
+                                  summary,
+                                  key: ValueKey('prayer-summary-${p.name}'),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: t.muted,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        Text(time, style: style),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -379,7 +407,7 @@ class _TimesList extends ConsumerWidget {
                 key: ValueKey('prayer-sound-${p.name}'),
                 tooltip: sound == null
                     ? l.reminderNone
-                    : '${soundName(l, sound)} · $name',
+                    : '${summary ?? soundName(l, sound)} · $name',
                 onPressed: obligatory
                     ? () => showPrayerAlertSheet(context, p)
                     : () => context.push('$prayerTimesLocation/settings'),
