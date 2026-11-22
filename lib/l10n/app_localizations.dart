@@ -9007,6 +9007,60 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'خروج'**
   String get storePrivacyExit;
+
+  /// No description provided for @tafsirCompare.
+  ///
+  /// In ar, this message translates to:
+  /// **'قارن'**
+  String get tafsirCompare;
+
+  /// No description provided for @tafsirCompareHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض كل النصوص المختارة معا'**
+  String get tafsirCompareHint;
+
+  /// No description provided for @tafsirChoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'التفاسير والترجمات'**
+  String get tafsirChoices;
+
+  /// No description provided for @tafsirReadMore.
+  ///
+  /// In ar, this message translates to:
+  /// **'اقرأ المزيد'**
+  String get tafsirReadMore;
+
+  /// No description provided for @tafsirShowLess.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض أقل'**
+  String get tafsirShowLess;
+
+  /// No description provided for @tafsirGoToVerse.
+  ///
+  /// In ar, this message translates to:
+  /// **'اذهب لآية'**
+  String get tafsirGoToVerse;
+
+  /// No description provided for @tafsirChooseTexts.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار التفاسير'**
+  String get tafsirChooseTexts;
+
+  /// No description provided for @tafsirShareText.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشاركة النص'**
+  String get tafsirShareText;
+
+  /// No description provided for @tafsirPlayVerse.
+  ///
+  /// In ar, this message translates to:
+  /// **'استمع للآية'**
+  String get tafsirPlayVerse;
 }
 
 class _AppLocalizationsDelegate

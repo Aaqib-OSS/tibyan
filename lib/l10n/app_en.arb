@@ -2001,5 +2001,14 @@
   "storePrivacyBody": "Tibyan needs no account, collects no personal data, and keeps your data on your device. Please read the privacy policy before you continue.",
   "storePrivacyRead": "Read the privacy policy",
   "storePrivacyAccept": "OK",
-  "storePrivacyExit": "Exit"
+  "storePrivacyExit": "Exit",
+  "tafsirCompare": "Compare",
+  "tafsirCompareHint": "Show all chosen texts together",
+  "tafsirChoices": "Tafsirs and translations",
+  "tafsirReadMore": "Read more",
+  "tafsirShowLess": "Show less",
+  "tafsirGoToVerse": "Go to verse",
+  "tafsirChooseTexts": "Choose tafsirs",
+  "tafsirShareText": "Share text",
+  "tafsirPlayVerse": "Play this verse"
 }

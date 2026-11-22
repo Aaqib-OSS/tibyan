@@ -50,6 +50,8 @@ class SettingsController extends Notifier<AppSettings> {
   static const _kHiddenBookTafsirs = 'settings.hiddenBookTafsirs';
   static const _kEnglishTafsirVisibility = 'settings.englishTafsirVisibility';
   static const _kKashida = 'settings.tafsirKashida';
+  static const _kTafsirChoice = 'settings.tafsirChoice';
+  static const _kTafsirCompare = 'settings.tafsirCompare';
   static const _kReciter = 'settings.reciterId';
   static const _kFollow = 'settings.followRecitation';
   static const _kTouchReading = 'settings.touchReading';
@@ -160,6 +162,8 @@ class SettingsController extends Notifier<AppSettings> {
         _kEnglishTafsirVisibility,
       ),
       tafsirKashida: _prefs.getBool(_kKashida) ?? false,
+      tafsirChoice: _prefs.getString(_kTafsirChoice),
+      tafsirCompare: _prefs.getBool(_kTafsirCompare) ?? false,
       reciterId: _prefs.getInt(_kReciter) ?? 1,
       riwayaReciters: {
         for (final r in Riwaya.values)
@@ -406,6 +410,18 @@ class SettingsController extends Notifier<AppSettings> {
   Future<void> setTafsirKashida(bool value) async {
     state = state.copyWith(tafsirKashida: value);
     await _prefs.setBool(_kKashida, value);
+  }
+
+  /// The text chosen in the tafsir's chip bar.
+  Future<void> setTafsirChoice(String key) async {
+    state = state.copyWith(tafsirChoice: key);
+    await _prefs.setString(_kTafsirChoice, key);
+  }
+
+  /// «قارن» in the tafsir: all shown texts at once.
+  Future<void> setTafsirCompare(bool value) async {
+    state = state.copyWith(tafsirCompare: value);
+    await _prefs.setBool(_kTafsirCompare, value);
   }
 
   /// Chooses the recitation for [riwaya] (Hafs unless given).

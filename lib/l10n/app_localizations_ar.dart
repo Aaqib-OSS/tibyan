@@ -5378,4 +5378,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get storePrivacyExit => 'خروج';
+
+  @override
+  String get tafsirCompare => 'قارن';
+
+  @override
+  String get tafsirCompareHint => 'عرض كل النصوص المختارة معا';
+
+  @override
+  String get tafsirChoices => 'التفاسير والترجمات';
+
+  @override
+  String get tafsirReadMore => 'اقرأ المزيد';
+
+  @override
+  String get tafsirShowLess => 'عرض أقل';
+
+  @override
+  String get tafsirGoToVerse => 'اذهب لآية';
+
+  @override
+  String get tafsirChooseTexts => 'اختار التفاسير';
+
+  @override
+  String get tafsirShareText => 'مشاركة النص';
+
+  @override
+  String get tafsirPlayVerse => 'استمع للآية';
 }
