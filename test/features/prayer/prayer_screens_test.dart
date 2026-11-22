@@ -115,6 +115,7 @@ void main() {
     // Android: «when the phone is in use», a notification by default.
     final notify = find.byKey(const ValueKey('prayer-inuse-notify'));
     await tester.scrollUntilVisible(notify, 200);
+    // ignore: deprecated_member_use
     expect(tester.widget<RadioListTile<InUseAdhan>>(notify).checked, isTrue);
     await tester.tap(find.byKey(const ValueKey('prayer-inuse-short')));
     await settle(tester);

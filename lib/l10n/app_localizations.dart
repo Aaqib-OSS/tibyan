@@ -9961,6 +9961,144 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'الأذان كاملًا'**
   String get adhanInUseFull;
+
+  /// No description provided for @hijriCalendarTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'التقويم الهجري'**
+  String get hijriCalendarTitle;
+
+  /// No description provided for @hijriOpenCalendar.
+  ///
+  /// In ar, this message translates to:
+  /// **'افتح التقويم الهجري'**
+  String get hijriOpenCalendar;
+
+  /// No description provided for @hijriPrevMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشهر السابق'**
+  String get hijriPrevMonth;
+
+  /// No description provided for @hijriNextMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشهر التالي'**
+  String get hijriNextMonth;
+
+  /// No description provided for @hijriBackToToday.
+  ///
+  /// In ar, this message translates to:
+  /// **'اليوم'**
+  String get hijriBackToToday;
+
+  /// No description provided for @hijriTodayLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اليوم'**
+  String get hijriTodayLabel;
+
+  /// No description provided for @hijriAdjustment.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل التاريخ: {days} يوم'**
+  String hijriAdjustment(String days);
+
+  /// No description provided for @occasionsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المناسبات'**
+  String get occasionsTitle;
+
+  /// No description provided for @occasionNext.
+  ///
+  /// In ar, this message translates to:
+  /// **'المناسبة القادمة'**
+  String get occasionNext;
+
+  /// No description provided for @occasionNewYear.
+  ///
+  /// In ar, this message translates to:
+  /// **'رأس السنة الهجرية'**
+  String get occasionNewYear;
+
+  /// No description provided for @occasionAshura.
+  ///
+  /// In ar, this message translates to:
+  /// **'عاشوراء'**
+  String get occasionAshura;
+
+  /// No description provided for @occasionRamadanStart.
+  ///
+  /// In ar, this message translates to:
+  /// **'أول رمضان'**
+  String get occasionRamadanStart;
+
+  /// No description provided for @occasionLastTen.
+  ///
+  /// In ar, this message translates to:
+  /// **'العشر الأواخر من رمضان'**
+  String get occasionLastTen;
+
+  /// No description provided for @occasionEidFitr.
+  ///
+  /// In ar, this message translates to:
+  /// **'عيد الفطر'**
+  String get occasionEidFitr;
+
+  /// No description provided for @occasionArafah.
+  ///
+  /// In ar, this message translates to:
+  /// **'يوم عرفة'**
+  String get occasionArafah;
+
+  /// No description provided for @occasionEidAdha.
+  ///
+  /// In ar, this message translates to:
+  /// **'عيد الأضحى'**
+  String get occasionEidAdha;
+
+  /// No description provided for @occasionTashreeq.
+  ///
+  /// In ar, this message translates to:
+  /// **'أيام التشريق'**
+  String get occasionTashreeq;
+
+  /// No description provided for @occasionIn.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =0{اليوم} =1{غدًا} =2{بعد يومين} few{بعد {n} أيام} other{بعد {n} يومًا}}'**
+  String occasionIn(int count, String n);
+
+  /// No description provided for @occasionOngoing.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارية الآن'**
+  String get occasionOngoing;
+
+  /// No description provided for @occasionTomorrow.
+  ///
+  /// In ar, this message translates to:
+  /// **'غدًا: {name}'**
+  String occasionTomorrow(String name);
+
+  /// No description provided for @occasionChannel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير المناسبات'**
+  String get occasionChannel;
+
+  /// No description provided for @occasionRemindersTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير قبل المناسبات بيوم'**
+  String get occasionRemindersTitle;
+
+  /// No description provided for @occasionRemindersNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'إشعار في المساء قبل كل مناسبة'**
+  String get occasionRemindersNote;
 }
 
 class _AppLocalizationsDelegate
