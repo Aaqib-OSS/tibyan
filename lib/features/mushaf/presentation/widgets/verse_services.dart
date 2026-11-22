@@ -25,6 +25,7 @@ class VerseServicesPanel extends StatelessWidget {
     required this.onMultiSelect,
     required this.onTafsir,
     required this.onListen,
+    this.onRepeat,
     required this.onWordStudy,
     required this.onWordMeanings,
     this.onReflect,
@@ -79,6 +80,10 @@ class VerseServicesPanel extends StatelessWidget {
   final VoidCallback onMultiSelect;
   final VoidCallback onTafsir;
   final VoidCallback onListen;
+
+  /// «كرر للحفظ»: repeat the selected verse or stretch, as set in the
+  /// repeat sheet.
+  final VoidCallback? onRepeat;
 
   /// Word study: the next tap on the page picks the word.
   /// Null where the edition has no word data (the riwaya editions): the
@@ -212,6 +217,17 @@ class VerseServicesPanel extends StatelessWidget {
             ),
           ],
         ),
+        if (onRepeat != null) ...[
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: onRepeat,
+            icon: const Icon(Icons.repeat),
+            label: Text(l.hifzRepeat),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+            ),
+          ),
+        ],
         const SizedBox(height: 8),
         Row(
           children: [
