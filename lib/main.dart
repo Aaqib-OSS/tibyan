@@ -269,12 +269,11 @@ void _startPrayer(ProviderContainer container) {
     onAdhan: (prayer, at) async {
       await container.read(appRouterReadyProvider).future;
       unawaited(
-        container
-            .read(appRouterProvider)
-            .push(
-              '$prayerTimesLocation/adhan?p=${prayer.name}'
-              '&at=${at.millisecondsSinceEpoch}',
-            ),
+        openOverHome(
+          container.read(appRouterProvider),
+          '$prayerTimesLocation/adhan?p=${prayer.name}'
+          '&at=${at.millisecondsSinceEpoch}',
+        ),
       );
     },
   ).start();
@@ -368,20 +367,21 @@ void _startKhatma(ProviderContainer container) {
       container.read(launchTargetProvider).value = true;
       await container.read(appRouterReadyProvider).future;
       unawaited(
-        container
-            .read(appRouterProvider)
-            .push(
-              uri.path == '/adhan'
-                  ? '$prayerTimesLocation/adhan?${uri.query}'
-                  : prayerTimesLocation,
-            ),
+        openOverHome(
+          container.read(appRouterProvider),
+          uri.path == '/adhan'
+              ? '$prayerTimesLocation/adhan?${uri.query}'
+              : prayerTimesLocation,
+        ),
       );
       return;
     }
     if (uri.toString() == weeklyReportLink) {
       container.read(launchTargetProvider).value = true;
       await container.read(appRouterReadyProvider).future;
-      unawaited(container.read(appRouterProvider).push(weeklyReportLocation));
+      unawaited(
+        openOverHome(container.read(appRouterProvider), weeklyReportLocation),
+      );
       return;
     }
     // A group khatma link: https://altibyan.app/k/<id> (universal / app
@@ -394,7 +394,10 @@ void _startKhatma(ProviderContainer container) {
       container.read(launchTargetProvider).value = true;
       await container.read(appRouterReadyProvider).future;
       unawaited(
-        container.read(appRouterProvider).push('/khatma/group/$groupId'),
+        openOverHome(
+          container.read(appRouterProvider),
+          '/khatma/group/$groupId',
+        ),
       );
       return;
     }
@@ -423,7 +426,7 @@ void _startKhatma(ProviderContainer container) {
     // running app goes at once: the signal is already given.
     container.read(launchTargetProvider).value = true;
     await container.read(appRouterReadyProvider).future;
-    container.read(appRouterProvider).go(route);
+    await openOverHome(container.read(appRouterProvider), route);
   }
 
   // A download's notification opens the Downloads screen, which only
@@ -431,7 +434,7 @@ void _startKhatma(ProviderContainer container) {
   container.read(backgroundDownloadsProvider).onNotificationTap = () async {
     container.read(launchTargetProvider).value = true;
     await container.read(appRouterReadyProvider).future;
-    unawaited(container.read(appRouterProvider).push('/downloads'));
+    unawaited(openOverHome(container.read(appRouterProvider), '/downloads'));
   };
 
   final reminders = container.read(reminderSchedulerProvider);

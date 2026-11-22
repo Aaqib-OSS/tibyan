@@ -12,7 +12,9 @@ import '../domain/prayer_settings.dart';
 import '../prayer_providers.dart';
 import '../services/prayer_alarms.dart';
 import '../services/prayer_runtime.dart';
+import '../../../core/router/app_router.dart' show openOverHome;
 import 'adhan_scene.dart';
+import 'prayer_times_screen.dart' show prayerTimesLocation;
 import 'prayer_widgets.dart';
 
 export 'adhan_scene.dart' show AdhanScene, AdhanBackdrop;
@@ -159,7 +161,10 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
                           if (context.canPop()) {
                             context.pop();
                           } else {
-                            context.go('/prayer');
+                            await openOverHome(
+                              GoRouter.of(context),
+                              prayerTimesLocation,
+                            );
                           }
                         },
                         child: Text(
@@ -187,7 +192,12 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
                       ),
                       onPressed: () async {
                         await native.leaveLockScreen(open: true);
-                        if (context.mounted) context.go('/prayer');
+                        if (!context.mounted) return;
+                        // Over home: back returns to Tibyan, not out of it.
+                        await openOverHome(
+                          GoRouter.of(context),
+                          prayerTimesLocation,
+                        );
                       },
                       child: Text(l.adhanOpenTimes),
                     ),

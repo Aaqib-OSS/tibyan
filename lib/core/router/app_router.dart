@@ -81,6 +81,19 @@ final launchTargetProvider = Provider<ValueNotifier<bool>>((ref) {
   return v;
 });
 
+/// Opens [location] from outside the app's own navigation (a
+/// notification, the full-screen adhan, a widget tap, a link or a
+/// shortcut): always on top of home, so the screen has a back button and
+/// back returns to home instead of closing the app.
+Future<void> openOverHome(GoRouter router, String location) async {
+  final path = Uri.parse(location).path;
+  if (path == '/' || path.isEmpty) return router.go('/');
+  router.go('/');
+  // The push builds on the stack the go above leaves, once it is in place.
+  await WidgetsBinding.instance.endOfFrame;
+  unawaited(router.push(location));
+}
+
 void markAppRouterReady(Completer<void> ready) {
   if (!ready.isCompleted) ready.complete();
 }
