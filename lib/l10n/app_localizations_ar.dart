@@ -6083,6 +6083,74 @@ class AppLocalizationsAr extends AppLocalizations {
   String get qiblaNoPlace => 'اختر مدينتك أولًا لمعرفة اتجاه القبلة.';
 
   @override
+  String get trackerTitle => 'صلواتي';
+
+  @override
+  String get trackerOpen => 'صلواتي: سجل صلواتك';
+
+  @override
+  String get prayedAction => 'صليت';
+
+  @override
+  String get prayedOnTime => 'في وقتها';
+
+  @override
+  String get prayedLate => 'متأخرة';
+
+  @override
+  String get prayedJamaah => 'في جماعة';
+
+  @override
+  String get prayedClear => 'إلغاء التسجيل';
+
+  @override
+  String prayedAsk(String prayer) {
+    return 'كيف صليت $prayer؟';
+  }
+
+  @override
+  String get trackerNotMarked => 'لم تُسجَّل';
+
+  @override
+  String get trackerPrevDay => 'اليوم السابق';
+
+  @override
+  String get trackerNextDay => 'اليوم التالي';
+
+  @override
+  String get qadaTitle => 'القضاء';
+
+  @override
+  String get qadaNote => 'عدّاد خاص بك: أضف ما فاتك، وسجّل ما قضيته.';
+
+  @override
+  String qadaAdd(String prayer) {
+    return 'أضف $prayer فائتة';
+  }
+
+  @override
+  String qadaSettle(String prayer) {
+    return 'قضيت $prayer';
+  }
+
+  @override
+  String get weekTitle => 'آخر سبعة أيام';
+
+  @override
+  String weekSummary(String n, String total) {
+    return 'سجّلت $n من $total صلاة';
+  }
+
+  @override
+  String weekBreakdown(String onTime, String late, String jamaah) {
+    return 'في وقتها $onTime · متأخرة $late · في جماعة $jamaah';
+  }
+
+  @override
+  String get weekGentle =>
+      'كل صلاة تسجّلها تُحسب، ويمكنك البدء من جديد في أي يوم.';
+
+  @override
   String get adhkarTitle => 'الأذكار';
 
   @override

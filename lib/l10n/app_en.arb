@@ -2270,6 +2270,69 @@
     }
   },
   "qiblaNoPlace": "Choose your city first to find the Qibla direction.",
+  "trackerTitle": "My prayers",
+  "trackerOpen": "My prayers: your prayer log",
+  "prayedAction": "I prayed",
+  "prayedOnTime": "On time",
+  "prayedLate": "Late",
+  "prayedJamaah": "In congregation",
+  "prayedClear": "Clear",
+  "prayedAsk": "How did you pray {prayer}?",
+  "@prayedAsk": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "trackerNotMarked": "Not marked",
+  "trackerPrevDay": "Previous day",
+  "trackerNextDay": "Next day",
+  "qadaTitle": "Qada",
+  "qadaNote": "Your own count: add what you missed, and record what you have made up.",
+  "qadaAdd": "Add a missed {prayer}",
+  "@qadaAdd": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "qadaSettle": "Made up a {prayer}",
+  "@qadaSettle": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "weekTitle": "The last seven days",
+  "weekSummary": "You marked {n} of {total} prayers",
+  "@weekSummary": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "weekBreakdown": "On time {onTime} · Late {late} · In congregation {jamaah}",
+  "@weekBreakdown": {
+    "placeholders": {
+      "onTime": {
+        "type": "String"
+      },
+      "late": {
+        "type": "String"
+      },
+      "jamaah": {
+        "type": "String"
+      }
+    }
+  },
+  "weekGentle": "Every prayer you mark counts, and any day is a good day to start again.",
   "adhkarTitle": "Adhkar",
   "adhkarMorning": "Morning",
   "adhkarEvening": "Evening",

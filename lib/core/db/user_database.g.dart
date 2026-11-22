@@ -12396,6 +12396,842 @@ class SyncJournalCompanion extends UpdateCompanion<SyncJournalRow> {
   }
 }
 
+class $PrayerLogsTable extends PrayerLogs
+    with TableInfo<$PrayerLogsTable, PrayerLogRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PrayerLogsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedColumn<String> uuid = GeneratedColumn<String>(
+    'uuid',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+    clientDefault: newUuid,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    clientDefault: DateTime.now,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _dayMeta = const VerificationMeta('day');
+  @override
+  late final GeneratedColumn<String> day = GeneratedColumn<String>(
+    'day',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _prayerMeta = const VerificationMeta('prayer');
+  @override
+  late final GeneratedColumn<String> prayer = GeneratedColumn<String>(
+    'prayer',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _howMeta = const VerificationMeta('how');
+  @override
+  late final GeneratedColumn<String> how = GeneratedColumn<String>(
+    'how',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    uuid,
+    updatedAt,
+    deletedAt,
+    id,
+    day,
+    prayer,
+    how,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'prayer_log';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PrayerLogRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('uuid')) {
+      context.handle(
+        _uuidMeta,
+        uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('day')) {
+      context.handle(
+        _dayMeta,
+        day.isAcceptableOrUnknown(data['day']!, _dayMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dayMeta);
+    }
+    if (data.containsKey('prayer')) {
+      context.handle(
+        _prayerMeta,
+        prayer.isAcceptableOrUnknown(data['prayer']!, _prayerMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_prayerMeta);
+    }
+    if (data.containsKey('how')) {
+      context.handle(
+        _howMeta,
+        how.isAcceptableOrUnknown(data['how']!, _howMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_howMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {day, prayer},
+  ];
+  @override
+  PrayerLogRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PrayerLogRow(
+      uuid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      day: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}day'],
+      )!,
+      prayer: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}prayer'],
+      )!,
+      how: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}how'],
+      )!,
+    );
+  }
+
+  @override
+  $PrayerLogsTable createAlias(String alias) {
+    return $PrayerLogsTable(attachedDatabase, alias);
+  }
+}
+
+class PrayerLogRow extends DataClass implements Insertable<PrayerLogRow> {
+  final String uuid;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final int id;
+  final String day;
+
+  /// `PrayerKind.name` of one of the five.
+  final String prayer;
+
+  /// `PrayedHow.name`: onTime, late or jamaah.
+  final String how;
+  const PrayerLogRow({
+    required this.uuid,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.id,
+    required this.day,
+    required this.prayer,
+    required this.how,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['uuid'] = Variable<String>(uuid);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['id'] = Variable<int>(id);
+    map['day'] = Variable<String>(day);
+    map['prayer'] = Variable<String>(prayer);
+    map['how'] = Variable<String>(how);
+    return map;
+  }
+
+  PrayerLogsCompanion toCompanion(bool nullToAbsent) {
+    return PrayerLogsCompanion(
+      uuid: Value(uuid),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      id: Value(id),
+      day: Value(day),
+      prayer: Value(prayer),
+      how: Value(how),
+    );
+  }
+
+  factory PrayerLogRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PrayerLogRow(
+      uuid: serializer.fromJson<String>(json['uuid']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      id: serializer.fromJson<int>(json['id']),
+      day: serializer.fromJson<String>(json['day']),
+      prayer: serializer.fromJson<String>(json['prayer']),
+      how: serializer.fromJson<String>(json['how']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'uuid': serializer.toJson<String>(uuid),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'id': serializer.toJson<int>(id),
+      'day': serializer.toJson<String>(day),
+      'prayer': serializer.toJson<String>(prayer),
+      'how': serializer.toJson<String>(how),
+    };
+  }
+
+  PrayerLogRow copyWith({
+    String? uuid,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    int? id,
+    String? day,
+    String? prayer,
+    String? how,
+  }) => PrayerLogRow(
+    uuid: uuid ?? this.uuid,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    id: id ?? this.id,
+    day: day ?? this.day,
+    prayer: prayer ?? this.prayer,
+    how: how ?? this.how,
+  );
+  PrayerLogRow copyWithCompanion(PrayerLogsCompanion data) {
+    return PrayerLogRow(
+      uuid: data.uuid.present ? data.uuid.value : this.uuid,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      id: data.id.present ? data.id.value : this.id,
+      day: data.day.present ? data.day.value : this.day,
+      prayer: data.prayer.present ? data.prayer.value : this.prayer,
+      how: data.how.present ? data.how.value : this.how,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PrayerLogRow(')
+          ..write('uuid: $uuid, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('id: $id, ')
+          ..write('day: $day, ')
+          ..write('prayer: $prayer, ')
+          ..write('how: $how')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(uuid, updatedAt, deletedAt, id, day, prayer, how);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PrayerLogRow &&
+          other.uuid == this.uuid &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.id == this.id &&
+          other.day == this.day &&
+          other.prayer == this.prayer &&
+          other.how == this.how);
+}
+
+class PrayerLogsCompanion extends UpdateCompanion<PrayerLogRow> {
+  final Value<String> uuid;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<int> id;
+  final Value<String> day;
+  final Value<String> prayer;
+  final Value<String> how;
+  const PrayerLogsCompanion({
+    this.uuid = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.id = const Value.absent(),
+    this.day = const Value.absent(),
+    this.prayer = const Value.absent(),
+    this.how = const Value.absent(),
+  });
+  PrayerLogsCompanion.insert({
+    this.uuid = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.id = const Value.absent(),
+    required String day,
+    required String prayer,
+    required String how,
+  }) : day = Value(day),
+       prayer = Value(prayer),
+       how = Value(how);
+  static Insertable<PrayerLogRow> custom({
+    Expression<String>? uuid,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<int>? id,
+    Expression<String>? day,
+    Expression<String>? prayer,
+    Expression<String>? how,
+  }) {
+    return RawValuesInsertable({
+      if (uuid != null) 'uuid': uuid,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (id != null) 'id': id,
+      if (day != null) 'day': day,
+      if (prayer != null) 'prayer': prayer,
+      if (how != null) 'how': how,
+    });
+  }
+
+  PrayerLogsCompanion copyWith({
+    Value<String>? uuid,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<int>? id,
+    Value<String>? day,
+    Value<String>? prayer,
+    Value<String>? how,
+  }) {
+    return PrayerLogsCompanion(
+      uuid: uuid ?? this.uuid,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      id: id ?? this.id,
+      day: day ?? this.day,
+      prayer: prayer ?? this.prayer,
+      how: how ?? this.how,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (day.present) {
+      map['day'] = Variable<String>(day.value);
+    }
+    if (prayer.present) {
+      map['prayer'] = Variable<String>(prayer.value);
+    }
+    if (how.present) {
+      map['how'] = Variable<String>(how.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PrayerLogsCompanion(')
+          ..write('uuid: $uuid, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('id: $id, ')
+          ..write('day: $day, ')
+          ..write('prayer: $prayer, ')
+          ..write('how: $how')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $QadaCountsTable extends QadaCounts
+    with TableInfo<$QadaCountsTable, QadaRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $QadaCountsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedColumn<String> uuid = GeneratedColumn<String>(
+    'uuid',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+    clientDefault: newUuid,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    clientDefault: DateTime.now,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _prayerMeta = const VerificationMeta('prayer');
+  @override
+  late final GeneratedColumn<String> prayer = GeneratedColumn<String>(
+    'prayer',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _countMeta = const VerificationMeta('count');
+  @override
+  late final GeneratedColumn<int> count = GeneratedColumn<int>(
+    'count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    uuid,
+    updatedAt,
+    deletedAt,
+    id,
+    prayer,
+    count,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'qada_count';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<QadaRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('uuid')) {
+      context.handle(
+        _uuidMeta,
+        uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('prayer')) {
+      context.handle(
+        _prayerMeta,
+        prayer.isAcceptableOrUnknown(data['prayer']!, _prayerMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_prayerMeta);
+    }
+    if (data.containsKey('count')) {
+      context.handle(
+        _countMeta,
+        count.isAcceptableOrUnknown(data['count']!, _countMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  QadaRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return QadaRow(
+      uuid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      prayer: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}prayer'],
+      )!,
+      count: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}count'],
+      )!,
+    );
+  }
+
+  @override
+  $QadaCountsTable createAlias(String alias) {
+    return $QadaCountsTable(attachedDatabase, alias);
+  }
+}
+
+class QadaRow extends DataClass implements Insertable<QadaRow> {
+  final String uuid;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final int id;
+  final String prayer;
+  final int count;
+  const QadaRow({
+    required this.uuid,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.id,
+    required this.prayer,
+    required this.count,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['uuid'] = Variable<String>(uuid);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['id'] = Variable<int>(id);
+    map['prayer'] = Variable<String>(prayer);
+    map['count'] = Variable<int>(count);
+    return map;
+  }
+
+  QadaCountsCompanion toCompanion(bool nullToAbsent) {
+    return QadaCountsCompanion(
+      uuid: Value(uuid),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      id: Value(id),
+      prayer: Value(prayer),
+      count: Value(count),
+    );
+  }
+
+  factory QadaRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return QadaRow(
+      uuid: serializer.fromJson<String>(json['uuid']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      id: serializer.fromJson<int>(json['id']),
+      prayer: serializer.fromJson<String>(json['prayer']),
+      count: serializer.fromJson<int>(json['count']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'uuid': serializer.toJson<String>(uuid),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'id': serializer.toJson<int>(id),
+      'prayer': serializer.toJson<String>(prayer),
+      'count': serializer.toJson<int>(count),
+    };
+  }
+
+  QadaRow copyWith({
+    String? uuid,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    int? id,
+    String? prayer,
+    int? count,
+  }) => QadaRow(
+    uuid: uuid ?? this.uuid,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    id: id ?? this.id,
+    prayer: prayer ?? this.prayer,
+    count: count ?? this.count,
+  );
+  QadaRow copyWithCompanion(QadaCountsCompanion data) {
+    return QadaRow(
+      uuid: data.uuid.present ? data.uuid.value : this.uuid,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      id: data.id.present ? data.id.value : this.id,
+      prayer: data.prayer.present ? data.prayer.value : this.prayer,
+      count: data.count.present ? data.count.value : this.count,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('QadaRow(')
+          ..write('uuid: $uuid, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('id: $id, ')
+          ..write('prayer: $prayer, ')
+          ..write('count: $count')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(uuid, updatedAt, deletedAt, id, prayer, count);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is QadaRow &&
+          other.uuid == this.uuid &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.id == this.id &&
+          other.prayer == this.prayer &&
+          other.count == this.count);
+}
+
+class QadaCountsCompanion extends UpdateCompanion<QadaRow> {
+  final Value<String> uuid;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<int> id;
+  final Value<String> prayer;
+  final Value<int> count;
+  const QadaCountsCompanion({
+    this.uuid = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.id = const Value.absent(),
+    this.prayer = const Value.absent(),
+    this.count = const Value.absent(),
+  });
+  QadaCountsCompanion.insert({
+    this.uuid = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.id = const Value.absent(),
+    required String prayer,
+    this.count = const Value.absent(),
+  }) : prayer = Value(prayer);
+  static Insertable<QadaRow> custom({
+    Expression<String>? uuid,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<int>? id,
+    Expression<String>? prayer,
+    Expression<int>? count,
+  }) {
+    return RawValuesInsertable({
+      if (uuid != null) 'uuid': uuid,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (id != null) 'id': id,
+      if (prayer != null) 'prayer': prayer,
+      if (count != null) 'count': count,
+    });
+  }
+
+  QadaCountsCompanion copyWith({
+    Value<String>? uuid,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<int>? id,
+    Value<String>? prayer,
+    Value<int>? count,
+  }) {
+    return QadaCountsCompanion(
+      uuid: uuid ?? this.uuid,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      id: id ?? this.id,
+      prayer: prayer ?? this.prayer,
+      count: count ?? this.count,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (prayer.present) {
+      map['prayer'] = Variable<String>(prayer.value);
+    }
+    if (count.present) {
+      map['count'] = Variable<int>(count.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('QadaCountsCompanion(')
+          ..write('uuid: $uuid, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('id: $id, ')
+          ..write('prayer: $prayer, ')
+          ..write('count: $count')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$UserDatabase extends GeneratedDatabase {
   _$UserDatabase(QueryExecutor e) : super(e);
   $UserDatabaseManager get managers => $UserDatabaseManager(this);
@@ -12433,6 +13269,8 @@ abstract class _$UserDatabase extends GeneratedDatabase {
   late final $TasbihDhikrsTable tasbihDhikrs = $TasbihDhikrsTable(this);
   late final $TasbihDaysTable tasbihDays = $TasbihDaysTable(this);
   late final $SyncJournalTable syncJournal = $SyncJournalTable(this);
+  late final $PrayerLogsTable prayerLogs = $PrayerLogsTable(this);
+  late final $QadaCountsTable qadaCounts = $QadaCountsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -12459,6 +13297,8 @@ abstract class _$UserDatabase extends GeneratedDatabase {
     tasbihDhikrs,
     tasbihDays,
     syncJournal,
+    prayerLogs,
+    qadaCounts,
   ];
 }
 
@@ -18799,6 +19639,459 @@ typedef $$SyncJournalTableProcessedTableManager =
       SyncJournalRow,
       PrefetchHooks Function()
     >;
+typedef $$PrayerLogsTableCreateCompanionBuilder = PrayerLogsCompanion Function({
+  Value<String> uuid,
+  Value<DateTime> updatedAt,
+  Value<DateTime?> deletedAt,
+  Value<int> id,
+  required String day,
+  required String prayer,
+  required String how,
+});
+typedef $$PrayerLogsTableUpdateCompanionBuilder = PrayerLogsCompanion Function({
+  Value<String> uuid,
+  Value<DateTime> updatedAt,
+  Value<DateTime?> deletedAt,
+  Value<int> id,
+  Value<String> day,
+  Value<String> prayer,
+  Value<String> how,
+});
+
+class $$PrayerLogsTableFilterComposer
+    extends Composer<_$UserDatabase, $PrayerLogsTable> {
+  $$PrayerLogsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get uuid => $composableBuilder(
+    column: $table.uuid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get day => $composableBuilder(
+    column: $table.day,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get prayer => $composableBuilder(
+    column: $table.prayer,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get how => $composableBuilder(
+    column: $table.how,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$PrayerLogsTableOrderingComposer
+    extends Composer<_$UserDatabase, $PrayerLogsTable> {
+  $$PrayerLogsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get uuid => $composableBuilder(
+    column: $table.uuid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get day => $composableBuilder(
+    column: $table.day,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get prayer => $composableBuilder(
+    column: $table.prayer,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get how => $composableBuilder(
+    column: $table.how,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$PrayerLogsTableAnnotationComposer
+    extends Composer<_$UserDatabase, $PrayerLogsTable> {
+  $$PrayerLogsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get uuid =>
+      $composableBuilder(column: $table.uuid, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get day =>
+      $composableBuilder(column: $table.day, builder: (column) => column);
+
+  GeneratedColumn<String> get prayer =>
+      $composableBuilder(column: $table.prayer, builder: (column) => column);
+
+  GeneratedColumn<String> get how =>
+      $composableBuilder(column: $table.how, builder: (column) => column);
+}
+
+class $$PrayerLogsTableTableManager
+    extends
+        RootTableManager<
+          _$UserDatabase,
+          $PrayerLogsTable,
+          PrayerLogRow,
+          $$PrayerLogsTableFilterComposer,
+          $$PrayerLogsTableOrderingComposer,
+          $$PrayerLogsTableAnnotationComposer,
+          $$PrayerLogsTableCreateCompanionBuilder,
+          $$PrayerLogsTableUpdateCompanionBuilder,
+          (
+            PrayerLogRow,
+            BaseReferences<_$UserDatabase, $PrayerLogsTable, PrayerLogRow>,
+          ),
+          PrayerLogRow,
+          PrefetchHooks Function()
+        > {
+  $$PrayerLogsTableTableManager(_$UserDatabase db, $PrayerLogsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PrayerLogsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PrayerLogsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PrayerLogsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> uuid = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<int> id = const Value.absent(),
+                Value<String> day = const Value.absent(),
+                Value<String> prayer = const Value.absent(),
+                Value<String> how = const Value.absent(),
+              }) => PrayerLogsCompanion(
+                uuid: uuid,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                id: id,
+                day: day,
+                prayer: prayer,
+                how: how,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> uuid = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<int> id = const Value.absent(),
+                required String day,
+                required String prayer,
+                required String how,
+              }) => PrayerLogsCompanion.insert(
+                uuid: uuid,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                id: id,
+                day: day,
+                prayer: prayer,
+                how: how,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$PrayerLogsTable, PrayerLogRow>(table),
+                  BaseReferences<
+                    _$UserDatabase,
+                    $PrayerLogsTable,
+                    PrayerLogRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$PrayerLogsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$UserDatabase,
+      $PrayerLogsTable,
+      PrayerLogRow,
+      $$PrayerLogsTableFilterComposer,
+      $$PrayerLogsTableOrderingComposer,
+      $$PrayerLogsTableAnnotationComposer,
+      $$PrayerLogsTableCreateCompanionBuilder,
+      $$PrayerLogsTableUpdateCompanionBuilder,
+      (
+        PrayerLogRow,
+        BaseReferences<_$UserDatabase, $PrayerLogsTable, PrayerLogRow>,
+      ),
+      PrayerLogRow,
+      PrefetchHooks Function()
+    >;
+typedef $$QadaCountsTableCreateCompanionBuilder = QadaCountsCompanion Function({
+  Value<String> uuid,
+  Value<DateTime> updatedAt,
+  Value<DateTime?> deletedAt,
+  Value<int> id,
+  required String prayer,
+  Value<int> count,
+});
+typedef $$QadaCountsTableUpdateCompanionBuilder = QadaCountsCompanion Function({
+  Value<String> uuid,
+  Value<DateTime> updatedAt,
+  Value<DateTime?> deletedAt,
+  Value<int> id,
+  Value<String> prayer,
+  Value<int> count,
+});
+
+class $$QadaCountsTableFilterComposer
+    extends Composer<_$UserDatabase, $QadaCountsTable> {
+  $$QadaCountsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get uuid => $composableBuilder(
+    column: $table.uuid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get prayer => $composableBuilder(
+    column: $table.prayer,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get count => $composableBuilder(
+    column: $table.count,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$QadaCountsTableOrderingComposer
+    extends Composer<_$UserDatabase, $QadaCountsTable> {
+  $$QadaCountsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get uuid => $composableBuilder(
+    column: $table.uuid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get prayer => $composableBuilder(
+    column: $table.prayer,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get count => $composableBuilder(
+    column: $table.count,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$QadaCountsTableAnnotationComposer
+    extends Composer<_$UserDatabase, $QadaCountsTable> {
+  $$QadaCountsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get uuid =>
+      $composableBuilder(column: $table.uuid, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get prayer =>
+      $composableBuilder(column: $table.prayer, builder: (column) => column);
+
+  GeneratedColumn<int> get count =>
+      $composableBuilder(column: $table.count, builder: (column) => column);
+}
+
+class $$QadaCountsTableTableManager
+    extends
+        RootTableManager<
+          _$UserDatabase,
+          $QadaCountsTable,
+          QadaRow,
+          $$QadaCountsTableFilterComposer,
+          $$QadaCountsTableOrderingComposer,
+          $$QadaCountsTableAnnotationComposer,
+          $$QadaCountsTableCreateCompanionBuilder,
+          $$QadaCountsTableUpdateCompanionBuilder,
+          (QadaRow, BaseReferences<_$UserDatabase, $QadaCountsTable, QadaRow>),
+          QadaRow,
+          PrefetchHooks Function()
+        > {
+  $$QadaCountsTableTableManager(_$UserDatabase db, $QadaCountsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$QadaCountsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$QadaCountsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$QadaCountsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> uuid = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<int> id = const Value.absent(),
+                Value<String> prayer = const Value.absent(),
+                Value<int> count = const Value.absent(),
+              }) => QadaCountsCompanion(
+                uuid: uuid,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                id: id,
+                prayer: prayer,
+                count: count,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> uuid = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<int> id = const Value.absent(),
+                required String prayer,
+                Value<int> count = const Value.absent(),
+              }) => QadaCountsCompanion.insert(
+                uuid: uuid,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                id: id,
+                prayer: prayer,
+                count: count,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$QadaCountsTable, QadaRow>(table),
+                  BaseReferences<_$UserDatabase, $QadaCountsTable, QadaRow>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$QadaCountsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$UserDatabase,
+      $QadaCountsTable,
+      QadaRow,
+      $$QadaCountsTableFilterComposer,
+      $$QadaCountsTableOrderingComposer,
+      $$QadaCountsTableAnnotationComposer,
+      $$QadaCountsTableCreateCompanionBuilder,
+      $$QadaCountsTableUpdateCompanionBuilder,
+      (QadaRow, BaseReferences<_$UserDatabase, $QadaCountsTable, QadaRow>),
+      QadaRow,
+      PrefetchHooks Function()
+    >;
 
 class $UserDatabaseManager {
   final _$UserDatabase _db;
@@ -18845,4 +20138,8 @@ class $UserDatabaseManager {
       $$TasbihDaysTableTableManager(_db, _db.tasbihDays);
   $$SyncJournalTableTableManager get syncJournal =>
       $$SyncJournalTableTableManager(_db, _db.syncJournal);
+  $$PrayerLogsTableTableManager get prayerLogs =>
+      $$PrayerLogsTableTableManager(_db, _db.prayerLogs);
+  $$QadaCountsTableTableManager get qadaCounts =>
+      $$QadaCountsTableTableManager(_db, _db.qadaCounts);
 }

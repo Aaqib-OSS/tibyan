@@ -129,8 +129,34 @@ object AdhanGate {
                 .setAutoCancel(true)
                 .setContentIntent(content)
                 .addAction(Notification.Action.Builder(null, label, play).build())
+                .apply {
+                    prayedAction(ctx, alert.optString("payload"), 5)?.let { addAction(it) }
+                }
                 .build(),
         )
+    }
+
+    /**
+     * «صليت»: opens «صلواتي» asking about the alert's prayer (the app's
+     * link handling puts it over home). Null when the payload names none.
+     */
+    fun prayedAction(ctx: Context, payload: String, requestCode: Int): Notification.Action? {
+        val prayer = try {
+            Uri.parse(payload).getQueryParameter("p")
+        } catch (_: Exception) {
+            null
+        } ?: return null
+        val i = Intent(ctx, MainActivity::class.java)
+            .setAction(Intent.ACTION_VIEW)
+            .setData(Uri.parse("tibyan://prayer/log?p=$prayer"))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        val pi = PendingIntent.getActivity(
+            ctx,
+            requestCode,
+            i,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        return Notification.Action.Builder(null, ctx.getString(R.string.adhan_prayed), pi).build()
     }
 
     fun cancelNotice(ctx: Context) {

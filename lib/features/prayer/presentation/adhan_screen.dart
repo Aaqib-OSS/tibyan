@@ -15,6 +15,7 @@ import '../services/prayer_runtime.dart';
 import '../../../core/router/app_router.dart' show openOverHome;
 import 'adhan_scene.dart';
 import 'prayer_times_screen.dart' show prayerTimesLocation;
+import 'prayer_tracker_screen.dart' show showPrayedSheet, trackerToday;
 import 'prayer_widgets.dart';
 
 export 'adhan_scene.dart' show AdhanScene, AdhanBackdrop;
@@ -205,6 +206,35 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
                       },
                       child: Text(l.adhanOpenTimes),
                     ),
+                    if (!widget.test &&
+                        obligatoryPrayers.contains(widget.prayer))
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: OutlinedButton.icon(
+                          key: const ValueKey('adhan-prayed'),
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(48),
+                            foregroundColor: const Color(0xFFF6F1E8),
+                            backgroundColor: Colors.black.withValues(
+                              alpha: .18,
+                            ),
+                            side: BorderSide(
+                              color: Colors.white.withValues(alpha: .4),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                          ),
+                          onPressed: () => showPrayedSheet(
+                            context,
+                            ref,
+                            widget.prayer,
+                            trackerToday(s),
+                          ),
+                          icon: const Icon(Icons.check_circle_outline),
+                          label: Text(l.prayedAction),
+                        ),
+                      ),
                   ],
                 ),
               ),

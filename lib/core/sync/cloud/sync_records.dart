@@ -87,7 +87,7 @@ String hashRow(Map<String, Object?> row) {
 /// (spaced review, memorization strength — the memorize mode's self-checks
 /// land there —, goals and the recitation record), the misbaha (the
 /// reader's own adhkar and the daily log, one row a device so a day's
-/// counts add up), the tadabbur notes and the last reading position (by
+/// counts add up), «صلواتي» (the prayer log and qada counts), the tadabbur notes and the last reading position (by
 /// surah and ayah, so it holds in any edition). The khatmas' caches
 /// (khatma_coverage, daily_stat) are rebuilt from the record instead.
 const syncedEntities = <String, List<String>>{
@@ -108,6 +108,8 @@ const syncedEntities = <String, List<String>>{
   'tasbih_day': ['day', 'dhikr', 'device'],
   'reflection': ['uuid'],
   'reading_positions': ['id'],
+  'prayer_log': ['day', 'prayer'],
+  'qada_count': ['prayer'],
 };
 
 /// The entity of synced settings.
