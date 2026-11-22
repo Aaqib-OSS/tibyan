@@ -5379,4 +5379,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cellularWait => 'Wait for Wi‑Fi';
+
+  @override
+  String get searchModeRoot => 'By root';
+
+  @override
+  String get searchRootHint => 'Type a root, such as رحم or ر ح م';
+
+  @override
+  String searchRootFound(String root) {
+    return 'Root «$root»';
+  }
+
+  @override
+  String get searchRootNone => 'No root with these letters';
 }

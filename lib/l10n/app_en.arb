@@ -2027,5 +2027,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "searchModeRoot": "By root",
+  "searchRootHint": "Type a root, such as رحم or ر ح م",
+  "searchRootFound": "Root «{root}»",
+  "searchRootNone": "No root with these letters"
 }
