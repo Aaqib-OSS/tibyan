@@ -5884,6 +5884,89 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adhanInUseFull => 'The full adhan';
 
   @override
+  String get hijriCalendarTitle => 'Hijri calendar';
+
+  @override
+  String get hijriOpenCalendar => 'Open the Hijri calendar';
+
+  @override
+  String get hijriPrevMonth => 'Previous month';
+
+  @override
+  String get hijriNextMonth => 'Next month';
+
+  @override
+  String get hijriBackToToday => 'Today';
+
+  @override
+  String get hijriTodayLabel => 'Today';
+
+  @override
+  String hijriAdjustment(String days) {
+    return 'Date adjustment: $days days';
+  }
+
+  @override
+  String get occasionsTitle => 'Occasions';
+
+  @override
+  String get occasionNext => 'Next occasion';
+
+  @override
+  String get occasionNewYear => 'Islamic New Year';
+
+  @override
+  String get occasionAshura => 'Ashura';
+
+  @override
+  String get occasionRamadanStart => 'First of Ramadan';
+
+  @override
+  String get occasionLastTen => 'The last ten days of Ramadan';
+
+  @override
+  String get occasionEidFitr => 'Eid al-Fitr';
+
+  @override
+  String get occasionArafah => 'Day of Arafah';
+
+  @override
+  String get occasionEidAdha => 'Eid al-Adha';
+
+  @override
+  String get occasionTashreeq => 'Days of Tashreeq';
+
+  @override
+  String occasionIn(int count, String n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'In $n days',
+      one: 'Tomorrow',
+      zero: 'Today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get occasionOngoing => 'Under way';
+
+  @override
+  String occasionTomorrow(String name) {
+    return 'Tomorrow: $name';
+  }
+
+  @override
+  String get occasionChannel => 'Occasion reminders';
+
+  @override
+  String get occasionRemindersTitle => 'Remind me the day before each occasion';
+
+  @override
+  String get occasionRemindersNote =>
+      'A notification in the evening before each occasion';
+
+  @override
   String get qiblaTitle => 'Qibla';
 
   @override
