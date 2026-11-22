@@ -52,6 +52,8 @@ class PrayerNative(
                         call.argument<Boolean>("preview") ?: false,
                         call.argument<Double>("volume") ?: AlarmVolume.DEFAULT,
                         call.argument<String>("stopLabel"),
+                        // From the app: the reader's own action.
+                        manual = true,
                     )
                     result.success(null)
                 }
@@ -209,6 +211,12 @@ object AdhanAlarms {
             o.put("volume", (a["volume"] as? Number)?.toDouble() ?: AlarmVolume.DEFAULT)
             o.put("stopLabel", a["stopLabel"] as? String ?: "")
             o.put("files", JSONArray((a["files"] as? List<*>) ?: emptyList<String>()))
+            o.put("shortFiles", JSONArray((a["shortFiles"] as? List<*>) ?: emptyList<String>()))
+            o.put("prayerAt", (a["prayerAt"] as? Number)?.toLong() ?: o.getLong("at"))
+            o.put("inUse", a["inUse"] as? String ?: AdhanPolicy.IN_USE_NOTIFY)
+            o.put("playLabel", a["playLabel"] as? String ?: "")
+            // Already fired (or stopped): a reschedule never re-arms it.
+            if (AdhanGate.hasFired(ctx, o.getLong("prayerAt"))) continue
             now.put(o)
         }
         prefs.edit().putString(KEY, now.toString()).apply()
@@ -227,6 +235,7 @@ object AdhanAlarms {
         o.put("volume", (alert["volume"] as? Number)?.toDouble() ?: AlarmVolume.DEFAULT)
         o.put("stopLabel", alert["stopLabel"] as? String ?: "")
         o.put("files", JSONArray((alert["files"] as? List<*>) ?: emptyList<String>()))
+        o.put("test", true)
         val am = ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         if (canExact(ctx)) {
             am.setExactAndAllowWhileIdle(
@@ -246,6 +255,7 @@ object AdhanAlarms {
                     o.optString("payload"),
                     volume = o.optDouble("volume", AlarmVolume.DEFAULT),
                     stopLabel = o.optString("stopLabel").ifEmpty { null },
+                    manual = true,
                 )
             }, (o.getLong("at") - System.currentTimeMillis()).coerceAtLeast(0))
         }
@@ -263,6 +273,7 @@ object AdhanAlarms {
             val o = list.getJSONObject(i)
             val at = o.getLong("at")
             if (at <= now) continue
+            if (AdhanGate.hasFired(ctx, o.optLong("prayerAt", at))) continue
             try {
                 am.setExactAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
@@ -289,17 +300,51 @@ class AdhanAlarmReceiver : BroadcastReceiver() {
             }
         }
         val o = JSONObject(intent.getStringExtra("alert") ?: return)
+        val now = System.currentTimeMillis()
         // Late by more than five minutes (the phone was off): no adhan.
-        if (System.currentTimeMillis() - o.getLong("at") > 5 * 60 * 1000L) return
-        val files = o.getJSONArray("files")
+        if (now - o.getLong("at") > 5 * 60 * 1000L) return
+        // «جرّب الأذان»: always heard (the reader is waiting for it).
+        val test = o.optBoolean("test", false)
+        if (!test) {
+            // Each prayer's adhan once: a duplicate or re-armed alarm is
+            // ignored, and so is one right after the reader stopped one.
+            if (!AdhanGate.markFired(context, o.optLong("prayerAt", o.getLong("at")))) return
+            if (AdhanGate.heldByStop(context, manual = false)) return
+        }
+        val playback = AdhanPolicy.decide(
+            inCall = AdhanGate.inCall(context),
+            inUse = !test && AdhanGate.inUse(context),
+            choice = o.optString("inUse", AdhanPolicy.IN_USE_NOTIFY),
+        )
+        when (playback) {
+            AdhanPolicy.Playback.NOTICE,
+            AdhanPolicy.Playback.SILENT_NOTICE,
+            -> {
+                AdhanGate.postNotice(
+                    context,
+                    o,
+                    silent = playback == AdhanPolicy.Playback.SILENT_NOTICE,
+                )
+                return
+            }
+            else -> {}
+        }
+        fun list(key: String): List<String> {
+            val a = o.optJSONArray(key) ?: return emptyList()
+            return (0 until a.length()).map { a.getString(it) }
+        }
+        val short = list("shortFiles")
+        val files = if (playback == AdhanPolicy.Playback.SHORT && short.isNotEmpty()) short else list("files")
         AdhanService.start(
             context,
-            (0 until files.length()).map { files.getString(it) },
+            files,
             o.optString("title"),
             o.optString("body"),
             o.optString("payload"),
             volume = o.optDouble("volume", AlarmVolume.DEFAULT),
             stopLabel = o.optString("stopLabel").ifEmpty { null },
+            manual = test,
+            alert = o,
         )
     }
 }

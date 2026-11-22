@@ -5865,6 +5865,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adhanVolumePreview => 'Preview the volume';
 
   @override
+  String get adhanPlay => 'Play the adhan';
+
+  @override
+  String get adhanInUseTitle => 'When the phone is in use';
+
+  @override
+  String get adhanInUseNote =>
+      'The screen is on and unlocked, or a video or other audio is playing. During a call only a silent notification arrives, with «Play the adhan».';
+
+  @override
+  String get adhanInUseNotify => 'Notification only';
+
+  @override
+  String get adhanInUseShort => '«Hayya ala al-salah» only';
+
+  @override
+  String get adhanInUseFull => 'The full adhan';
+
+  @override
   String get qiblaTitle => 'Qibla';
 
   @override

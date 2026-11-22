@@ -155,4 +155,12 @@ void main() {
       expect(list.nearest(24.7, 46.7)!.name, 'Riyadh');
     });
   });
+
+  test('«when the phone is in use»: a notification by default, kept', () {
+    expect(const PrayerSettings().inUse, InUseAdhan.notify);
+    for (final u in InUseAdhan.values) {
+      final s = PrayerSettings.decode(PrayerSettings(inUse: u).encode());
+      expect(s.inUse, u);
+    }
+  });
 }
