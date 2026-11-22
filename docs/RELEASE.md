@@ -63,7 +63,7 @@ iOS وmacOS:
 
 ## أندرويد: شاشة الأذان الكاملة (اختياري)
 
-- **البناء الافتراضي** لا يعلن `USE_FULL_SCREEN_INTENT` (يحذفه الـ placeholder `fullScreenIntentNode=remove`). هذا ما يُرفع لجوجل بلاي ما لم يُقرَّر غير ذلك:
+- **البناء الافتراضي** لا يعلن `USE_FULL_SCREEN_INTENT` (الإذن في `android/app/src/fullscreen/AndroidManifest.xml` ولا يُدمج إلا مع هذا الخيار). هذا ما يُرفع لجوجل بلاي ما لم يُقرَّر غير ذلك:
   `flutter build appbundle --release`
 - **نسخة الشاشة الكاملة** تعلن الإذن وتفتح `AdhanFullScreenActivity` فوق شاشة القفل عند الأذان:
   `flutter build appbundle --release --dart-define=FULLSCREEN_ADHAN=true`

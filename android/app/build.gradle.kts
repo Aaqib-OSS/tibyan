@@ -54,8 +54,6 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "app.tibyan.tibyan"
-        manifestPlaceholders["fullScreenIntentNode"] =
-            if (fullScreenAdhan) "merge" else "remove"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -79,6 +77,13 @@ android {
         }
     }
 
+    // FULLSCREEN_ADHAN=true: src/fullscreen's manifest (the permission) is
+    // merged into every build type; the default build never sees it.
+    if (fullScreenAdhan) {
+        for (type in listOf("debug", "profile", "release")) {
+            sourceSets.maybeCreate(type).manifest.srcFile("src/fullscreen/AndroidManifest.xml")
+        }
+    }
     sourceSets["main"].java.srcDir(if (huaweiBuild) "src/huawei/kotlin" else "src/gms/kotlin")
 
     buildTypes {
