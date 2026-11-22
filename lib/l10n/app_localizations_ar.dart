@@ -6118,4 +6118,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get qiblaNoPlace => 'اختر مدينتك أولًا لمعرفة اتجاه القبلة.';
+
+  @override
+  String get searchModeRoot => 'بالجذر';
+
+  @override
+  String get searchRootHint => 'اكتب جذرًا، مثل «رحم» أو «ر ح م»';
+
+  @override
+  String searchRootFound(String root) {
+    return 'الجذر «$root»';
+  }
+
+  @override
+  String get searchRootNone => 'لا جذر بهذه الحروف';
 }
