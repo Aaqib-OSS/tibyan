@@ -10380,6 +10380,192 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'كل صلاة تسجّلها تُحسب، ويمكنك البدء من جديد في أي يوم.'**
   String get weekGentle;
+
+  /// No description provided for @adhkarTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأذكار'**
+  String get adhkarTitle;
+
+  /// No description provided for @adhkarMorning.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصباح'**
+  String get adhkarMorning;
+
+  /// No description provided for @adhkarEvening.
+  ///
+  /// In ar, this message translates to:
+  /// **'المساء'**
+  String get adhkarEvening;
+
+  /// No description provided for @adhkarReset.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة العد'**
+  String get adhkarReset;
+
+  /// No description provided for @adhkarSettingsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعدادات الأذكار'**
+  String get adhkarSettingsTitle;
+
+  /// No description provided for @adhkarProgress.
+  ///
+  /// In ar, this message translates to:
+  /// **'أتممت {done} من {total}'**
+  String adhkarProgress(String done, String total);
+
+  /// No description provided for @adhkarCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{n} / {count}'**
+  String adhkarCount(String n, String count);
+
+  /// No description provided for @adhkarDetails.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفضل والمصدر'**
+  String get adhkarDetails;
+
+  /// No description provided for @adhkarFadl.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفضل'**
+  String get adhkarFadl;
+
+  /// No description provided for @adhkarSource.
+  ///
+  /// In ar, this message translates to:
+  /// **'المصدر'**
+  String get adhkarSource;
+
+  /// No description provided for @adhkarChannel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير الأذكار'**
+  String get adhkarChannel;
+
+  /// No description provided for @adhkarMorningNotice.
+  ///
+  /// In ar, this message translates to:
+  /// **'أذكار الصباح'**
+  String get adhkarMorningNotice;
+
+  /// No description provided for @adhkarEveningNotice.
+  ///
+  /// In ar, this message translates to:
+  /// **'أذكار المساء'**
+  String get adhkarEveningNotice;
+
+  /// No description provided for @adhkarMorningReminder.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير بأذكار الصباح'**
+  String get adhkarMorningReminder;
+
+  /// No description provided for @adhkarEveningReminder.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير بأذكار المساء'**
+  String get adhkarEveningReminder;
+
+  /// No description provided for @adhkarReminderTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوقت: {time}'**
+  String adhkarReminderTime(String time);
+
+  /// No description provided for @salawatTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير «الصلاة على النبي»'**
+  String get salawatTitle;
+
+  /// No description provided for @salawatNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'يشغّل تسجيل الشيخ محمد صديق المنشاوي على فترات تختارها'**
+  String get salawatNote;
+
+  /// No description provided for @salawatAudioName.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصلاة على النبي — محمد صديق المنشاوي'**
+  String get salawatAudioName;
+
+  /// No description provided for @salawatNoticeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصلاة على النبي'**
+  String get salawatNoticeTitle;
+
+  /// No description provided for @salawatEvery.
+  ///
+  /// In ar, this message translates to:
+  /// **'التكرار كل'**
+  String get salawatEvery;
+
+  /// No description provided for @salawatLess.
+  ///
+  /// In ar, this message translates to:
+  /// **'أقل'**
+  String get salawatLess;
+
+  /// No description provided for @salawatMore.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكثر'**
+  String get salawatMore;
+
+  /// No description provided for @salawatMinutes.
+  ///
+  /// In ar, this message translates to:
+  /// **'دقائق'**
+  String get salawatMinutes;
+
+  /// No description provided for @salawatHours.
+  ///
+  /// In ar, this message translates to:
+  /// **'ساعات'**
+  String get salawatHours;
+
+  /// No description provided for @salawatMinNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'أقل فترة {n} دقيقة'**
+  String salawatMinNote(String n);
+
+  /// No description provided for @salawatWindow.
+  ///
+  /// In ar, this message translates to:
+  /// **'خلال ساعات محددة فقط'**
+  String get salawatWindow;
+
+  /// No description provided for @salawatFrom.
+  ///
+  /// In ar, this message translates to:
+  /// **'من: {time}'**
+  String salawatFrom(String time);
+
+  /// No description provided for @salawatTo.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلى: {time}'**
+  String salawatTo(String time);
+
+  /// No description provided for @salawatRulesNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يُشغَّل الصوت أثناء المكالمات، ويتبع إعداد «عندما يكون الهاتف قيد الاستخدام» في إعدادات الأذان.'**
+  String get salawatRulesNote;
+
+  /// No description provided for @salawatUnsupported.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير «الصلاة على النبي» متاح على أندرويد وآيفون وماك.'**
+  String get salawatUnsupported;
 }
 
 class _AppLocalizationsDelegate

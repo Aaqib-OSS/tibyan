@@ -215,6 +215,8 @@ object AdhanAlarms {
             o.put("prayerAt", (a["prayerAt"] as? Number)?.toLong() ?: o.getLong("at"))
             o.put("inUse", a["inUse"] as? String ?: AdhanPolicy.IN_USE_NOTIFY)
             o.put("playLabel", a["playLabel"] as? String ?: "")
+            // Not an adhan (the salawat reminder): no full-screen adhan.
+            o.put("quiet", a["quiet"] as? Boolean ?: false)
             // Already fired (or stopped): a reschedule never re-arms it.
             if (AdhanGate.hasFired(ctx, o.getLong("prayerAt"))) continue
             now.put(o)

@@ -20,6 +20,7 @@ import 'app.dart';
 import 'features/prayer/domain/prayer_settings.dart' show PrayerSettings;
 import 'features/prayer/prayer_providers.dart' show prayerSettingsKey;
 import 'features/prayer/data/adhan_downloads.dart';
+import 'features/adhkar/presentation/adhkar_screen.dart' show adhkarLocation;
 import 'features/prayer/presentation/prayer_times_screen.dart'
     show prayerTimesLocation;
 import 'features/prayer/services/prayer_runtime.dart';
@@ -376,6 +377,22 @@ void _startKhatma(ProviderContainer container) {
           '/hijri' => '$prayerTimesLocation/hijri',
           _ => prayerTimesLocation,
         }),
+      );
+      return;
+    }
+    // An adhkar or salawat reminder: the adhkar, over home.
+    if (uri.scheme == 'tibyan' && uri.host == 'adhkar') {
+      container.read(launchTargetProvider).value = true;
+      await container.read(appRouterReadyProvider).future;
+      unawaited(
+        openOverHome(
+          container.read(appRouterProvider),
+          uri.queryParameters['tab'] == 'evening'
+              ? '$adhkarLocation?tab=evening'
+              : uri.queryParameters['tab'] == 'morning'
+              ? '$adhkarLocation?tab=morning'
+              : adhkarLocation,
+        ),
       );
       return;
     }

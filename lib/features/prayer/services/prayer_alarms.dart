@@ -108,7 +108,12 @@ class PrayerAlarms {
     required this.adhan,
     this.readLate,
     this.writeLate,
+    this.extraNatives,
   });
+
+  /// Android: other alarms that go through the adhan service and its rules
+  /// (the salawat reminder), scheduled with the adhans.
+  final Future<List<NativeAdhan>> Function()? extraNatives;
 
   /// The late alerts that already fired (kept on the device), so a plan
   /// made again within their minute never fires them twice.
@@ -244,7 +249,7 @@ class PrayerAlarms {
     if (Platform.isAndroid) exact = await native.canScheduleExact();
     final natives = <NativeAdhan>[];
     if (place == null || plan.isEmpty) {
-      await native.scheduleAdhans(const []);
+      await native.scheduleAdhans(await _extras());
       return plan;
     }
     final files = await adhanFiles(s);
@@ -301,8 +306,17 @@ class PrayerAlarms {
         // One alert the system refused: the others still go.
       }
     }
-    await native.scheduleAdhans(natives);
+    await native.scheduleAdhans([...natives, ...await _extras()]);
     return plan;
+  }
+
+  Future<List<NativeAdhan>> _extras() async {
+    if (!Platform.isAndroid) return const [];
+    try {
+      return await extraNatives?.call() ?? const [];
+    } catch (_) {
+      return const [];
+    }
   }
 
   /// How long after «جرّب الأذان» the test alert fires.

@@ -4258,5 +4258,84 @@
       }
     }
   },
-  "weekGentle": "كل صلاة تسجّلها تُحسب، ويمكنك البدء من جديد في أي يوم."
+  "weekGentle": "كل صلاة تسجّلها تُحسب، ويمكنك البدء من جديد في أي يوم.",
+  "adhkarTitle": "الأذكار",
+  "adhkarMorning": "الصباح",
+  "adhkarEvening": "المساء",
+  "adhkarReset": "إعادة العد",
+  "adhkarSettingsTitle": "إعدادات الأذكار",
+  "adhkarProgress": "أتممت {done} من {total}",
+  "@adhkarProgress": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "adhkarCount": "{n} / {count}",
+  "@adhkarCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "adhkarDetails": "الفضل والمصدر",
+  "adhkarFadl": "الفضل",
+  "adhkarSource": "المصدر",
+  "adhkarChannel": "تذكير الأذكار",
+  "adhkarMorningNotice": "أذكار الصباح",
+  "adhkarEveningNotice": "أذكار المساء",
+  "adhkarMorningReminder": "تذكير بأذكار الصباح",
+  "adhkarEveningReminder": "تذكير بأذكار المساء",
+  "adhkarReminderTime": "الوقت: {time}",
+  "@adhkarReminderTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "salawatTitle": "تذكير «الصلاة على النبي»",
+  "salawatNote": "يشغّل تسجيل الشيخ محمد صديق المنشاوي على فترات تختارها",
+  "salawatAudioName": "الصلاة على النبي — محمد صديق المنشاوي",
+  "salawatNoticeTitle": "الصلاة على النبي",
+  "salawatEvery": "التكرار كل",
+  "salawatLess": "أقل",
+  "salawatMore": "أكثر",
+  "salawatMinutes": "دقائق",
+  "salawatHours": "ساعات",
+  "salawatMinNote": "أقل فترة {n} دقيقة",
+  "@salawatMinNote": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "salawatWindow": "خلال ساعات محددة فقط",
+  "salawatFrom": "من: {time}",
+  "@salawatFrom": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "salawatTo": "إلى: {time}",
+  "@salawatTo": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "salawatRulesNote": "لا يُشغَّل الصوت أثناء المكالمات، ويتبع إعداد «عندما يكون الهاتف قيد الاستخدام» في إعدادات الأذان.",
+  "salawatUnsupported": "تذكير «الصلاة على النبي» متاح على أندرويد وآيفون وماك."
 }
