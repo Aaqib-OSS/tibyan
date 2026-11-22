@@ -109,11 +109,8 @@ Future<void> main() async {
       timingOverridesProvider.overrideWithValue(timing),
       wordTimingPacksProvider.overrideWithValue(words),
       reminderSchedulerProvider.overrideWithValue(LocalReminderScheduler()),
-      homeWidgetSyncProvider.overrideWithValue(
-        defaultTargetPlatform == TargetPlatform.macOS
-            ? MacHomeWidgetSync()
-            : PluginHomeWidgetSync(),
-      ),
+      // No widgets (and no home_widget calls) on Windows and Linux.
+      homeWidgetSyncProvider.overrideWithValue(homeWidgetSyncFor()),
     ],
   );
 
