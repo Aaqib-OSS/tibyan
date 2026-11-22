@@ -5925,4 +5925,57 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adhanVolumePreview => 'معاينة المستوى';
+
+  @override
+  String get qiblaTitle => 'القبلة';
+
+  @override
+  String get qiblaOpen => 'اتجاه القبلة';
+
+  @override
+  String qiblaFrom(String place) {
+    return 'من $place';
+  }
+
+  @override
+  String qiblaDegrees(String deg) {
+    return '$deg° من الشمال الحقيقي';
+  }
+
+  @override
+  String qiblaDistance(String km) {
+    return 'المسافة إلى الكعبة: $km كم';
+  }
+
+  @override
+  String get qiblaAligned => 'أنت متجه إلى القبلة';
+
+  @override
+  String qiblaTurnRight(String deg) {
+    return 'استدر يمينًا $deg°';
+  }
+
+  @override
+  String qiblaTurnLeft(String deg) {
+    return 'استدر يسارًا $deg°';
+  }
+
+  @override
+  String get qiblaCalibrate =>
+      'حرّك الهاتف في الهواء على شكل الرقم 8 عدة مرات لمعايرة البوصلة.';
+
+  @override
+  String get qiblaInterference =>
+      'دقة البوصلة منخفضة: ابتعد عن المعادن والأجهزة الكهربائية وأغطية الهاتف المغناطيسية.';
+
+  @override
+  String get qiblaNoSensor => 'لا توجد بوصلة في هذا الجهاز.';
+
+  @override
+  String qiblaStaticSteps(String deg) {
+    return 'حدّد اتجاه الشمال (بخريطة أو بوصلة)، ثم استدر $deg° باتجاه عقارب الساعة.';
+  }
+
+  @override
+  String get qiblaNoPlace => 'اختر مدينتك أولًا لمعرفة اتجاه القبلة.';
 }

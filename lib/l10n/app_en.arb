@@ -2161,5 +2161,60 @@
   "adhanVolume": "Adhan volume",
   "adhanVolumeNote": "The adhan plays at this level even when the ringer or media is muted, then the device volume goes back to what it was. The volume keys lower it during the adhan.",
   "adhanVolumeAppleNote": "On iPhone and Mac the alert follows the device volume; this level is for the adhan inside the app only.",
-  "adhanVolumePreview": "Preview the volume"
+  "adhanVolumePreview": "Preview the volume",
+  "qiblaTitle": "Qibla",
+  "qiblaOpen": "Qibla direction",
+  "qiblaFrom": "From {place}",
+  "@qiblaFrom": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaDegrees": "{deg}° from true north",
+  "@qiblaDegrees": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaDistance": "Distance to the Kaaba: {km} km",
+  "@qiblaDistance": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaAligned": "You are facing the Qibla",
+  "qiblaTurnRight": "Turn right {deg}°",
+  "@qiblaTurnRight": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaTurnLeft": "Turn left {deg}°",
+  "@qiblaTurnLeft": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaCalibrate": "Move the phone through the air in a figure 8 a few times to calibrate the compass.",
+  "qiblaInterference": "Compass accuracy is low: move away from metal, electrical devices and magnetic phone cases.",
+  "qiblaNoSensor": "This device has no compass.",
+  "qiblaStaticSteps": "Find north (with a map or a compass), then turn {deg}° clockwise.",
+  "@qiblaStaticSteps": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaNoPlace": "Choose your city first to find the Qibla direction."
 }
