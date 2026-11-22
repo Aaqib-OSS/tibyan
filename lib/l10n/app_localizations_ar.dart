@@ -6308,4 +6308,43 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get salawatUnsupported =>
       'تذكير «الصلاة على النبي» متاح على أندرويد وآيفون وماك.';
+
+  @override
+  String get prayerPerPrayerTitle => 'أذان كل صلاة';
+
+  @override
+  String get prayerPerPrayerNote =>
+      'لكل صلاة مؤذنها وطول أذانها إن شئت؛ وإلا فحسب الإعدادات العامة.';
+
+  @override
+  String get prayerFollowGeneral => 'حسب الإعدادات العامة';
+
+  @override
+  String get prayerGeneralShort => 'حسب العام';
+
+  @override
+  String get prayerCustomSetup => 'إعداد خاص';
+
+  @override
+  String get prayerSameAsGeneral => 'نفس العام';
+
+  @override
+  String get prayerOwnVolume => 'مستوى الصوت';
+
+  @override
+  String prayerDownloadMuezzin(String name) {
+    return 'تنزيل $name';
+  }
+
+  @override
+  String get prayerMuezzinFallback =>
+      'حتى يكتمل تنزيله يُرفع الأذان بصوت المؤذن العام، ثم بالنغمة الهادئة.';
+
+  @override
+  String get prayerTryOwn => 'جرّب';
+
+  @override
+  String prayerAdhanSummaryLabel(String prayer, String summary) {
+    return '$prayer: $summary';
+  }
 }

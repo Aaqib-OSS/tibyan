@@ -78,10 +78,16 @@ String alertPayload(PlannedAlert a) => a.kind == AlertKind.atTime
 }
 
 /// Which downloaded recording an adhan plays: the chosen muezzin when it
-/// is on the device, else the default one when it is, else none (the
-/// alert then sounds the gentle tone). Never a server link.
-String? adhanSlugFor(String chosen, bool Function(String slug) installed) {
+/// is on the device, else [general] (the general muezzin, when a prayer
+/// chose its own), else the default one, else none (the alert then sounds
+/// the gentle tone). Never a server link.
+String? adhanSlugFor(
+  String chosen,
+  bool Function(String slug) installed, {
+  String? general,
+}) {
   if (installed(chosen)) return chosen;
+  if (general != null && installed(general)) return general;
   if (installed(PrayerSettings.defaultMuezzin)) {
     return PrayerSettings.defaultMuezzin;
   }
@@ -131,12 +137,25 @@ class PrayerAlarms {
 
   bool get _apple => Platform.isIOS || Platform.isMacOS;
 
-  /// The files the adhan plays (the cut or the whole adhan, then the dua
-  /// when chosen), or none when the recording is not on the device.
-  Future<List<String>> adhanFiles(PrayerSettings s, {bool? full}) async {
-    final slug = adhanSlugFor(s.muezzin, adhan.isInstalled);
+  /// The muezzin [prayer]'s adhan plays (its own, then the general one,
+  /// then the default), or null when none is downloaded.
+  String? slugFor(PrayerSettings s, PrayerKind? prayer) => adhanSlugFor(
+    s.forPrayer(prayer).muezzin,
+    adhan.isInstalled,
+    general: s.muezzin,
+  );
+
+  /// The files [prayer]'s adhan plays (the cut or the whole adhan, its own
+  /// length or the general one, then the dua when chosen), or none when no
+  /// recording is on the device. No [prayer]: the general settings.
+  Future<List<String>> adhanFiles(
+    PrayerSettings s, {
+    bool? full,
+    PrayerKind? prayer,
+  }) async {
+    final slug = slugFor(s, prayer);
     if (slug == null) return const [];
-    final whole = full ?? s.length == AdhanLength.full;
+    final whole = full ?? s.forPrayer(prayer).length == AdhanLength.full;
     final main = await adhan.fileOf(slug, whole ? 'full.m4a' : 'short.m4a');
     if (!await main.exists()) return const [];
     final dua = await adhan.fileOf(duaSlug, 'dua_shaarawy.m4a');
@@ -147,30 +166,37 @@ class PrayerAlarms {
     ];
   }
 
-  /// Apple: copies the muezzin's PCM cut where the notification can play
+  /// Apple: copies each muezzin's PCM cut where the notification can play
   /// it; its name changes with the muezzin (the system caches sounds by
-  /// name). Null when it is not downloaded.
-  Future<String?> _appleSound(String slug) async {
-    if (!adhan.isInstalled(slug)) return null;
+  /// name). Returns slug → sound name for those downloaded; the sounds of
+  /// muezzins no longer used are removed.
+  Future<Map<String, String>> _appleSounds(Set<String> slugs) async {
+    final out = <String, String>{};
     try {
-      final name = 'tibyan_adhan_$slug.caf';
       final lib = await getLibraryDirectory();
       final dir = Directory(p.join(lib.path, 'Sounds'));
       await dir.create(recursive: true);
-      final target = File(p.join(dir.path, name));
-      if (!await target.exists()) {
-        await (await adhan.fileOf(slug, 'short.caf')).copy(target.path);
+      for (final slug in slugs) {
+        if (!adhan.isInstalled(slug)) continue;
+        final name = 'tibyan_adhan_$slug.caf';
+        final target = File(p.join(dir.path, name));
+        if (!await target.exists()) {
+          await (await adhan.fileOf(slug, 'short.caf')).copy(target.path);
+        }
+        out[slug] = name;
       }
-      // Older muezzins' sounds are removed.
       await for (final f in dir.list()) {
         final b = p.basename(f.path);
-        if (b.startsWith('tibyan_adhan_') && b != name) await f.delete();
+        if (b.startsWith('tibyan_adhan_') && !out.containsValue(b)) {
+          await f.delete();
+        }
       }
-      return name;
-    } catch (_) {
-      return null;
-    }
+    } catch (_) {}
+    return out;
   }
+
+  Future<String?> _appleSound(String? slug) async =>
+      slug == null ? null : (await _appleSounds({slug}))[slug];
 
   NotificationDetails _details(
     AlertSound sound, {
@@ -221,12 +247,11 @@ class PrayerAlarms {
   }) async {
     final when = now ?? DateTime.now();
     final apple = _apple;
-    final slug = adhanSlugFor(s.muezzin, adhan.isInstalled);
-    final adhanReady = slug != null;
     final plan = planAlerts(
       settings: s,
       now: when,
-      adhanReady: adhanReady,
+      adhanReady: slugFor(s, null) != null,
+      readyFor: (p) => slugFor(s, p) != null,
       limit: apple ? appleMaxPrayerAlerts : null,
       lateFired: readLate?.call() ?? const {},
     );
@@ -252,29 +277,40 @@ class PrayerAlarms {
       await native.scheduleAdhans(await _extras());
       return plan;
     }
-    final files = await adhanFiles(s);
-    final shortFiles = await adhanFiles(s, full: false);
-    final appleSound = apple && slug != null ? await _appleSound(slug) : null;
+    // Each prayer's own files, volume and Apple sound.
+    final files = <PrayerKind, List<String>>{};
+    final shortFiles = <PrayerKind, List<String>>{};
+    final slugs = <PrayerKind, String?>{};
+    for (final p in obligatoryPrayers) {
+      files[p] = await adhanFiles(s, prayer: p);
+      shortFiles[p] = await adhanFiles(s, prayer: p, full: false);
+      slugs[p] = slugFor(s, p);
+    }
+    final appleSounds = apple
+        ? await _appleSounds({...slugs.values.nonNulls})
+        : const <String, String>{};
     for (final a in plan) {
       final t = alertTexts(l, a, place);
+      final mine = files[a.prayer] ?? const <String>[];
+      final appleSound = appleSounds[slugs[a.prayer]];
       if (Platform.isAndroid &&
           exact &&
           a.kind == AlertKind.atTime &&
           a.sound == AlertSound.adhan &&
-          files.isNotEmpty) {
+          mine.isNotEmpty) {
         natives.add(
           NativeAdhan(
             id: a.id,
             at: a.at,
             title: t.title,
             body: t.body,
-            files: files,
+            files: mine,
             payload: alertPayload(a),
-            volume: s.adhanVolume,
+            volume: s.forPrayer(a.prayer).adhanVolume,
             stopLabel: l.adhanStop,
             playLabel: l.adhanPlay,
             prayerAt: a.prayerAt,
-            shortFiles: shortFiles,
+            shortFiles: shortFiles[a.prayer] ?? const [],
             inUse: s.inUse.name,
           ),
         );
@@ -327,21 +363,26 @@ class PrayerAlarms {
   /// the exact alarm and the adhan service. Apple: a notification with the
   /// short cut as its sound (heard in front too). Desktop: the app plays
   /// it. Returns when it is scheduled.
+  /// [prayer]: that prayer's own adhan («جرّب» in its sheet).
   Future<void> testAdhan(
     PrayerSettings s,
     AppLocalizations l, {
     required Future<void> Function() playInApp,
+    PrayerKind? prayer,
   }) async {
     final at = DateTime.now().add(testDelay);
-    final files = await adhanFiles(s);
+    final files = await adhanFiles(s, prayer: prayer);
     // A test never claims a real prayer time: its own title, the next
     // prayer's scene.
     final place = s.place;
-    final scene = place == null
-        ? PrayerKind.maghrib
-        : nextPrayer(place, DateTime.now(), s)?.prayer ?? PrayerKind.maghrib;
+    final scene =
+        prayer ??
+        (place == null
+            ? PrayerKind.maghrib
+            : nextPrayer(place, DateTime.now(), s)?.prayer ??
+                  PrayerKind.maghrib);
     final title = l.adhanTestBody;
-    final slugNow = adhanSlugFor(s.muezzin, adhan.isInstalled);
+    final slugNow = slugFor(s, prayer);
     final body = slugNow == null
         ? l.soundTone
         : l.adhanByMuezzin(muezzinOf(slugNow).name(l.localeName == 'ar'));
@@ -355,7 +396,7 @@ class PrayerAlarms {
           body: body,
           files: files,
           payload: payload,
-          volume: s.adhanVolume,
+          volume: s.forPrayer(prayer).adhanVolume,
           stopLabel: l.adhanStop,
         ),
       );
@@ -363,8 +404,7 @@ class PrayerAlarms {
     }
     if (_apple) {
       final fln = await plugin();
-      final slug = adhanSlugFor(s.muezzin, adhan.isInstalled);
-      final sound = slug == null ? null : await _appleSound(slug);
+      final sound = await _appleSound(slugNow);
       final darwin = DarwinNotificationDetails(
         sound: sound,
         presentSound: true,

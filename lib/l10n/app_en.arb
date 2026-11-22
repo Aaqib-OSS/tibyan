@@ -2425,5 +2425,33 @@
     }
   },
   "salawatRulesNote": "No sound during calls; it follows «When the phone is in use» in the adhan settings.",
-  "salawatUnsupported": "The «Salawat on the Prophet» reminder is available on Android, iPhone and Mac."
+  "salawatUnsupported": "The «Salawat on the Prophet» reminder is available on Android, iPhone and Mac.",
+  "prayerPerPrayerTitle": "Each prayer's adhan",
+  "prayerPerPrayerNote": "Give a prayer its own muezzin and length if you like; otherwise it follows the general settings.",
+  "prayerFollowGeneral": "Follow the general settings",
+  "prayerGeneralShort": "General",
+  "prayerCustomSetup": "Custom",
+  "prayerSameAsGeneral": "Same as general",
+  "prayerOwnVolume": "Volume",
+  "prayerDownloadMuezzin": "Download {name}",
+  "@prayerDownloadMuezzin": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "prayerMuezzinFallback": "Until it is downloaded, the general muezzin plays, then the gentle tone.",
+  "prayerTryOwn": "Try",
+  "prayerAdhanSummaryLabel": "{prayer}: {summary}",
+  "@prayerAdhanSummaryLabel": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      },
+      "summary": {
+        "type": "String"
+      }
+    }
+  }
 }
