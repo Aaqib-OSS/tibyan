@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../platform/app_store.dart';
+import '../net/server.dart';
 
 /// In-app updates for the Windows installer build.
 ///
@@ -15,10 +16,21 @@ import '../platform/app_store.dart';
 /// the newest Setup.exe with its SHA-256. A newer version is downloaded in the
 /// background, verified, and run silently (`/S /RELAUNCH`) when the reader
 /// presses «أعد التشغيل للتحديث». Other platforms never start it.
-const windowsFeedUrl = 'https://tibyan.ahmedhelal.dev/win/latest.json';
+const windowsFeedUrl = '$serverBase/win/latest.json';
 
-/// Installers are only accepted from here, whatever the feed says.
-const windowsInstallerPrefix = 'https://tibyan.ahmedhelal.dev/win/';
+/// Installers are only accepted from here (or the same path on the
+/// fallback host), whatever the feed says.
+const windowsInstallerPrefix = '$serverBase/win/';
+
+/// Whether [url] is an installer under `/win/` on one of Tibyan's hosts.
+bool isWindowsInstallerUrl(String url) {
+  final uri = Uri.tryParse(url);
+  return uri != null &&
+      uri.scheme == 'https' &&
+      isServerUrl(uri) &&
+      uri.path.startsWith('/win/') &&
+      !uri.path.contains('..');
+}
 
 class UpdateFeed {
   const UpdateFeed({
@@ -46,7 +58,7 @@ class UpdateFeed {
     final build = json['build'];
     final size = json['size'];
     if (version is! String || parseVersion(version) == null) return null;
-    if (url is! String || !url.startsWith(windowsInstallerPrefix)) return null;
+    if (url is! String || !isWindowsInstallerUrl(url)) return null;
     if (sha is! String || !RegExp(r'^[0-9a-fA-F]{64}$').hasMatch(sha)) {
       return null;
     }
@@ -140,7 +152,7 @@ class WindowsUpdater extends ValueNotifier<UpdateState> {
     this.downloadDir,
     InstallerLauncher? launch,
     this.feedUrl = windowsFeedUrl,
-  }) : _client = client ?? http.Client(),
+  }) : _client = client ?? FallbackClient(),
        _currentVersion = currentVersion ?? _packageVersion,
        _launch = launch ?? _launchSilent,
        super(const UpdateIdle());

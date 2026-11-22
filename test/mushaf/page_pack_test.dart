@@ -145,14 +145,14 @@ void main() {
 
   test('page packs come from the mirror first', () {
     for (final spec in [PagePackSpec.madina1441, PagePackSpec.madina1405]) {
-      expect(spec.url, startsWith('https://tibyan.ahmedhelal.dev/mirror/'));
+      expect(spec.url, startsWith('https://altibyan.app/mirror/'));
       expect(spec.fallbacks, isNotEmpty);
     }
     // Shamarly: only the mirror has this zip (no byte-identical source).
     const shamarly = PagePackSpec.shamarly;
     expect(
       shamarly.url,
-      'https://tibyan.ahmedhelal.dev/mirror/sources/shamarly/shamarly-pages-archive-org.zip',
+      'https://altibyan.app/mirror/sources/shamarly/shamarly-pages-archive-org.zip',
     );
     expect(shamarly.fallbacks, isEmpty);
     expect(shamarly.format, PackFormat.pngShamarly);
