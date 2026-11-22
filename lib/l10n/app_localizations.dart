@@ -9847,6 +9847,30 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'يبدأ الأذان بعد ١٠ ثوانٍ، كما في التنبيه الحقيقي.'**
   String get adhanTestScheduled;
+
+  /// No description provided for @adhanVolume.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستوى صوت الأذان'**
+  String get adhanVolume;
+
+  /// No description provided for @adhanVolumeNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'يُسمع الأذان بهذا المستوى ولو كان الجرس أو الوسائط صامتة، ثم يعود صوت الجهاز كما كان. أزرار الصوت تخفضه أثناء الأذان.'**
+  String get adhanVolumeNote;
+
+  /// No description provided for @adhanVolumeAppleNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'في آيفون وماك يتبع صوت التنبيه مستوى صوت الجهاز؛ هذا المستوى للأذان داخل التطبيق فقط.'**
+  String get adhanVolumeAppleNote;
+
+  /// No description provided for @adhanVolumePreview.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاينة المستوى'**
+  String get adhanVolumePreview;
 }
 
 class _AppLocalizationsDelegate

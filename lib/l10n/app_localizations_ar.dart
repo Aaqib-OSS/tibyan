@@ -5884,4 +5884,18 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get adhanTestScheduled =>
       'يبدأ الأذان بعد ١٠ ثوانٍ، كما في التنبيه الحقيقي.';
+
+  @override
+  String get adhanVolume => 'مستوى صوت الأذان';
+
+  @override
+  String get adhanVolumeNote =>
+      'يُسمع الأذان بهذا المستوى ولو كان الجرس أو الوسائط صامتة، ثم يعود صوت الجهاز كما كان. أزرار الصوت تخفضه أثناء الأذان.';
+
+  @override
+  String get adhanVolumeAppleNote =>
+      'في آيفون وماك يتبع صوت التنبيه مستوى صوت الجهاز؛ هذا المستوى للأذان داخل التطبيق فقط.';
+
+  @override
+  String get adhanVolumePreview => 'معاينة المستوى';
 }

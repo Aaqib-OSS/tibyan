@@ -142,12 +142,16 @@ class PrayerSettings {
     this.muezzin = defaultMuezzin,
     this.length = AdhanLength.full,
     this.duaAfter = false,
+    this.adhanVolume = defaultVolume,
     this.desktopAsked = false,
     this.tray = false,
     this.launchAtLogin = false,
   });
 
   static const defaultMuezzin = 'refaat';
+
+  /// «مستوى صوت الأذان» until the user sets it.
+  static const defaultVolume = 0.7;
 
   /// Reminder lengths offered before a prayer (0 = none).
   static const reminderChoices = [0, 5, 10, 15, 30];
@@ -186,6 +190,11 @@ class PrayerSettings {
   /// The after-prayer dua right after the adhan.
   final bool duaAfter;
 
+  /// «مستوى صوت الأذان» (0…1). Android: the alarm stream's level while the
+  /// adhan plays (restored after). Apple: the in-app player only (the
+  /// system volume applies to alerts). Desktop: the player's volume.
+  final double adhanVolume;
+
   /// Desktop: the tray and launch-at-login question was asked.
   final bool desktopAsked;
   final bool tray;
@@ -220,6 +229,7 @@ class PrayerSettings {
     String? muezzin,
     AdhanLength? length,
     bool? duaAfter,
+    double? adhanVolume,
     bool? desktopAsked,
     bool? tray,
     bool? launchAtLogin,
@@ -241,6 +251,7 @@ class PrayerSettings {
     muezzin: muezzin ?? this.muezzin,
     length: length ?? this.length,
     duaAfter: duaAfter ?? this.duaAfter,
+    adhanVolume: (adhanVolume ?? this.adhanVolume).clamp(0.0, 1.0),
     desktopAsked: desktopAsked ?? this.desktopAsked,
     tray: tray ?? this.tray,
     launchAtLogin: launchAtLogin ?? this.launchAtLogin,
@@ -264,6 +275,7 @@ class PrayerSettings {
     'muezzin': muezzin,
     'length': length.name,
     'dua': duaAfter,
+    'volume': adhanVolume,
     'desktopAsked': desktopAsked,
     'tray': tray,
     'login': launchAtLogin,
@@ -318,6 +330,10 @@ class PrayerSettings {
         muezzin: j['muezzin'] as String? ?? d.muezzin,
         length: _enum(AdhanLength.values, j['length']) ?? d.length,
         duaAfter: j['dua'] as bool? ?? d.duaAfter,
+        adhanVolume: ((j['volume'] as num?)?.toDouble() ?? d.adhanVolume).clamp(
+          0.0,
+          1.0,
+        ),
         desktopAsked: j['desktopAsked'] as bool? ?? d.desktopAsked,
         tray: j['tray'] as bool? ?? d.tray,
         launchAtLogin: j['login'] as bool? ?? d.launchAtLogin,

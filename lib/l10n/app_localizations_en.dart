@@ -5822,4 +5822,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get adhanTestScheduled =>
       'The adhan starts in 10 seconds, as a real alert would.';
+
+  @override
+  String get adhanVolume => 'Adhan volume';
+
+  @override
+  String get adhanVolumeNote =>
+      'The adhan plays at this level even when the ringer or media is muted, then the device volume goes back to what it was. The volume keys lower it during the adhan.';
+
+  @override
+  String get adhanVolumeAppleNote =>
+      'On iPhone and Mac the alert follows the device volume; this level is for the adhan inside the app only.';
+
+  @override
+  String get adhanVolumePreview => 'Preview the volume';
 }

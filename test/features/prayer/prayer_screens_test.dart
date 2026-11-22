@@ -115,6 +115,13 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('prayer-shuruq')));
     await settle(tester);
     expect(container.read(prayerSettingsProvider).shuruqAlert, isTrue);
+    expect(find.byKey(const ValueKey('prayer-volume')), findsOneWidget);
+    await tester.drag(
+      find.byKey(const ValueKey('prayer-volume')),
+      const Offset(400, 0), // RTL: right is lower
+    );
+    await settle(tester);
+    expect(container.read(prayerSettingsProvider).adhanVolume, lessThan(0.7));
     await tester.tap(find.byKey(const ValueKey('prayer-length-short')));
     await settle(tester);
     expect(container.read(prayerSettingsProvider).length, AdhanLength.short);

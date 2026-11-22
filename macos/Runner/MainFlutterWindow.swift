@@ -184,7 +184,7 @@ final class PrayerChannel: NSObject, CLLocationManagerDelegate {
     case "locate":
       locate(result)
     case "play":
-      play((args?["files"] as? [String]) ?? [])
+      play((args?["files"] as? [String]) ?? [], volume: Float(args?["volume"] as? Double ?? 0.7))
       result(nil)
     case "stop":
       stop()
@@ -245,7 +245,8 @@ final class PrayerChannel: NSObject, CLLocationManagerDelegate {
 
   // MARK: The adhan in the app
 
-  private func play(_ files: [String]) {
+  /// In-app only: the player's own volume (alerts follow the system's).
+  private func play(_ files: [String], volume: Float) {
     stop()
     let items = files.compactMap { f -> AVPlayerItem? in
       let url = f.hasPrefix("http") ? URL(string: f) : URL(fileURLWithPath: f)
@@ -253,6 +254,7 @@ final class PrayerChannel: NSObject, CLLocationManagerDelegate {
     }
     guard let last = items.last else { return }
     let p = AVQueuePlayer(items: items)
+    p.volume = max(0, min(1, volume))
     player = p
     endObserver = NotificationCenter.default.addObserver(
       forName: .AVPlayerItemDidPlayToEndTime, object: last, queue: .main

@@ -247,6 +247,48 @@ class PrayerSettingsScreen extends ConsumerWidget {
                           ),
                         ),
                       ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                      child: Text(l.adhanVolume),
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Slider(
+                            key: const ValueKey('prayer-volume'),
+                            value: s.adhanVolume,
+                            divisions: 10,
+                            label: '${digits((s.adhanVolume * 100).round())}٪',
+                            semanticFormatterCallback: (v) =>
+                                '${l.adhanVolume} ${digits((v * 100).round())}٪',
+                            onChanged: (v) =>
+                                ctrl.update((x) => x.copyWith(adhanVolume: v)),
+                          ),
+                        ),
+                        IconButton(
+                          key: const ValueKey('prayer-volume-preview'),
+                          tooltip: l.adhanVolumePreview,
+                          onPressed: () => PrayerRuntime.instance?.playAdhan(
+                            PrayerKind.maghrib,
+                            full: false,
+                          ),
+                          icon: const Icon(Icons.volume_up_outlined),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                      child: Text(
+                        isApplePlatform
+                            ? l.adhanVolumeAppleNote
+                            : l.adhanVolumeNote,
+                        style: TextStyle(
+                          color: t.muted,
+                          fontSize: 12,
+                          height: 1.6,
+                        ),
+                      ),
+                    ),
                     SwitchListTile(
                       key: const ValueKey('prayer-dua'),
                       title: Text(l.prayerDuaAfter),

@@ -68,6 +68,15 @@ void main() {
       expect(s.offsetOf(PrayerKind.fajr), PrayerSettings.maxOffset);
     });
 
+    test('adhan volume: 70% by default, saved, clamped', () {
+      expect(const PrayerSettings().adhanVolume, 0.7);
+      final s = const PrayerSettings().copyWith(adhanVolume: 0.4);
+      expect(PrayerSettings.decode(s.encode()).adhanVolume, 0.4);
+      expect(const PrayerSettings().copyWith(adhanVolume: 3).adhanVolume, 1);
+      expect(PrayerSettings.decode('{"volume":-1}').adhanVolume, 0);
+      expect(PrayerSettings.decode('{}').adhanVolume, 0.7);
+    });
+
     test('clearing the method returns to the country default', () {
       final s = const PrayerSettings(
         place: cairo,
