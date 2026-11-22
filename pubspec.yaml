@@ -83,6 +83,7 @@ dependencies:
   adhan: ^2.0.0+1
   hijri: ^3.0.1
   tray_manager: ^0.5.2
+  flutter_compass: ^0.8.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

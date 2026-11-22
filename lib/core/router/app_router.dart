@@ -24,6 +24,7 @@ import '../../features/prayer/presentation/adhan_screen.dart';
 import '../../features/prayer/presentation/hijri_calendar_screen.dart';
 import '../../features/prayer/presentation/prayer_settings_screen.dart';
 import '../../features/prayer/presentation/prayer_times_screen.dart';
+import '../../features/prayer/presentation/qibla_screen.dart';
 import '../../features/search/search_screen.dart';
 import '../../features/khatma/presentation/journal_screen.dart';
 import '../../features/khatma/presentation/khatma_screen.dart';
@@ -336,6 +337,10 @@ final appRouterProvider = Provider<GoRouter>(
             path: 'settings',
             builder: (context, state) =>
                 const LookTheme(child: PrayerSettingsScreen()),
+          ),
+          GoRoute(
+            path: 'qibla',
+            builder: (context, state) => const LookTheme(child: QiblaScreen()),
           ),
           GoRoute(
             path: 'hijri',
