@@ -14,6 +14,7 @@ import '../../mushaf/presentation/widgets/illuminated_frame.dart'
 import '../data/adhan_catalog.dart';
 import '../data/adhan_downloads.dart';
 import '../prayer_providers.dart';
+import '../services/prayer_native.dart';
 import '../services/prayer_runtime.dart';
 
 /// The muezzin's photo once downloaded; the first letter of the name
@@ -70,9 +71,26 @@ class AdhanLibraryScreen extends ConsumerStatefulWidget {
 class _AdhanLibraryScreenState extends ConsumerState<AdhanLibraryScreen> {
   String? _previewing;
 
+  /// Read once: `ref` must not be used in [dispose] (the element is
+  /// already unmounting then).
+  late final PrayerNative _native = ref.read(prayerNativeProvider);
+
+  @override
+  void initState() {
+    super.initState();
+    _native.playing.addListener(_onPlaying);
+  }
+
+  void _onPlaying() {
+    if (!_native.playing.value && _previewing != null && mounted) {
+      setState(() => _previewing = null);
+    }
+  }
+
   @override
   void dispose() {
-    if (_previewing != null) unawaited(ref.read(prayerNativeProvider).stop());
+    _native.playing.removeListener(_onPlaying);
+    if (_previewing != null) unawaited(_native.stop());
     super.dispose();
   }
 
@@ -112,11 +130,6 @@ class _AdhanLibraryScreenState extends ConsumerState<AdhanLibraryScreen> {
               child: ListenableBuilder(
                 listenable: Listenable.merge([adhan.changes, native.playing]),
                 builder: (context, _) {
-                  if (!native.playing.value && _previewing != null) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (mounted) setState(() => _previewing = null);
-                    });
-                  }
                   return ListView(
                     padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
                     children: [
