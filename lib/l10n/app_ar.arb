@@ -4104,6 +4104,32 @@
   "occasionChannel": "تذكير المناسبات",
   "occasionRemindersTitle": "تذكير قبل المناسبات بيوم",
   "occasionRemindersNote": "إشعار في المساء قبل كل مناسبة",
+  "hifzRepeat": "كرر للحفظ",
+  "hifzRepeatTitle": "التكرار للحفظ",
+  "repeatFromVerse": "من الآية",
+  "repeatToVerse": "إلى الآية",
+  "repeatEachVerse": "تكرار كل آية",
+  "repeatWholeRange": "تكرار المقطع كاملًا",
+  "repeatPause": "سكوت بين التكرارات",
+  "repeatStart": "ابدأ التكرار",
+  "chooseRepeatRange": "اختر آيات للتكرار",
+  "repeatProgressVerse": "الآية {done}/{total} · التكرار {rangeDone}/{rangeTotal}",
+  "@repeatProgressVerse": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      },
+      "rangeDone": {
+        "type": "String"
+      },
+      "rangeTotal": {
+        "type": "String"
+      }
+    }
+  },
   "qiblaTitle": "القبلة",
   "qiblaOpen": "اتجاه القبلة",
   "qiblaFrom": "من {place}",

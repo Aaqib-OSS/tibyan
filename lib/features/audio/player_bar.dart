@@ -16,6 +16,7 @@ import '../content_extras/verse_audio_index.dart';
 import '../mushaf/mushaf_providers.dart';
 import '../mushaf/presentation/mushaf_screen.dart';
 import '../mushaf/presentation/widgets/illuminated_frame.dart';
+import 'ayah_repeat_sheet.dart';
 import 'recitation.dart';
 import 'reciter_avatar.dart';
 import 'verse_queue.dart';
@@ -60,7 +61,7 @@ class PlayerBar extends ConsumerWidget {
         : s.ayah == null
         ? l.surahWord(surah)
         : '${l.surahWord(surah)} | ${digits(s.ayah!)}';
-    final repeating = s.timed && s.repeat != 1;
+    final repeating = s.timed && (s.repeat != 1 || s.repeatsVerseInRange);
     // Verses go right to left in Arabic: "previous" points right there.
     final rtl = Directionality.of(context) == TextDirection.rtl;
 
@@ -130,6 +131,15 @@ class PlayerBar extends ConsumerWidget {
                               ? l.playerError
                               : clip != null
                               ? contentCredit(clip.source, lang)
+                              : repeating && s.repeatsVerseInRange
+                              ? l.repeatProgressVerse(
+                                  digits(s.verseRepeatDone + 1),
+                                  s.verseRepeat == 0
+                                      ? '∞'
+                                      : digits(s.verseRepeat),
+                                  digits(s.repeatDone + 1),
+                                  s.repeat == 0 ? '∞' : digits(s.repeat),
+                                )
                               : repeating
                               ? l.repeatProgress(
                                   digits(s.repeatDone + 1),
@@ -480,6 +490,21 @@ class PlayerOptions extends ConsumerWidget {
               ),
             ],
           ),
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+            ),
+            icon: const Icon(Icons.repeat),
+            label: Text(l.chooseRepeatRange),
+            onPressed: () => showAyahRepeatSheet(
+              context,
+              surah: s.surah,
+              from: s.rangeFrom ?? s.ayah ?? 1,
+              to: s.rangeTo ?? s.ayah,
+              reciterId: s.reciterId,
+            ),
+          ),
           const SizedBox(height: 12),
         ],
         if (!playing || s.timed) ...[
@@ -495,6 +520,22 @@ class PlayerOptions extends ConsumerWidget {
             c.setRepeat,
           ),
           const SizedBox(height: 12),
+          if (s.rangeTo != null) ...[
+            Semantics(
+              header: true,
+              child: Text(l.repeatEachVerse, style: title),
+            ),
+            const SizedBox(height: 6),
+            chips<int>(
+              [
+                for (final n in repeatCounts)
+                  (n, n == 0 ? l.repeatForever : l.repeatTimes(digits(n))),
+              ],
+              s.verseRepeat,
+              c.setVerseRepeat,
+            ),
+            const SizedBox(height: 12),
+          ],
           Semantics(header: true, child: Text(l.silenceLabel, style: title)),
           const SizedBox(height: 6),
           chips<int>(
