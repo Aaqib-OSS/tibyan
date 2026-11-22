@@ -5379,4 +5379,488 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cellularWait => 'Wait for Wi‑Fi';
+
+  @override
+  String get prayerTimesTitle => 'Prayer times';
+
+  @override
+  String get prayerTileNote => 'Times and the adhan';
+
+  @override
+  String get prayerFajr => 'Fajr';
+
+  @override
+  String get prayerShuruq => 'Sunrise';
+
+  @override
+  String get prayerDuha => 'Duha';
+
+  @override
+  String get prayerDhuhr => 'Dhuhr';
+
+  @override
+  String get prayerAsr => 'Asr';
+
+  @override
+  String get prayerMaghrib => 'Maghrib';
+
+  @override
+  String get prayerIsha => 'Isha';
+
+  @override
+  String get timeAm => 'AM';
+
+  @override
+  String get timePm => 'PM';
+
+  @override
+  String prayerAdhanNow(String prayer) {
+    return 'It is time for the $prayer adhan';
+  }
+
+  @override
+  String prayerTimeOf(String prayer) {
+    return 'It is $prayer time';
+  }
+
+  @override
+  String get prayerIftarNow => 'Time to break the fast: the Maghrib adhan';
+
+  @override
+  String prayerBefore(int count, String n, String prayer) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$n minutes to the $prayer adhan',
+      one: '1 minute to the $prayer adhan',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String prayerBeforeImsak(int count, String n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$n minutes to imsak',
+      one: '1 minute to imsak',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String prayerBeforeIftar(int count, String n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$n minutes to iftar',
+      one: '1 minute to iftar',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get prayerChannel => 'Adhan and prayer times';
+
+  @override
+  String get prayerReminderChannel => 'Reminders before prayers';
+
+  @override
+  String prayerIn(String time) {
+    return 'In $time';
+  }
+
+  @override
+  String prayerHoursMinutes(String h, String m) {
+    return '$h h $m min';
+  }
+
+  @override
+  String prayerMinutesOnly(String m) {
+    return '$m min';
+  }
+
+  @override
+  String get prayerChangePlace => 'Change';
+
+  @override
+  String get prayerEnableTitle => 'Turn on prayer times';
+
+  @override
+  String get prayerEnableBody =>
+      'Times are calculated on your device, offline, and you are alerted at each prayer.';
+
+  @override
+  String get prayerEnable => 'Turn on';
+
+  @override
+  String get prayerEnabledSwitch => 'Prayer alerts';
+
+  @override
+  String get prayerLocateMe => 'Find my location';
+
+  @override
+  String get prayerLocateNote =>
+      'Once, approximately. Your location is not tracked.';
+
+  @override
+  String get prayerLocateFailed =>
+      'Could not find your location. Choose your city from the list.';
+
+  @override
+  String get prayerChooseCity => 'Choose a city';
+
+  @override
+  String get prayerSearchCity => 'Search for a city';
+
+  @override
+  String get prayerNoCity => 'No city by that name';
+
+  @override
+  String prayerMethodLine(String method, String asr) {
+    return 'Method: $method · Asr: $asr';
+  }
+
+  @override
+  String get prayerSettingsTitle => 'Prayer time settings';
+
+  @override
+  String get prayerSectionPlace => 'Location';
+
+  @override
+  String get prayerSectionCalc => 'Calculation';
+
+  @override
+  String get prayerSectionAdhan => 'Adhan';
+
+  @override
+  String get prayerSectionExtra => 'More alerts';
+
+  @override
+  String get prayerSectionRamadan => 'Ramadan';
+
+  @override
+  String get prayerSectionDesktop => 'Desktop';
+
+  @override
+  String get prayerMethod => 'Calculation method';
+
+  @override
+  String prayerMethodAuto(String method) {
+    return 'By country ($method)';
+  }
+
+  @override
+  String get methodEgyptian => 'Egyptian General Authority of Survey';
+
+  @override
+  String get methodUmmAlQura => 'Umm al-Qura, Makkah';
+
+  @override
+  String get methodMwl => 'Muslim World League';
+
+  @override
+  String get methodKarachi => 'University of Islamic Sciences, Karachi';
+
+  @override
+  String get methodNorthAmerica => 'Islamic Society of North America';
+
+  @override
+  String get methodDubai => 'Dubai';
+
+  @override
+  String get methodKuwait => 'Kuwait';
+
+  @override
+  String get methodQatar => 'Qatar';
+
+  @override
+  String get methodSingapore => 'Singapore';
+
+  @override
+  String get methodTurkey => 'Diyanet, Turkey';
+
+  @override
+  String get methodMoonsighting => 'Moonsighting Committee';
+
+  @override
+  String get prayerAsrRule => 'Asr calculation';
+
+  @override
+  String get asrShafii => 'Majority (Shafi\'i)';
+
+  @override
+  String get asrHanafi => 'Hanafi';
+
+  @override
+  String get prayerHijriOffset => 'Hijri date adjustment';
+
+  @override
+  String get prayerHijriOffsetNote =>
+      'Umm al-Qura calendar, adjusted by a day or two to match your country';
+
+  @override
+  String prayerDays(String n) {
+    return '$n days';
+  }
+
+  @override
+  String get prayerSoundAtTime => 'Sound when the time comes';
+
+  @override
+  String get soundSilent => 'Silent notification';
+
+  @override
+  String get soundTone => 'Gentle tone';
+
+  @override
+  String get soundAdhan => 'Adhan';
+
+  @override
+  String get prayerMuezzin => 'Muezzin';
+
+  @override
+  String prayerMuezzinState(String name, String state) {
+    return '$name · $state';
+  }
+
+  @override
+  String get adhanDownloaded => 'Downloaded';
+
+  @override
+  String get adhanNotDownloaded => 'Not downloaded';
+
+  @override
+  String adhanDownloading(String percent) {
+    return 'Downloading… $percent';
+  }
+
+  @override
+  String get adhanPausedState => 'Paused';
+
+  @override
+  String get adhanFailedState => 'Download failed';
+
+  @override
+  String get adhanUntilDownloaded =>
+      'Until the adhan is downloaded, the gentle tone is used.';
+
+  @override
+  String get prayerReminderBefore => 'Reminder before the adhan';
+
+  @override
+  String get reminderNone => 'None';
+
+  @override
+  String reminderMinutes(String n) {
+    return '$n min';
+  }
+
+  @override
+  String get prayerOffset => 'Adjust the time by hand';
+
+  @override
+  String get prayerOffsetNote => 'To match your local mosque';
+
+  @override
+  String prayerOffsetValue(String value) {
+    return '$value min';
+  }
+
+  @override
+  String get minuteLess => 'One minute earlier';
+
+  @override
+  String get minuteMore => 'One minute later';
+
+  @override
+  String get prayerApplyAll => 'Apply to all prayers';
+
+  @override
+  String get prayerApplied => 'Applied to all prayers';
+
+  @override
+  String get adhanLength => 'Adhan length';
+
+  @override
+  String get adhanFull => 'The full adhan';
+
+  @override
+  String get adhanShort => 'Up to «Hayya ala as-salah»';
+
+  @override
+  String get adhanAppleNote =>
+      'On iPhone and Mac the notification plays only the opening of the adhan (30 seconds at most); tap it to hear the full adhan in the app.';
+
+  @override
+  String get prayerDuaAfter => 'Dua after the adhan';
+
+  @override
+  String get prayerDuaAfterNote =>
+      'By Sheikh al-Sha\'rawi, played when the adhan ends';
+
+  @override
+  String get prayerShuruqAlert => 'Sunrise alert';
+
+  @override
+  String get prayerDuhaAlert => 'Duha alert';
+
+  @override
+  String get prayerDuhaNote => 'Twenty minutes after sunrise';
+
+  @override
+  String get prayerSuhoorAlert => 'Reminder before imsak';
+
+  @override
+  String get prayerIftarAlert => 'Reminder before iftar';
+
+  @override
+  String get prayerRamadanNote =>
+      'These alerts work only in Ramadan, automatically';
+
+  @override
+  String get prayerTray => 'Stay in the system tray';
+
+  @override
+  String get prayerTrayNote =>
+      'Closing the window keeps the app running to play the full adhan';
+
+  @override
+  String get prayerLaunchAtLogin => 'Open at login';
+
+  @override
+  String get prayerDesktopAskTitle => 'The adhan on your computer';
+
+  @override
+  String get prayerDesktopAskBody =>
+      'To play the full adhan the app needs to keep running in the system tray. Keep it there and open it at login?';
+
+  @override
+  String get prayerDesktopYes => 'Yes';
+
+  @override
+  String get prayerDesktopNo => 'Not now';
+
+  @override
+  String get prayerTrayShow => 'Open Tibyan';
+
+  @override
+  String get prayerTrayQuit => 'Quit';
+
+  @override
+  String get prayerExactTitle => 'Allow alerts at the exact time';
+
+  @override
+  String get prayerExactBody =>
+      'For the adhan to start exactly on time, allow Tibyan to set alarms in the system settings. Without it you get a notification with the tone.';
+
+  @override
+  String get prayerExactOpen => 'Open settings';
+
+  @override
+  String get prayerNotifDenied =>
+      'Notifications are off for Tibyan in the system settings.';
+
+  @override
+  String get adhanLibraryTitle => 'Adhan library';
+
+  @override
+  String get adhanLibraryIntro =>
+      'Choose a muezzin and listen before downloading. Each adhan downloads once and then works offline.';
+
+  @override
+  String adhanLicense(String license) {
+    return 'Under a Creative Commons licence, $license';
+  }
+
+  @override
+  String get adhanSelected => 'Selected';
+
+  @override
+  String get adhanSelect => 'Choose';
+
+  @override
+  String adhanPreview(String name) {
+    return 'Preview $name';
+  }
+
+  @override
+  String adhanDownload(String name) {
+    return 'Download $name';
+  }
+
+  @override
+  String adhanDelete(String name) {
+    return 'Delete $name';
+  }
+
+  @override
+  String adhanDeleteTitle(String name) {
+    return 'Delete the adhan by $name?';
+  }
+
+  @override
+  String get adhanDeleteBody =>
+      'It is removed from your device. You can download it again.';
+
+  @override
+  String adhanByMuezzin(String name) {
+    return 'By Sheikh $name';
+  }
+
+  @override
+  String get adhanStop => 'Stop the adhan';
+
+  @override
+  String get adhanOpenTimes => 'Open prayer times';
+
+  @override
+  String get adhanNowLabel => 'It is now time for';
+
+  @override
+  String adhanOf(String prayer) {
+    return '$prayer adhan';
+  }
+
+  @override
+  String get downloadsSectionAdhan => 'Adhan';
+
+  @override
+  String get adhanSourcesTitle => 'Adhan library';
+
+  @override
+  String adhanSourcesBody(String license) {
+    return 'The adhan and dua recordings come from Tibyan\'s library, under a Creative Commons licence, $license.';
+  }
+
+  @override
+  String get citiesSourceTitle => 'City list';
+
+  @override
+  String get citiesSourceBody =>
+      'GeoNames (geonames.org), under a Creative Commons licence, CC BY 4.0.';
+
+  @override
+  String get adhanTest => 'Try the adhan';
+
+  @override
+  String get adhanTestBody => 'Adhan test';
+
+  @override
+  String get adhanTestScheduled =>
+      'The adhan starts in 10 seconds, as a real alert would.';
+
+  @override
+  String get adhanVolume => 'Adhan volume';
+
+  @override
+  String get adhanVolumeNote =>
+      'The adhan plays at this level even when the ringer or media is muted, then the device volume goes back to what it was. The volume keys lower it during the adhan.';
+
+  @override
+  String get adhanVolumeAppleNote =>
+      'On iPhone and Mac the alert follows the device volume; this level is for the adhan inside the app only.';
+
+  @override
+  String get adhanVolumePreview => 'Preview the volume';
 }

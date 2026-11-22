@@ -4,6 +4,8 @@ import '../../../core/ui/look_kit.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../prayer/data/adhan_catalog.dart';
+
 import '../../../core/theme/app_theme.dart';
 import '../../audio/recitation.dart';
 import '../../../l10n/app_localizations.dart';
@@ -230,6 +232,40 @@ class AboutMushafScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
+                  // «مواقيت الصلاة»: the adhan library and the city list.
+                  Card(
+                    child: ExpansionTile(
+                      title: Text(l.adhanSourcesTitle),
+                      subtitle: Text(
+                        adhanLicense,
+                        style: TextStyle(color: t.muted),
+                      ),
+                      expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                      childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      children: [
+                        Text(l.adhanSourcesBody(adhanLicense)),
+                        const SizedBox(height: 6),
+                        for (final m in muezzins)
+                          Text(
+                            '${m.name(Localizations.localeOf(context).languageCode == 'ar')} · ${l.adhanLicense(adhanLicense)}',
+                            style: TextStyle(color: t.muted),
+                          ),
+                        const SizedBox(height: 6),
+                        SelectableText(
+                          adhanLicenseUrl,
+                          style: TextStyle(color: t.accent),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Card(
+                    child: ExpansionTile(
+                      title: Text(l.citiesSourceTitle),
+                      expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                      childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      children: [Text(l.citiesSourceBody)],
+                    ),
+                  ),
                   Card(
                     child: ExpansionTile(
                       title: Text(l.digitsFontTitle),

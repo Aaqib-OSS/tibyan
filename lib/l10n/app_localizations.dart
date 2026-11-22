@@ -9121,6 +9121,810 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'انتظار Wi‑Fi'**
   String get cellularWait;
+
+  /// No description provided for @prayerTimesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مواقيت الصلاة'**
+  String get prayerTimesTitle;
+
+  /// No description provided for @prayerTileNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'المواقيت والأذان'**
+  String get prayerTileNote;
+
+  /// No description provided for @prayerFajr.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفجر'**
+  String get prayerFajr;
+
+  /// No description provided for @prayerShuruq.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشروق'**
+  String get prayerShuruq;
+
+  /// No description provided for @prayerDuha.
+  ///
+  /// In ar, this message translates to:
+  /// **'الضحى'**
+  String get prayerDuha;
+
+  /// No description provided for @prayerDhuhr.
+  ///
+  /// In ar, this message translates to:
+  /// **'الظهر'**
+  String get prayerDhuhr;
+
+  /// No description provided for @prayerAsr.
+  ///
+  /// In ar, this message translates to:
+  /// **'العصر'**
+  String get prayerAsr;
+
+  /// No description provided for @prayerMaghrib.
+  ///
+  /// In ar, this message translates to:
+  /// **'المغرب'**
+  String get prayerMaghrib;
+
+  /// No description provided for @prayerIsha.
+  ///
+  /// In ar, this message translates to:
+  /// **'العشاء'**
+  String get prayerIsha;
+
+  /// No description provided for @timeAm.
+  ///
+  /// In ar, this message translates to:
+  /// **'ص'**
+  String get timeAm;
+
+  /// No description provided for @timePm.
+  ///
+  /// In ar, this message translates to:
+  /// **'م'**
+  String get timePm;
+
+  /// No description provided for @prayerAdhanNow.
+  ///
+  /// In ar, this message translates to:
+  /// **'حان الآن موعد أذان {prayer}'**
+  String prayerAdhanNow(String prayer);
+
+  /// No description provided for @prayerTimeOf.
+  ///
+  /// In ar, this message translates to:
+  /// **'حان وقت {prayer}'**
+  String prayerTimeOf(String prayer);
+
+  /// No description provided for @prayerIftarNow.
+  ///
+  /// In ar, this message translates to:
+  /// **'حان موعد الإفطار: أذان المغرب'**
+  String get prayerIftarNow;
+
+  /// No description provided for @prayerBefore.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{بقيت دقيقة على أذان {prayer}} =2{بقيت دقيقتان على أذان {prayer}} few{بقي {n} دقائق على أذان {prayer}} other{بقي {n} دقيقة على أذان {prayer}}}'**
+  String prayerBefore(int count, String n, String prayer);
+
+  /// No description provided for @prayerBeforeImsak.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{بقيت دقيقة على الإمساك} =2{بقيت دقيقتان على الإمساك} few{بقي {n} دقائق على الإمساك} other{بقي {n} دقيقة على الإمساك}}'**
+  String prayerBeforeImsak(int count, String n);
+
+  /// No description provided for @prayerBeforeIftar.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{بقيت دقيقة على الإفطار} =2{بقيت دقيقتان على الإفطار} few{بقي {n} دقائق على الإفطار} other{بقي {n} دقيقة على الإفطار}}'**
+  String prayerBeforeIftar(int count, String n);
+
+  /// No description provided for @prayerChannel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأذان ومواقيت الصلاة'**
+  String get prayerChannel;
+
+  /// No description provided for @prayerReminderChannel.
+  ///
+  /// In ar, this message translates to:
+  /// **'التذكير قبل الصلاة'**
+  String get prayerReminderChannel;
+
+  /// No description provided for @prayerIn.
+  ///
+  /// In ar, this message translates to:
+  /// **'بعد {time}'**
+  String prayerIn(String time);
+
+  /// No description provided for @prayerHoursMinutes.
+  ///
+  /// In ar, this message translates to:
+  /// **'{h} ساعة و {m} دقيقة'**
+  String prayerHoursMinutes(String h, String m);
+
+  /// No description provided for @prayerMinutesOnly.
+  ///
+  /// In ar, this message translates to:
+  /// **'{m} دقيقة'**
+  String prayerMinutesOnly(String m);
+
+  /// No description provided for @prayerChangePlace.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغيير'**
+  String get prayerChangePlace;
+
+  /// No description provided for @prayerEnableTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'فعّل مواقيت الصلاة'**
+  String get prayerEnableTitle;
+
+  /// No description provided for @prayerEnableBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'تُحسب المواقيت على جهازك دون اتصال، ويصلك تنبيه عند كل صلاة.'**
+  String get prayerEnableBody;
+
+  /// No description provided for @prayerEnable.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفعيل'**
+  String get prayerEnable;
+
+  /// No description provided for @prayerEnabledSwitch.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنبيهات الصلاة'**
+  String get prayerEnabledSwitch;
+
+  /// No description provided for @prayerLocateMe.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدّد موقعي'**
+  String get prayerLocateMe;
+
+  /// No description provided for @prayerLocateNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرة واحدة، بدقة تقريبية، ولا يُتتبَّع موقعك.'**
+  String get prayerLocateNote;
+
+  /// No description provided for @prayerLocateFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تحديد الموقع. اختر مدينتك من القائمة.'**
+  String get prayerLocateFailed;
+
+  /// No description provided for @prayerChooseCity.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر المدينة'**
+  String get prayerChooseCity;
+
+  /// No description provided for @prayerSearchCity.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث عن مدينة'**
+  String get prayerSearchCity;
+
+  /// No description provided for @prayerNoCity.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد مدينة بهذا الاسم'**
+  String get prayerNoCity;
+
+  /// No description provided for @prayerMethodLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'طريقة الحساب: {method} · العصر: {asr}'**
+  String prayerMethodLine(String method, String asr);
+
+  /// No description provided for @prayerSettingsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعدادات المواقيت'**
+  String get prayerSettingsTitle;
+
+  /// No description provided for @prayerSectionPlace.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموقع'**
+  String get prayerSectionPlace;
+
+  /// No description provided for @prayerSectionCalc.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحساب'**
+  String get prayerSectionCalc;
+
+  /// No description provided for @prayerSectionAdhan.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأذان'**
+  String get prayerSectionAdhan;
+
+  /// No description provided for @prayerSectionExtra.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنبيهات إضافية'**
+  String get prayerSectionExtra;
+
+  /// No description provided for @prayerSectionRamadan.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمضان'**
+  String get prayerSectionRamadan;
+
+  /// No description provided for @prayerSectionDesktop.
+  ///
+  /// In ar, this message translates to:
+  /// **'سطح المكتب'**
+  String get prayerSectionDesktop;
+
+  /// No description provided for @prayerMethod.
+  ///
+  /// In ar, this message translates to:
+  /// **'طريقة الحساب'**
+  String get prayerMethod;
+
+  /// No description provided for @prayerMethodAuto.
+  ///
+  /// In ar, this message translates to:
+  /// **'تلقائي حسب البلد ({method})'**
+  String prayerMethodAuto(String method);
+
+  /// No description provided for @methodEgyptian.
+  ///
+  /// In ar, this message translates to:
+  /// **'الهيئة المصرية العامة للمساحة'**
+  String get methodEgyptian;
+
+  /// No description provided for @methodUmmAlQura.
+  ///
+  /// In ar, this message translates to:
+  /// **'أم القرى، مكة المكرمة'**
+  String get methodUmmAlQura;
+
+  /// No description provided for @methodMwl.
+  ///
+  /// In ar, this message translates to:
+  /// **'رابطة العالم الإسلامي'**
+  String get methodMwl;
+
+  /// No description provided for @methodKarachi.
+  ///
+  /// In ar, this message translates to:
+  /// **'جامعة العلوم الإسلامية، كراتشي'**
+  String get methodKarachi;
+
+  /// No description provided for @methodNorthAmerica.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجمعية الإسلامية لأمريكا الشمالية'**
+  String get methodNorthAmerica;
+
+  /// No description provided for @methodDubai.
+  ///
+  /// In ar, this message translates to:
+  /// **'دبي'**
+  String get methodDubai;
+
+  /// No description provided for @methodKuwait.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكويت'**
+  String get methodKuwait;
+
+  /// No description provided for @methodQatar.
+  ///
+  /// In ar, this message translates to:
+  /// **'قطر'**
+  String get methodQatar;
+
+  /// No description provided for @methodSingapore.
+  ///
+  /// In ar, this message translates to:
+  /// **'سنغافورة'**
+  String get methodSingapore;
+
+  /// No description provided for @methodTurkey.
+  ///
+  /// In ar, this message translates to:
+  /// **'رئاسة الشؤون الدينية التركية'**
+  String get methodTurkey;
+
+  /// No description provided for @methodMoonsighting.
+  ///
+  /// In ar, this message translates to:
+  /// **'لجنة رؤية الهلال'**
+  String get methodMoonsighting;
+
+  /// No description provided for @prayerAsrRule.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساب العصر'**
+  String get prayerAsrRule;
+
+  /// No description provided for @asrShafii.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجمهور (شافعي)'**
+  String get asrShafii;
+
+  /// No description provided for @asrHanafi.
+  ///
+  /// In ar, this message translates to:
+  /// **'حنفي'**
+  String get asrHanafi;
+
+  /// No description provided for @prayerHijriOffset.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل التاريخ الهجري'**
+  String get prayerHijriOffset;
+
+  /// No description provided for @prayerHijriOffsetNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقويم أم القرى، مع تعديل يوم أو يومين لمطابقة بلدك'**
+  String get prayerHijriOffsetNote;
+
+  /// No description provided for @prayerDays.
+  ///
+  /// In ar, this message translates to:
+  /// **'{n} يوم'**
+  String prayerDays(String n);
+
+  /// No description provided for @prayerSoundAtTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصوت عند دخول الوقت'**
+  String get prayerSoundAtTime;
+
+  /// No description provided for @soundSilent.
+  ///
+  /// In ar, this message translates to:
+  /// **'إشعار صامت'**
+  String get soundSilent;
+
+  /// No description provided for @soundTone.
+  ///
+  /// In ar, this message translates to:
+  /// **'نغمة هادئة'**
+  String get soundTone;
+
+  /// No description provided for @soundAdhan.
+  ///
+  /// In ar, this message translates to:
+  /// **'أذان'**
+  String get soundAdhan;
+
+  /// No description provided for @prayerMuezzin.
+  ///
+  /// In ar, this message translates to:
+  /// **'المؤذن'**
+  String get prayerMuezzin;
+
+  /// No description provided for @prayerMuezzinState.
+  ///
+  /// In ar, this message translates to:
+  /// **'{name} · {state}'**
+  String prayerMuezzinState(String name, String state);
+
+  /// No description provided for @adhanDownloaded.
+  ///
+  /// In ar, this message translates to:
+  /// **'محمّل'**
+  String get adhanDownloaded;
+
+  /// No description provided for @adhanNotDownloaded.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير محمّل'**
+  String get adhanNotDownloaded;
+
+  /// No description provided for @adhanDownloading.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري التحميل… {percent}'**
+  String adhanDownloading(String percent);
+
+  /// No description provided for @adhanPausedState.
+  ///
+  /// In ar, this message translates to:
+  /// **'متوقف مؤقتًا'**
+  String get adhanPausedState;
+
+  /// No description provided for @adhanFailedState.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر التحميل'**
+  String get adhanFailedState;
+
+  /// No description provided for @adhanUntilDownloaded.
+  ///
+  /// In ar, this message translates to:
+  /// **'حتى يكتمل تحميل الأذان تُستعمل النغمة الهادئة.'**
+  String get adhanUntilDownloaded;
+
+  /// No description provided for @prayerReminderBefore.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير قبل الأذان'**
+  String get prayerReminderBefore;
+
+  /// No description provided for @reminderNone.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدون'**
+  String get reminderNone;
+
+  /// No description provided for @reminderMinutes.
+  ///
+  /// In ar, this message translates to:
+  /// **'{n} د'**
+  String reminderMinutes(String n);
+
+  /// No description provided for @prayerOffset.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل الوقت يدويًا'**
+  String get prayerOffset;
+
+  /// No description provided for @prayerOffsetNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'لمطابقة مسجد الحي'**
+  String get prayerOffsetNote;
+
+  /// No description provided for @prayerOffsetValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'{value} د'**
+  String prayerOffsetValue(String value);
+
+  /// No description provided for @minuteLess.
+  ///
+  /// In ar, this message translates to:
+  /// **'دقيقة أقل'**
+  String get minuteLess;
+
+  /// No description provided for @minuteMore.
+  ///
+  /// In ar, this message translates to:
+  /// **'دقيقة أكثر'**
+  String get minuteMore;
+
+  /// No description provided for @prayerApplyAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'تطبيق على كل الصلوات'**
+  String get prayerApplyAll;
+
+  /// No description provided for @prayerApplied.
+  ///
+  /// In ar, this message translates to:
+  /// **'طُبّق على كل الصلوات'**
+  String get prayerApplied;
+
+  /// No description provided for @adhanLength.
+  ///
+  /// In ar, this message translates to:
+  /// **'طول الأذان'**
+  String get adhanLength;
+
+  /// No description provided for @adhanFull.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأذان كاملًا'**
+  String get adhanFull;
+
+  /// No description provided for @adhanShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'حتى «حي على الصلاة»'**
+  String get adhanShort;
+
+  /// No description provided for @adhanAppleNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'في آيفون وماك يُسمع في الإشعار مطلع الأذان فقط (٣٠ ثانية بحد أقصى)، والضغط على الإشعار يكمل الأذان في التطبيق.'**
+  String get adhanAppleNote;
+
+  /// No description provided for @prayerDuaAfter.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدعاء بعد الأذان'**
+  String get prayerDuaAfter;
+
+  /// No description provided for @prayerDuaAfterNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'بصوت الشيخ الشعراوي، يُشغَّل بعد انتهاء الأذان'**
+  String get prayerDuaAfterNote;
+
+  /// No description provided for @prayerShuruqAlert.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنبيه الشروق'**
+  String get prayerShuruqAlert;
+
+  /// No description provided for @prayerDuhaAlert.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنبيه الضحى'**
+  String get prayerDuhaAlert;
+
+  /// No description provided for @prayerDuhaNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'بعد الشروق بعشرين دقيقة'**
+  String get prayerDuhaNote;
+
+  /// No description provided for @prayerSuhoorAlert.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير قبل الإمساك'**
+  String get prayerSuhoorAlert;
+
+  /// No description provided for @prayerIftarAlert.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير قبل الإفطار'**
+  String get prayerIftarAlert;
+
+  /// No description provided for @prayerRamadanNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعمل هذه التنبيهات تلقائيًا في رمضان فقط'**
+  String get prayerRamadanNote;
+
+  /// No description provided for @prayerTray.
+  ///
+  /// In ar, this message translates to:
+  /// **'البقاء في شريط النظام'**
+  String get prayerTray;
+
+  /// No description provided for @prayerTrayNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'إغلاق النافذة يبقي التطبيق ليشغّل الأذان كاملًا'**
+  String get prayerTrayNote;
+
+  /// No description provided for @prayerLaunchAtLogin.
+  ///
+  /// In ar, this message translates to:
+  /// **'التشغيل عند بدء الجهاز'**
+  String get prayerLaunchAtLogin;
+
+  /// No description provided for @prayerDesktopAskTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأذان على الكمبيوتر'**
+  String get prayerDesktopAskTitle;
+
+  /// No description provided for @prayerDesktopAskBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'ليُسمع الأذان كاملًا يلزم أن يبقى التطبيق يعمل في شريط النظام. هل تريد إبقاءه هناك وتشغيله عند بدء الجهاز؟'**
+  String get prayerDesktopAskBody;
+
+  /// No description provided for @prayerDesktopYes.
+  ///
+  /// In ar, this message translates to:
+  /// **'نعم'**
+  String get prayerDesktopYes;
+
+  /// No description provided for @prayerDesktopNo.
+  ///
+  /// In ar, this message translates to:
+  /// **'ليس الآن'**
+  String get prayerDesktopNo;
+
+  /// No description provided for @prayerTrayShow.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح تبيان'**
+  String get prayerTrayShow;
+
+  /// No description provided for @prayerTrayQuit.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنهاء'**
+  String get prayerTrayQuit;
+
+  /// No description provided for @prayerExactTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'السماح بالتنبيه في الوقت تمامًا'**
+  String get prayerExactTitle;
+
+  /// No description provided for @prayerExactBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'ليبدأ الأذان في وقته تمامًا، اسمح لتبيان بضبط المنبّهات من إعدادات النظام. بدونه يصلك إشعار بالنغمة.'**
+  String get prayerExactBody;
+
+  /// No description provided for @prayerExactOpen.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح الإعدادات'**
+  String get prayerExactOpen;
+
+  /// No description provided for @prayerNotifDenied.
+  ///
+  /// In ar, this message translates to:
+  /// **'التنبيهات متوقفة لتبيان من إعدادات النظام.'**
+  String get prayerNotifDenied;
+
+  /// No description provided for @adhanLibraryTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكتبة الأذان'**
+  String get adhanLibraryTitle;
+
+  /// No description provided for @adhanLibraryIntro.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر المؤذن، واستمع للمعاينة قبل التحميل. يُحمَّل كل أذان مرة واحدة ويعمل بعدها دون اتصال.'**
+  String get adhanLibraryIntro;
+
+  /// No description provided for @adhanLicense.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحت رخصة المشاع الإبداعي {license}'**
+  String adhanLicense(String license);
+
+  /// No description provided for @adhanSelected.
+  ///
+  /// In ar, this message translates to:
+  /// **'المختار'**
+  String get adhanSelected;
+
+  /// No description provided for @adhanSelect.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيار'**
+  String get adhanSelect;
+
+  /// No description provided for @adhanPreview.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاينة {name}'**
+  String adhanPreview(String name);
+
+  /// No description provided for @adhanDownload.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحميل {name}'**
+  String adhanDownload(String name);
+
+  /// No description provided for @adhanDelete.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف {name}'**
+  String adhanDelete(String name);
+
+  /// No description provided for @adhanDeleteTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف أذان {name}؟'**
+  String adhanDeleteTitle(String name);
+
+  /// No description provided for @adhanDeleteBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'يُحذف من جهازك، ويمكنك تحميله مرة أخرى.'**
+  String get adhanDeleteBody;
+
+  /// No description provided for @adhanByMuezzin.
+  ///
+  /// In ar, this message translates to:
+  /// **'بصوت الشيخ {name}'**
+  String adhanByMuezzin(String name);
+
+  /// No description provided for @adhanStop.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيقاف الأذان'**
+  String get adhanStop;
+
+  /// No description provided for @adhanOpenTimes.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح المواقيت'**
+  String get adhanOpenTimes;
+
+  /// No description provided for @adhanNowLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'حان الآن موعد'**
+  String get adhanNowLabel;
+
+  /// No description provided for @adhanOf.
+  ///
+  /// In ar, this message translates to:
+  /// **'أذان {prayer}'**
+  String adhanOf(String prayer);
+
+  /// No description provided for @downloadsSectionAdhan.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأذان'**
+  String get downloadsSectionAdhan;
+
+  /// No description provided for @adhanSourcesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكتبة الأذان'**
+  String get adhanSourcesTitle;
+
+  /// No description provided for @adhanSourcesBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيلات الأذان والدعاء من مكتبة تبيان، تحت رخصة المشاع الإبداعي {license}.'**
+  String adhanSourcesBody(String license);
+
+  /// No description provided for @citiesSourceTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'قائمة المدن'**
+  String get citiesSourceTitle;
+
+  /// No description provided for @citiesSourceBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'GeoNames (geonames.org)، تحت رخصة المشاع الإبداعي CC BY 4.0.'**
+  String get citiesSourceBody;
+
+  /// No description provided for @adhanTest.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرّب الأذان'**
+  String get adhanTest;
+
+  /// No description provided for @adhanTestBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجربة الأذان'**
+  String get adhanTestBody;
+
+  /// No description provided for @adhanTestScheduled.
+  ///
+  /// In ar, this message translates to:
+  /// **'يبدأ الأذان بعد ١٠ ثوانٍ، كما في التنبيه الحقيقي.'**
+  String get adhanTestScheduled;
+
+  /// No description provided for @adhanVolume.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستوى صوت الأذان'**
+  String get adhanVolume;
+
+  /// No description provided for @adhanVolumeNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'يُسمع الأذان بهذا المستوى ولو كان الجرس أو الوسائط صامتة، ثم يعود صوت الجهاز كما كان. أزرار الصوت تخفضه أثناء الأذان.'**
+  String get adhanVolumeNote;
+
+  /// No description provided for @adhanVolumeAppleNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'في آيفون وماك يتبع صوت التنبيه مستوى صوت الجهاز؛ هذا المستوى للأذان داخل التطبيق فقط.'**
+  String get adhanVolumeAppleNote;
+
+  /// No description provided for @adhanVolumePreview.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاينة المستوى'**
+  String get adhanVolumePreview;
 }
 
 class _AppLocalizationsDelegate

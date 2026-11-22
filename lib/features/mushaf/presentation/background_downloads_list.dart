@@ -77,10 +77,14 @@ class DownloadRow extends StatelessWidget {
     required this.fraction,
     required this.actions,
     this.done = false,
+    this.leading,
   });
 
   /// Finished: no progress bar.
   final bool done;
+
+  /// Before the title (the muezzin's photo in the adhan library).
+  final Widget? leading;
 
   final String title;
   final String status;
@@ -97,6 +101,10 @@ class DownloadRow extends StatelessWidget {
           padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 8, 12),
           child: Row(
             children: [
+              if (leading != null) ...[
+                ExcludeSemantics(child: leading!),
+                const SizedBox(width: 12),
+              ],
               Expanded(
                 child: Semantics(
                   liveRegion: true,

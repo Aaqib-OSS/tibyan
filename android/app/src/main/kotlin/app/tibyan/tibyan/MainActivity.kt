@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioManager
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
@@ -21,10 +22,13 @@ import java.io.File
 class MainActivity : AudioServiceActivity() {
     private var pendingSave: Pair<List<String>, MethodChannel.Result>? = null
     private var tasbih: TasbihNative? = null
+    private var prayer: PrayerNative? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         tasbih = TasbihNative(applicationContext, flutterEngine.dartExecutor.binaryMessenger)
+        // «مواقيت الصلاة»: one coarse position, the adhan and its alarms.
+        prayer = PrayerNative(this, flutterEngine.dartExecutor.binaryMessenger)
         // «الساعة»: today's portion and the dhikr to the Wear OS app; its
         // counts are announced to the misbaha while the app runs.
         WatchBridge(applicationContext, flutterEngine.dartExecutor.binaryMessenger)
@@ -90,7 +94,27 @@ class MainActivity : AudioServiceActivity() {
 
     // «المسبحة»: while it asks, the volume buttons count and the volume
     // stays as it is.
+    // While the adhan sounds, the volume keys change the alarm stream it
+    // plays on (also over the lock screen), before anything else.
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        val dir = AlarmVolume.keyDirection(event.keyCode)
+        if (dir != 0 && AdhanService.playing) {
+            volumeControlStream = AudioManager.STREAM_ALARM
+            if (event.action == KeyEvent.ACTION_DOWN) {
+                val am = getSystemService(AUDIO_SERVICE) as AudioManager
+                try {
+                    am.adjustStreamVolume(
+                        AudioManager.STREAM_ALARM,
+                        if (dir > 0) AudioManager.ADJUST_RAISE else AudioManager.ADJUST_LOWER,
+                        AudioManager.FLAG_SHOW_UI,
+                    )
+                } catch (_: SecurityException) {
+                    // Do-Not-Disturb owns the alarm stream.
+                }
+            }
+            return true
+        }
+        if (!AdhanService.playing) volumeControlStream = AudioManager.USE_DEFAULT_STREAM_TYPE
         val t = tasbih
         if (t != null && t.volumeKeys &&
             (event.keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
@@ -115,6 +139,9 @@ class MainActivity : AudioServiceActivity() {
         grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        val granted = grantResults.isNotEmpty() &&
+            grantResults[0] == PackageManager.PERMISSION_GRANTED
+        if (prayer?.onPermissionResult(requestCode, granted) == true) return
         if (requestCode != SAVE_REQUEST) return
         val (paths, result) = pendingSave ?: return
         pendingSave = null
@@ -168,7 +195,49 @@ class MainActivity : AudioServiceActivity() {
         return true
     }
 
-    private companion object {
-        const val SAVE_REQUEST = 7301
+    /** Opened over the lock screen by the full-screen adhan. */
+    var overLockScreen = false
+        private set
+
+    override fun onCreate(savedInstanceState: android.os.Bundle?) {
+        showOverLockScreen(intent)
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        showOverLockScreen(intent)
+        super.onNewIntent(intent)
+    }
+
+    private fun showOverLockScreen(i: Intent?) {
+        if (i?.getBooleanExtra(EXTRA_LOCK_SCREEN, false) != true) return
+        overLockScreen = true
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
+        }
+    }
+
+    /** The adhan screen closed: back behind the lock screen. */
+    /** [open]: the reader wants the app (asks to unlock); else back
+     *  behind the lock screen. */
+    fun leaveLockScreen(open: Boolean) {
+        if (!overLockScreen) return
+        overLockScreen = false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(false)
+            setTurnScreenOn(false)
+        }
+        if (open && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val km = getSystemService(KEYGUARD_SERVICE) as android.app.KeyguardManager
+            km.requestDismissKeyguard(this, null)
+        } else if (!open) {
+            moveTaskToBack(true)
+        }
+    }
+
+    companion object {
+        private const val SAVE_REQUEST = 7301
+        const val EXTRA_LOCK_SCREEN = "app.tibyan.ADHAN_LOCK_SCREEN"
     }
 }

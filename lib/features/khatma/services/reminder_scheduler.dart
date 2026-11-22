@@ -146,6 +146,13 @@ class LocalReminderScheduler implements ReminderScheduler {
     }
   }
 
+  /// The plugin, initialised once: the prayer alerts share it (one
+  /// initialisation keeps one tap handler for every notification).
+  Future<FlutterLocalNotificationsPlugin> plugin() async {
+    await _init();
+    return _plugin;
+  }
+
   Future<void> _init() => _ready ??= () async {
     tzdata.initializeTimeZones();
     try {
@@ -167,6 +174,11 @@ class LocalReminderScheduler implements ReminderScheduler {
           requestAlertPermission: false,
           requestBadgePermission: false,
           requestSoundPermission: false,
+        ),
+        windows: WindowsInitializationSettings(
+          appName: 'Tibyan',
+          appUserModelId: 'AhmedHelal.Tibyan',
+          guid: '5b0f3c1e-8a4d-4c55-9a7e-2f6c1d9e4b21',
         ),
       ),
       onDidReceiveNotificationResponse: (r) {

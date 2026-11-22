@@ -2,3 +2,7 @@
    language; ar.lproj keeps «تبيان». */
 "CFBundleName" = "Tibyan";
 "CFBundleDisplayName" = "Tibyan";
+
+/* «مواقيت الصلاة»: «حدّد موقعي». */
+"NSLocationUsageDescription" = "Tibyan uses your approximate location once, to calculate prayer times for your city. It is not tracked or shared.";
+"NSLocationWhenInUseUsageDescription" = "Tibyan uses your approximate location once, to calculate prayer times for your city. It is not tracked or shared.";
