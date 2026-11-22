@@ -5967,16 +5967,39 @@ class AppLocalizationsEn extends AppLocalizations {
       'A notification in the evening before each occasion';
 
   @override
-  String get searchModeRoot => 'By root';
+  String get hifzRepeat => 'Repeat to memorize';
 
   @override
-  String get searchRootHint => 'Type a root, such as رحم or ر ح م';
+  String get hifzRepeatTitle => 'Repeat for memorizing';
 
   @override
-  String searchRootFound(String root) {
-    return 'Root «$root»';
+  String get repeatFromVerse => 'From verse';
+
+  @override
+  String get repeatToVerse => 'To verse';
+
+  @override
+  String get repeatEachVerse => 'Repeat each verse';
+
+  @override
+  String get repeatWholeRange => 'Repeat the whole passage';
+
+  @override
+  String get repeatPause => 'Pause between repeats';
+
+  @override
+  String get repeatStart => 'Start repeating';
+
+  @override
+  String get chooseRepeatRange => 'Choose verses to repeat';
+
+  @override
+  String repeatProgressVerse(
+    String done,
+    String total,
+    String rangeDone,
+    String rangeTotal,
+  ) {
+    return 'Verse $done/$total · Repeat $rangeDone/$rangeTotal';
   }
-
-  @override
-  String get searchRootNone => 'No root with these letters';
 }

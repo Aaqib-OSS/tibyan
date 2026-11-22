@@ -10100,29 +10100,70 @@ abstract class AppLocalizations {
   /// **'إشعار في المساء قبل كل مناسبة'**
   String get occasionRemindersNote;
 
-  /// No description provided for @searchModeRoot.
+  /// No description provided for @hifzRepeat.
   ///
   /// In ar, this message translates to:
-  /// **'بالجذر'**
-  String get searchModeRoot;
+  /// **'كرر للحفظ'**
+  String get hifzRepeat;
 
-  /// No description provided for @searchRootHint.
+  /// No description provided for @hifzRepeatTitle.
   ///
   /// In ar, this message translates to:
-  /// **'اكتب جذرًا، مثل «رحم» أو «ر ح م»'**
-  String get searchRootHint;
+  /// **'التكرار للحفظ'**
+  String get hifzRepeatTitle;
 
-  /// No description provided for @searchRootFound.
+  /// No description provided for @repeatFromVerse.
   ///
   /// In ar, this message translates to:
-  /// **'الجذر «{root}»'**
-  String searchRootFound(String root);
+  /// **'من الآية'**
+  String get repeatFromVerse;
 
-  /// No description provided for @searchRootNone.
+  /// No description provided for @repeatToVerse.
   ///
   /// In ar, this message translates to:
-  /// **'لا جذر بهذه الحروف'**
-  String get searchRootNone;
+  /// **'إلى الآية'**
+  String get repeatToVerse;
+
+  /// No description provided for @repeatEachVerse.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكرار كل آية'**
+  String get repeatEachVerse;
+
+  /// No description provided for @repeatWholeRange.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكرار المقطع كاملًا'**
+  String get repeatWholeRange;
+
+  /// No description provided for @repeatPause.
+  ///
+  /// In ar, this message translates to:
+  /// **'سكوت بين التكرارات'**
+  String get repeatPause;
+
+  /// No description provided for @repeatStart.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابدأ التكرار'**
+  String get repeatStart;
+
+  /// No description provided for @chooseRepeatRange.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر آيات للتكرار'**
+  String get chooseRepeatRange;
+
+  /// No description provided for @repeatProgressVerse.
+  ///
+  /// In ar, this message translates to:
+  /// **'الآية {done}/{total} · التكرار {rangeDone}/{rangeTotal}'**
+  String repeatProgressVerse(
+    String done,
+    String total,
+    String rangeDone,
+    String rangeTotal,
+  );
 }
 
 class _AppLocalizationsDelegate
