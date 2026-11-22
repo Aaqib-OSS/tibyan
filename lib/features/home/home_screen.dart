@@ -852,13 +852,6 @@ class _ElderlyHome extends ConsumerWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                _BigAction(
-                  icon: Icons.mosque_outlined,
-                  label: l.prayerTimesTitle,
-                  detail: l.prayerTileNote,
-                  onTap: () => context.push(prayerTimesLocation),
-                ),
                 // The khatma's portion for today (plan 6: elderly mode's
                 // home has its own card): a tap opens the portion.
                 if (khatma != null && !khatma.complete) ...[
