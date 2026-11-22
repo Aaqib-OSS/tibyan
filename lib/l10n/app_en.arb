@@ -2161,5 +2161,52 @@
   "adhanVolume": "Adhan volume",
   "adhanVolumeNote": "The adhan plays at this level even when the ringer or media is muted, then the device volume goes back to what it was. The volume keys lower it during the adhan.",
   "adhanVolumeAppleNote": "On iPhone and Mac the alert follows the device volume; this level is for the adhan inside the app only.",
-  "adhanVolumePreview": "Preview the volume"
+  "adhanVolumePreview": "Preview the volume",
+  "hijriCalendarTitle": "Hijri calendar",
+  "hijriOpenCalendar": "Open the Hijri calendar",
+  "hijriPrevMonth": "Previous month",
+  "hijriNextMonth": "Next month",
+  "hijriBackToToday": "Today",
+  "hijriTodayLabel": "Today",
+  "hijriAdjustment": "Date adjustment: {days} days",
+  "@hijriAdjustment": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "occasionsTitle": "Occasions",
+  "occasionNext": "Next occasion",
+  "occasionNewYear": "Islamic New Year",
+  "occasionAshura": "Ashura",
+  "occasionRamadanStart": "First of Ramadan",
+  "occasionLastTen": "The last ten days of Ramadan",
+  "occasionEidFitr": "Eid al-Fitr",
+  "occasionArafah": "Day of Arafah",
+  "occasionEidAdha": "Eid al-Adha",
+  "occasionTashreeq": "Days of Tashreeq",
+  "occasionIn": "{count, plural, =0{Today} =1{Tomorrow} other{In {n} days}}",
+  "@occasionIn": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "occasionOngoing": "Under way",
+  "occasionTomorrow": "Tomorrow: {name}",
+  "@occasionTomorrow": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "occasionChannel": "Occasion reminders",
+  "occasionRemindersTitle": "Remind me the day before each occasion",
+  "occasionRemindersNote": "A notification in the evening before each occasion"
 }

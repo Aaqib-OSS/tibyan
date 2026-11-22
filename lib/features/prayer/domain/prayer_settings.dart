@@ -139,6 +139,7 @@ class PrayerSettings {
     this.iftarAlert = true,
     this.iftarMinutes = 15,
     this.hijriOffset = 0,
+    this.occasionReminders = false,
     this.muezzin = defaultMuezzin,
     this.length = AdhanLength.full,
     this.duaAfter = false,
@@ -184,6 +185,9 @@ class PrayerSettings {
 
   /// Days added to the Umm al-Qura date (−2 … 2).
   final int hijriOffset;
+
+  /// A reminder the day before each Hijri occasion (off until chosen).
+  final bool occasionReminders;
   final String muezzin;
   final AdhanLength length;
 
@@ -226,6 +230,7 @@ class PrayerSettings {
     bool? iftarAlert,
     int? iftarMinutes,
     int? hijriOffset,
+    bool? occasionReminders,
     String? muezzin,
     AdhanLength? length,
     bool? duaAfter,
@@ -248,6 +253,7 @@ class PrayerSettings {
     iftarAlert: iftarAlert ?? this.iftarAlert,
     iftarMinutes: iftarMinutes ?? this.iftarMinutes,
     hijriOffset: (hijriOffset ?? this.hijriOffset).clamp(-2, 2),
+    occasionReminders: occasionReminders ?? this.occasionReminders,
     muezzin: muezzin ?? this.muezzin,
     length: length ?? this.length,
     duaAfter: duaAfter ?? this.duaAfter,
@@ -272,6 +278,7 @@ class PrayerSettings {
     'iftar': iftarAlert,
     'iftarMin': iftarMinutes,
     'hijri': hijriOffset,
+    'occasions': occasionReminders,
     'muezzin': muezzin,
     'length': length.name,
     'dua': duaAfter,
@@ -327,6 +334,7 @@ class PrayerSettings {
         iftarAlert: j['iftar'] as bool? ?? d.iftarAlert,
         iftarMinutes: _int(j['iftarMin']) ?? d.iftarMinutes,
         hijriOffset: (_int(j['hijri']) ?? 0).clamp(-2, 2),
+        occasionReminders: j['occasions'] as bool? ?? d.occasionReminders,
         muezzin: j['muezzin'] as String? ?? d.muezzin,
         length: _enum(AdhanLength.values, j['length']) ?? d.length,
         duaAfter: j['dua'] as bool? ?? d.duaAfter,
