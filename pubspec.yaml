@@ -80,7 +80,9 @@ dependencies:
   window_manager: ^0.5.2
   google_sign_in: ^7.2.0
   in_app_review: ^2.0.12
-
+  adhan: ^2.0.0+1
+  hijri: ^3.0.1
+  tray_manager: ^0.5.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
