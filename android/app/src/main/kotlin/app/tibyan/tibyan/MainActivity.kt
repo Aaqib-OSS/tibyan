@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioManager
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
@@ -93,7 +94,27 @@ class MainActivity : AudioServiceActivity() {
 
     // «المسبحة»: while it asks, the volume buttons count and the volume
     // stays as it is.
+    // While the adhan sounds, the volume keys change the alarm stream it
+    // plays on (also over the lock screen), before anything else.
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        val dir = AlarmVolume.keyDirection(event.keyCode)
+        if (dir != 0 && AdhanService.playing) {
+            volumeControlStream = AudioManager.STREAM_ALARM
+            if (event.action == KeyEvent.ACTION_DOWN) {
+                val am = getSystemService(AUDIO_SERVICE) as AudioManager
+                try {
+                    am.adjustStreamVolume(
+                        AudioManager.STREAM_ALARM,
+                        if (dir > 0) AudioManager.ADJUST_RAISE else AudioManager.ADJUST_LOWER,
+                        AudioManager.FLAG_SHOW_UI,
+                    )
+                } catch (_: SecurityException) {
+                    // Do-Not-Disturb owns the alarm stream.
+                }
+            }
+            return true
+        }
+        if (!AdhanService.playing) volumeControlStream = AudioManager.USE_DEFAULT_STREAM_TYPE
         val t = tasbih
         if (t != null && t.volumeKeys &&
             (event.keyCode == KeyEvent.KEYCODE_VOLUME_UP ||

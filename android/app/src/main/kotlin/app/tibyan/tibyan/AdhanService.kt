@@ -86,6 +86,7 @@ class AdhanService : Service() {
         startSession(title)
         listenScreenOff()
         playCurrent()
+        playing = true
         onPlaying?.invoke(true)
         return START_NOT_STICKY
     }
@@ -173,6 +174,15 @@ class AdhanService : Service() {
     private fun startSession(title: String) {
         session?.release()
         session = MediaSession(this, "TibyanAdhan").apply {
+            // Local playback on the alarm stream: the volume keys change
+            // the adhan's level even with the screen locked or another
+            // app in front.
+            setPlaybackToLocal(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build(),
+            )
             setPlaybackState(
                 PlaybackState.Builder()
                     .setActions(PlaybackState.ACTION_STOP)
@@ -293,6 +303,7 @@ class AdhanService : Service() {
         screenOff = null
         session?.release()
         session = null
+        playing = false
         onPlaying?.invoke(false)
         onFinished?.invoke()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -305,6 +316,7 @@ class AdhanService : Service() {
     }
 
     override fun onDestroy() {
+        playing = false
         releasePlayer()
         alarmVolume.restore()
         screenOff?.let {
@@ -323,6 +335,10 @@ class AdhanService : Service() {
         const val ACTION_STOP = "app.tibyan.ADHAN_STOP"
         private const val TAG = "TibyanAdhan"
         private const val TONE = "tone:"
+
+        /** Whether the adhan sounds now (the activity's volume keys). */
+        @Volatile
+        var playing = false
 
         /** Told when the adhan starts and stops (the app's screen). */
         var onPlaying: ((Boolean) -> Unit)? = null

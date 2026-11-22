@@ -23,6 +23,7 @@ class AlarmVolumeTest {
         val v = AlarmVolume(s)
         v.apply(1.0)
         v.apply(0.5) // a second file (the dua): the original stays saved
+        assertEquals(10, s.level) // and the level is not set again
         v.restore()
         assertEquals(3, s.level)
         s.level = 6
@@ -39,6 +40,25 @@ class AlarmVolumeTest {
         assertEquals(2, s.level)
         v.restore()
         assertEquals(4, s.level)
+    }
+
+    @Test
+    fun theNextFileDoesNotUndoAVolumeKey() {
+        val s = FakeStream(max = 7, level = 4)
+        val v = AlarmVolume(s)
+        v.apply(1.0)
+        s.level = 3 // volume down during the adhan
+        v.apply(1.0) // the dua starts
+        assertEquals(3, s.level)
+        v.restore()
+        assertEquals(4, s.level)
+    }
+
+    @Test
+    fun volumeKeysMapToDirections() {
+        assertEquals(1, AlarmVolume.keyDirection(24))
+        assertEquals(-1, AlarmVolume.keyDirection(25))
+        assertEquals(0, AlarmVolume.keyDirection(4))
     }
 
     @Test

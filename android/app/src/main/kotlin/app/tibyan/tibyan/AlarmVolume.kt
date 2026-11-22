@@ -17,9 +17,14 @@ class AlarmVolume(private val stream: Stream) {
 
     private var saved: Int? = null
 
-    /** Saves the current level and sets [fraction] (0…1) of the maximum. */
+    /**
+     * Saves the current level and sets [fraction] (0…1) of the maximum,
+     * once per adhan: a later file in the queue (the dua) does not set it
+     * again, so a volume key pressed meanwhile is kept.
+     */
     fun apply(fraction: Double) {
-        if (saved == null) saved = stream.level
+        if (saved != null) return
+        saved = stream.level
         stream.level = indexFor(fraction, stream.max)
     }
 
@@ -31,6 +36,20 @@ class AlarmVolume(private val stream: Stream) {
     }
 
     companion object {
+        /**
+         * What a key does while the adhan plays: +1 (raise), -1 (lower) or
+         * 0 (not a volume key).
+         */
+        fun keyDirection(keyCode: Int): Int = when (keyCode) {
+            KEYCODE_VOLUME_UP -> 1
+            KEYCODE_VOLUME_DOWN -> -1
+            else -> 0
+        }
+
+        // android.view.KeyEvent's codes (kept here for plain JVM tests).
+        const val KEYCODE_VOLUME_UP = 24
+        const val KEYCODE_VOLUME_DOWN = 25
+
         /** The stream index for [fraction]: at least 1, never above [max]. */
         fun indexFor(fraction: Double, max: Int): Int {
             if (max <= 0) return 0
