@@ -99,11 +99,15 @@ class AdhanDownloads implements DownloadHandler {
     groupNotificationId: kGroup,
   );
 
-  List<String> filesOf(String slug) =>
-      slug == duaSlug ? duaFilesFor(apple: apple) : adhanFilesFor(apple: apple);
+  List<String> filesOf(String slug) => switch (slug) {
+    duaSlug => duaFilesFor(apple: apple),
+    salawatSlug => salawatFilesFor(apple: apple),
+    _ => adhanFilesFor(apple: apple),
+  };
 
-  Future<Directory> dirOf(String slug) async =>
-      Directory(p.join((await _supportDir()).path, 'adhan', slug));
+  Future<Directory> dirOf(String slug) async => Directory(
+    p.join((await _supportDir()).path, 'adhan', adhanFolderOf(slug)),
+  );
 
   Future<File> fileOf(String slug, String name) async =>
       File(p.join((await dirOf(slug)).path, name));
@@ -127,7 +131,7 @@ class AdhanDownloads implements DownloadHandler {
   /// change); every file must be present.
   Future<void> refresh() async {
     _installed.clear();
-    for (final slug in [...muezzins.map((m) => m.slug), duaSlug]) {
+    for (final slug in [...muezzins.map((m) => m.slug), duaSlug, salawatSlug]) {
       var bytes = 0;
       var all = true;
       for (final f in filesOf(slug)) {
@@ -194,7 +198,7 @@ class AdhanDownloads implements DownloadHandler {
       return false;
     }
     for (final f in filesOf(slug)) {
-      final hash = sums['$slug/$f'];
+      final hash = sums['${adhanFolderOf(slug)}/$f'];
       if (hash == null) continue;
       final target = await fileOf(slug, f);
       if (await fileMatches(target, hash)) continue;
@@ -209,7 +213,7 @@ class AdhanDownloads implements DownloadHandler {
       await _downloads.enqueue(
         DownloadTask(
           taskId: id,
-          url: '$adhanBaseUrl/$slug/$f',
+          url: '$adhanBaseUrl/${adhanFolderOf(slug)}/$f',
           filename: '$slug-$f',
           directory: folder,
           baseDirectory: BaseDirectory.applicationSupport,
@@ -249,8 +253,16 @@ class AdhanDownloads implements DownloadHandler {
   /// Removes [slug]'s recordings from the device.
   Future<void> delete(String slug) async {
     await cancel(slug);
+    // Only its own files: the dua and the salawat share a folder.
+    for (final f in filesOf(slug)) {
+      final file = await fileOf(slug, f);
+      if (await file.exists()) await file.delete();
+    }
     final dir = await dirOf(slug);
-    if (await dir.exists()) await dir.delete(recursive: true);
+    if (await dir.exists()) {
+      final left = await dir.list().toList();
+      if (left.whereType<File>().isEmpty) await dir.delete(recursive: true);
+    }
     await refresh();
   }
 

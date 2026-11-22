@@ -5997,4 +5997,112 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get qiblaNoPlace => 'اختر مدينتك أولًا لمعرفة اتجاه القبلة.';
+
+  @override
+  String get adhkarTitle => 'الأذكار';
+
+  @override
+  String get adhkarMorning => 'الصباح';
+
+  @override
+  String get adhkarEvening => 'المساء';
+
+  @override
+  String get adhkarReset => 'إعادة العد';
+
+  @override
+  String get adhkarSettingsTitle => 'إعدادات الأذكار';
+
+  @override
+  String adhkarProgress(String done, String total) {
+    return 'أتممت $done من $total';
+  }
+
+  @override
+  String adhkarCount(String n, String count) {
+    return '$n / $count';
+  }
+
+  @override
+  String get adhkarDetails => 'الفضل والمصدر';
+
+  @override
+  String get adhkarFadl => 'الفضل';
+
+  @override
+  String get adhkarSource => 'المصدر';
+
+  @override
+  String get adhkarChannel => 'تذكير الأذكار';
+
+  @override
+  String get adhkarMorningNotice => 'أذكار الصباح';
+
+  @override
+  String get adhkarEveningNotice => 'أذكار المساء';
+
+  @override
+  String get adhkarMorningReminder => 'تذكير بأذكار الصباح';
+
+  @override
+  String get adhkarEveningReminder => 'تذكير بأذكار المساء';
+
+  @override
+  String adhkarReminderTime(String time) {
+    return 'الوقت: $time';
+  }
+
+  @override
+  String get salawatTitle => 'تذكير «الصلاة على النبي»';
+
+  @override
+  String get salawatNote =>
+      'يشغّل تسجيل الشيخ محمد صديق المنشاوي على فترات تختارها';
+
+  @override
+  String get salawatAudioName => 'الصلاة على النبي — محمد صديق المنشاوي';
+
+  @override
+  String get salawatNoticeTitle => 'الصلاة على النبي';
+
+  @override
+  String get salawatEvery => 'التكرار كل';
+
+  @override
+  String get salawatLess => 'أقل';
+
+  @override
+  String get salawatMore => 'أكثر';
+
+  @override
+  String get salawatMinutes => 'دقائق';
+
+  @override
+  String get salawatHours => 'ساعات';
+
+  @override
+  String salawatMinNote(String n) {
+    return 'أقل فترة $n دقيقة';
+  }
+
+  @override
+  String get salawatWindow => 'خلال ساعات محددة فقط';
+
+  @override
+  String salawatFrom(String time) {
+    return 'من: $time';
+  }
+
+  @override
+  String salawatTo(String time) {
+    return 'إلى: $time';
+  }
+
+  @override
+  String get salawatRulesNote =>
+      'لا يُشغَّل الصوت أثناء المكالمات، ويتبع إعداد «عندما يكون الهاتف قيد الاستخدام» في إعدادات الأذان.';
+
+  @override
+  String get salawatUnsupported =>
+      'تذكير «الصلاة على النبي» متاح على أندرويد وآيفون وماك.';
 }

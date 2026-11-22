@@ -17,6 +17,8 @@ import '../prayer_providers.dart';
 import 'prayer_alarms.dart';
 import 'prayer_desktop.dart';
 import 'prayer_native.dart';
+import '../../adhkar/adhkar_providers.dart';
+import '../../adhkar/services/adhkar_reminders.dart';
 
 final prayerNativeProvider = Provider<PrayerNative>((ref) => PrayerNative());
 
@@ -32,6 +34,30 @@ final prayerAlarmsProvider = Provider<PrayerAlarms>((ref) {
             .toSet(),
     writeLate: (v) =>
         ref.read(sharedPreferencesProvider).setStringList(_lateKey, v.toList()),
+    extraNatives: () async {
+      final adhan = ref.read(adhanDownloadsProvider);
+      final s = ref.read(adhkarSettingsProvider);
+      final audio = s.salawatOn && adhan.isInstalled(salawatSlug)
+          ? (await adhan.fileOf(salawatSlug, 'salawat_minshawi.m4a')).path
+          : null;
+      return salawatNatives(
+        s,
+        ref.read(prayerSettingsProvider),
+        lookupAppLocalizations(
+          ref.read(settingsProvider).locale ?? const Locale('ar'),
+        ),
+        audio,
+      );
+    },
+  );
+});
+
+final adhkarRemindersProvider = Provider<AdhkarReminders>((ref) {
+  final reminders = ref.watch(reminderSchedulerProvider);
+  return AdhkarReminders(
+    plugin: () async =>
+        reminders is LocalReminderScheduler ? reminders.plugin() : null,
+    adhan: ref.watch(adhanDownloadsProvider),
   );
 });
 
@@ -75,6 +101,7 @@ class PrayerRuntime {
     AdhanDownloads.displayName = _l.adhanLibraryTitle;
     _c.read(prayerNativeProvider).stopLabel = _l.adhanStop;
     _c.listen(prayerSettingsProvider, (_, _) => schedule());
+    _c.listen(adhkarSettingsProvider, (_, _) => schedule());
     final adhan = _c.read(adhanDownloadsProvider);
     adhan.changes.addListener(schedule);
     AppLifecycleListener(
@@ -119,6 +146,13 @@ class PrayerRuntime {
             .sync(_c.read(prayerSettingsProvider), _l);
       } catch (e) {
         debugPrint('prayer alerts: $e');
+      }
+      try {
+        await _c
+            .read(adhkarRemindersProvider)
+            .sync(_c.read(adhkarSettingsProvider), _l);
+      } catch (e) {
+        debugPrint('adhkar reminders: $e');
       }
     });
   }

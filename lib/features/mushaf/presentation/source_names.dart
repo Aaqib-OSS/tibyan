@@ -12,6 +12,18 @@ typedef SourceText = ({
 });
 
 const _ar = <String, SourceText>{
+  'seen-arabic-adhkar': (
+    title: 'أذكار الصباح والمساء',
+    publisher: 'Seen-Arabic — Morning and Evening Adhkar DB (MIT)',
+    license: 'رخصة MIT، «Copyright (c) 2024 Seen Arabic»؛ النصوص معروضة كما نُشرت دون تعديل',
+    credit: 'Seen-Arabic — Morning and Evening Adhkar DB (MIT)',
+  ),
+  'hisn-almuslim': (
+    title: 'حصن المسلم',
+    publisher: 'حصن المسلم — د. سعيد بن علي بن وهف القحطاني',
+    license: 'مصدر نصوص الأذكار كما تذكره قاعدة Seen-Arabic',
+    credit: 'حصن المسلم — د. سعيد بن علي بن وهف القحطاني',
+  ),
   'kfgqpc-qcf4-surah-names': (
     title: 'خط أسماء السور (QCF4_QBSML)',
     publisher: 'مجمع الملك فهد لطباعة المصحف الشريف',
@@ -180,6 +192,19 @@ const _ar = <String, SourceText>{
 };
 
 const _en = <String, SourceText>{
+  'seen-arabic-adhkar': (
+    title: 'Morning and evening adhkar',
+    publisher: 'Seen-Arabic — Morning and Evening Adhkar DB (MIT)',
+    license: 'MIT License, «Copyright (c) 2024 Seen Arabic»; the texts are shown exactly as published',
+    credit: 'Seen-Arabic — Morning and Evening Adhkar DB (MIT)',
+  ),
+  'hisn-almuslim': (
+    title: 'Hisn al-Muslim (Fortress of the Muslim)',
+    publisher: 'حصن المسلم — د. سعيد بن علي بن وهف القحطاني (Dr Sa\'id ibn Ali ibn Wahf al-Qahtani)',
+    license:
+        'The source of the adhkar texts, as the Seen-Arabic database states',
+    credit: 'حصن المسلم — د. سعيد بن علي بن وهف القحطاني',
+  ),
   'kfgqpc-qcf4-surah-names': (
     title: 'Surah name font (QCF4_QBSML)',
     publisher: 'King Fahd Glorious Quran Printing Complex',
@@ -358,6 +383,13 @@ const bundledSources = [
     url: 'https://huggingface.co/intfloat/multilingual-e5-small',
     version: '614241f622f53c4eeff9890bdc4f31cfecc418b3',
   ),
+  // «الأذكار»: bundled verbatim (assets/adhkar, checked by SHA256SUMS).
+  (
+    key: 'seen-arabic-adhkar',
+    url: 'https://github.com/Seen-Arabic/Morning-And-Evening-Adhkar-DB',
+    version: '39d422fb3e3a',
+  ),
+  (key: 'hisn-almuslim', url: 'https://www.hisnmuslim.com', version: '1436 AH'),
   // The tasmee's model (downloaded on first use, not bundled): credited
   // here, in one place, rather than on the tasmee screens.
   (

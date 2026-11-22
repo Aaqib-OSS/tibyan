@@ -2222,5 +2222,84 @@
       }
     }
   },
-  "qiblaNoPlace": "Choose your city first to find the Qibla direction."
+  "qiblaNoPlace": "Choose your city first to find the Qibla direction.",
+  "adhkarTitle": "Adhkar",
+  "adhkarMorning": "Morning",
+  "adhkarEvening": "Evening",
+  "adhkarReset": "Reset the count",
+  "adhkarSettingsTitle": "Adhkar settings",
+  "adhkarProgress": "{done} of {total} done",
+  "@adhkarProgress": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "adhkarCount": "{n} / {count}",
+  "@adhkarCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "adhkarDetails": "Virtue and source",
+  "adhkarFadl": "Virtue",
+  "adhkarSource": "Source",
+  "adhkarChannel": "Adhkar reminders",
+  "adhkarMorningNotice": "Morning adhkar",
+  "adhkarEveningNotice": "Evening adhkar",
+  "adhkarMorningReminder": "Morning adhkar reminder",
+  "adhkarEveningReminder": "Evening adhkar reminder",
+  "adhkarReminderTime": "Time: {time}",
+  "@adhkarReminderTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "salawatTitle": "«Salawat on the Prophet» reminder",
+  "salawatNote": "Plays Sheikh Muhammad Siddiq al-Minshawi's recording at the intervals you choose",
+  "salawatAudioName": "Salawat on the Prophet — Muhammad Siddiq al-Minshawi",
+  "salawatNoticeTitle": "Salawat on the Prophet",
+  "salawatEvery": "Repeat every",
+  "salawatLess": "Less",
+  "salawatMore": "More",
+  "salawatMinutes": "Minutes",
+  "salawatHours": "Hours",
+  "salawatMinNote": "The shortest interval is {n} minutes",
+  "@salawatMinNote": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "salawatWindow": "Only during set hours",
+  "salawatFrom": "From: {time}",
+  "@salawatFrom": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "salawatTo": "To: {time}",
+  "@salawatTo": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "salawatRulesNote": "No sound during calls; it follows «When the phone is in use» in the adhan settings.",
+  "salawatUnsupported": "The «Salawat on the Prophet» reminder is available on Android, iPhone and Mac."
 }

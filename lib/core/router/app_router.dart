@@ -23,6 +23,9 @@ import '../../features/prayer/presentation/adhan_library_screen.dart';
 import '../../features/prayer/presentation/adhan_screen.dart';
 import '../../features/prayer/presentation/prayer_settings_screen.dart';
 import '../../features/prayer/presentation/prayer_times_screen.dart';
+import '../../features/adhkar/data/adhkar_data.dart' show AdhkarTime;
+import '../../features/adhkar/presentation/adhkar_screen.dart';
+import '../../features/adhkar/presentation/adhkar_settings_screen.dart';
 import '../../features/prayer/presentation/qibla_screen.dart';
 import '../../features/search/search_screen.dart';
 import '../../features/khatma/presentation/journal_screen.dart';
@@ -327,6 +330,24 @@ final appRouterProvider = Provider<GoRouter>(
       ),
       // «مواقيت الصلاة», its settings, the adhan library, and the
       // full-screen adhan an alert opens.
+      // «الأذكار»: the morning and evening adhkar and their settings.
+      GoRoute(
+        path: adhkarLocation,
+        builder: (context, state) => LookTheme(
+          child: AdhkarScreen(
+            initial: state.uri.queryParameters['tab'] == 'evening'
+                ? AdhkarTime.evening
+                : AdhkarTime.morning,
+          ),
+        ),
+        routes: [
+          GoRoute(
+            path: 'settings',
+            builder: (context, state) =>
+                const LookTheme(child: AdhkarSettingsScreen()),
+          ),
+        ],
+      ),
       GoRoute(
         path: prayerTimesLocation,
         builder: (context, state) =>

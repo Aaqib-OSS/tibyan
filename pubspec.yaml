@@ -144,6 +144,7 @@ flutter:
     - assets/brand/
     - assets/tasbih/
     - assets/prayer/
+    - assets/adhkar/
 
   fonts:
     # Interface numbers outside the mushaf: digits and number signs cut from
