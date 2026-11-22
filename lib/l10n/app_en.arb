@@ -2215,12 +2215,6 @@
   "occasionChannel": "Occasion reminders",
   "occasionRemindersTitle": "Remind me the day before each occasion",
   "occasionRemindersNote": "A notification in the evening before each occasion",
-<<<<<<< HEAD
-  "searchModeRoot": "By root",
-  "searchRootHint": "Type a root, such as رحم or ر ح م",
-  "searchRootFound": "Root «{root}»",
-  "searchRootNone": "No root with these letters"
-=======
   "hifzRepeat": "Repeat to memorize",
   "hifzRepeatTitle": "Repeat for memorizing",
   "repeatFromVerse": "From verse",
@@ -2230,6 +2224,64 @@
   "repeatPause": "Pause between repeats",
   "repeatStart": "Start repeating",
   "chooseRepeatRange": "Choose verses to repeat",
-  "repeatProgressVerse": "Verse {done}/{total} · Repeat {rangeDone}/{rangeTotal}"
->>>>>>> origin/main
+  "repeatProgressVerse": "Verse {done}/{total} · Repeat {rangeDone}/{rangeTotal}",
+  "qiblaTitle": "Qibla",
+  "qiblaOpen": "Qibla direction",
+  "qiblaFrom": "From {place}",
+  "@qiblaFrom": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaDegrees": "{deg}° from true north",
+  "@qiblaDegrees": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaDistance": "Distance to the Kaaba: {km} km",
+  "@qiblaDistance": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaAligned": "You are facing the Qibla",
+  "qiblaTurnRight": "Turn right {deg}°",
+  "@qiblaTurnRight": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaTurnLeft": "Turn left {deg}°",
+  "@qiblaTurnLeft": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaCalibrate": "Move the phone through the air in a figure 8 a few times to calibrate the compass.",
+  "qiblaInterference": "Compass accuracy is low: move away from metal, electrical devices and magnetic phone cases.",
+  "qiblaNoSensor": "This device has no compass.",
+  "qiblaStaticSteps": "Find north (with a map or a compass), then turn {deg}° clockwise.",
+  "@qiblaStaticSteps": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaNoPlace": "Choose your city first to find the Qibla direction.",
+  "searchModeRoot": "By root",
+  "searchRootHint": "Type a root, such as رحم or ر ح م",
+  "searchRootFound": "Root «{root}»",
+  "searchRootNone": "No root with these letters"
 }

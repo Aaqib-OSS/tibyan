@@ -6002,4 +6002,72 @@ class AppLocalizationsEn extends AppLocalizations {
   ) {
     return 'Verse $done/$total · Repeat $rangeDone/$rangeTotal';
   }
+
+  @override
+  String get qiblaTitle => 'Qibla';
+
+  @override
+  String get qiblaOpen => 'Qibla direction';
+
+  @override
+  String qiblaFrom(String place) {
+    return 'From $place';
+  }
+
+  @override
+  String qiblaDegrees(String deg) {
+    return '$deg° from true north';
+  }
+
+  @override
+  String qiblaDistance(String km) {
+    return 'Distance to the Kaaba: $km km';
+  }
+
+  @override
+  String get qiblaAligned => 'You are facing the Qibla';
+
+  @override
+  String qiblaTurnRight(String deg) {
+    return 'Turn right $deg°';
+  }
+
+  @override
+  String qiblaTurnLeft(String deg) {
+    return 'Turn left $deg°';
+  }
+
+  @override
+  String get qiblaCalibrate =>
+      'Move the phone through the air in a figure 8 a few times to calibrate the compass.';
+
+  @override
+  String get qiblaInterference =>
+      'Compass accuracy is low: move away from metal, electrical devices and magnetic phone cases.';
+
+  @override
+  String get qiblaNoSensor => 'This device has no compass.';
+
+  @override
+  String qiblaStaticSteps(String deg) {
+    return 'Find north (with a map or a compass), then turn $deg° clockwise.';
+  }
+
+  @override
+  String get qiblaNoPlace =>
+      'Choose your city first to find the Qibla direction.';
+
+  @override
+  String get searchModeRoot => 'By root';
+
+  @override
+  String get searchRootHint => 'Type a root, such as رحم or ر ح م';
+
+  @override
+  String searchRootFound(String root) {
+    return 'Root «$root»';
+  }
+
+  @override
+  String get searchRootNone => 'No root with these letters';
 }

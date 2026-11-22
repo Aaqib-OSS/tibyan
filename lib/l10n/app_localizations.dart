@@ -10164,6 +10164,108 @@ abstract class AppLocalizations {
     String rangeDone,
     String rangeTotal,
   );
+
+  /// No description provided for @qiblaTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'القبلة'**
+  String get qiblaTitle;
+
+  /// No description provided for @qiblaOpen.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتجاه القبلة'**
+  String get qiblaOpen;
+
+  /// No description provided for @qiblaFrom.
+  ///
+  /// In ar, this message translates to:
+  /// **'من {place}'**
+  String qiblaFrom(String place);
+
+  /// No description provided for @qiblaDegrees.
+  ///
+  /// In ar, this message translates to:
+  /// **'{deg}° من الشمال الحقيقي'**
+  String qiblaDegrees(String deg);
+
+  /// No description provided for @qiblaDistance.
+  ///
+  /// In ar, this message translates to:
+  /// **'المسافة إلى الكعبة: {km} كم'**
+  String qiblaDistance(String km);
+
+  /// No description provided for @qiblaAligned.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنت متجه إلى القبلة'**
+  String get qiblaAligned;
+
+  /// No description provided for @qiblaTurnRight.
+  ///
+  /// In ar, this message translates to:
+  /// **'استدر يمينًا {deg}°'**
+  String qiblaTurnRight(String deg);
+
+  /// No description provided for @qiblaTurnLeft.
+  ///
+  /// In ar, this message translates to:
+  /// **'استدر يسارًا {deg}°'**
+  String qiblaTurnLeft(String deg);
+
+  /// No description provided for @qiblaCalibrate.
+  ///
+  /// In ar, this message translates to:
+  /// **'حرّك الهاتف في الهواء على شكل الرقم 8 عدة مرات لمعايرة البوصلة.'**
+  String get qiblaCalibrate;
+
+  /// No description provided for @qiblaInterference.
+  ///
+  /// In ar, this message translates to:
+  /// **'دقة البوصلة منخفضة: ابتعد عن المعادن والأجهزة الكهربائية وأغطية الهاتف المغناطيسية.'**
+  String get qiblaInterference;
+
+  /// No description provided for @qiblaNoSensor.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد بوصلة في هذا الجهاز.'**
+  String get qiblaNoSensor;
+
+  /// No description provided for @qiblaStaticSteps.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدّد اتجاه الشمال (بخريطة أو بوصلة)، ثم استدر {deg}° باتجاه عقارب الساعة.'**
+  String qiblaStaticSteps(String deg);
+
+  /// No description provided for @qiblaNoPlace.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر مدينتك أولًا لمعرفة اتجاه القبلة.'**
+  String get qiblaNoPlace;
+
+  /// No description provided for @searchModeRoot.
+  ///
+  /// In ar, this message translates to:
+  /// **'بالجذر'**
+  String get searchModeRoot;
+
+  /// No description provided for @searchRootHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب جذرًا، مثل «رحم» أو «ر ح م»'**
+  String get searchRootHint;
+
+  /// No description provided for @searchRootFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجذر «{root}»'**
+  String searchRootFound(String root);
+
+  /// No description provided for @searchRootNone.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا جذر بهذه الحروف'**
+  String get searchRootNone;
 }
 
 class _AppLocalizationsDelegate
