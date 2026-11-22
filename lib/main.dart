@@ -17,6 +17,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
+import 'features/prayer/data/adhan_downloads.dart';
+import 'features/prayer/presentation/prayer_times_screen.dart'
+    show prayerTimesLocation;
+import 'features/prayer/services/prayer_runtime.dart';
 import 'features/group_khatma/data/group_khatma_api.dart';
 import 'features/settings/report/problem_report.dart';
 import 'core/crash/crash_reporting.dart';
@@ -147,7 +151,8 @@ Future<void> main() async {
   // while the app was closed reaches its handler.
   container
     ..read(backgroundModelDownloadProvider)
-    ..read(backgroundRecitationsProvider);
+    ..read(backgroundRecitationsProvider)
+    ..read(adhanDownloadsProvider);
   unawaited(
     container
         .read(backgroundPacksProvider)
@@ -169,6 +174,7 @@ Future<void> main() async {
   _startCarBrowsing(container);
   _startLiveActivity(container);
   _startKhatma(container);
+  _startPrayer(container);
   // Windows installer builds: check for a new Setup.exe (no-op elsewhere).
   windowsUpdater.start();
   startupMark('main-done');
@@ -243,6 +249,26 @@ Future<void> _refreshTimings(
   } catch (_) {
     // Nothing to do: the bundled timings are used.
   }
+}
+
+/// Prayer times: alerts planned 7 days ahead, planned again at every
+/// launch, resume and change; the app plays the adhan itself where it does
+/// (desktop tray, Apple platforms in front) and shows its screen.
+void _startPrayer(ProviderContainer container) {
+  PrayerRuntime(
+    container,
+    onAdhan: (prayer, at) async {
+      await container.read(appRouterReadyProvider).future;
+      unawaited(
+        container
+            .read(appRouterProvider)
+            .push(
+              '$prayerTimesLocation/adhan?p=${prayer.name}'
+              '&at=${at.millisecondsSinceEpoch}',
+            ),
+      );
+    },
+  ).start();
 }
 
 /// Keeps the khatma's reminders (rolling) and the home screen widget up to
@@ -320,6 +346,21 @@ void _startKhatma(ProviderContainer container) {
     if (link == null) return;
     // Google Assistant's «open app feature»: the shortcut's own link.
     final uri = assistantFeatureLink(link) ?? link;
+    // A prayer alert: the full-screen adhan (or the times).
+    if (uri.scheme == 'tibyan' && uri.host == 'prayer') {
+      container.read(launchTargetProvider).value = true;
+      await container.read(appRouterReadyProvider).future;
+      unawaited(
+        container
+            .read(appRouterProvider)
+            .push(
+              uri.path == '/adhan'
+                  ? '$prayerTimesLocation/adhan?${uri.query}'
+                  : prayerTimesLocation,
+            ),
+      );
+      return;
+    }
     if (uri.toString() == weeklyReportLink) {
       container.read(launchTargetProvider).value = true;
       await container.read(appRouterReadyProvider).future;

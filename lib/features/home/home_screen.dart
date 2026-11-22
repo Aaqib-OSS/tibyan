@@ -18,6 +18,8 @@ import '../../l10n/app_localizations.dart';
 import '../hifz/hifz_providers.dart';
 import '../khatma/domain/khatmah.dart' show EntryPoint;
 import '../khatma/khatma_providers.dart';
+import '../prayer/presentation/prayer_times_screen.dart'
+    show prayerTimesLocation;
 import '../tasbih/presentation/tasbih_screen.dart'
     show tasbihIcon, tasbihLocation;
 import '../tasbih/tasbih_providers.dart' show tasbihTodayProvider;
@@ -121,6 +123,12 @@ class HomeScreen extends ConsumerWidget {
             ? l.tasbihTileToday(digits(tasbihToday))
             : l.tasbihTileStart,
         onTap: () => context.push(tasbihLocation),
+      ),
+      (
+        icon: Icons.mosque_outlined,
+        label: l.prayerTimesTitle,
+        note: l.prayerTileNote,
+        onTap: () => context.push(prayerTimesLocation),
       ),
       (
         icon: railIcon(RailItem.tasmee),
@@ -843,6 +851,13 @@ class _ElderlyHome extends ConsumerWidget {
                       () => context.go('/mushaf?entry=home'),
                     ),
                   ),
+                ),
+                const SizedBox(height: 16),
+                _BigAction(
+                  icon: Icons.mosque_outlined,
+                  label: l.prayerTimesTitle,
+                  detail: l.prayerTileNote,
+                  onTap: () => context.push(prayerTimesLocation),
                 ),
                 // The khatma's portion for today (plan 6: elderly mode's
                 // home has its own card): a tap opens the portion.

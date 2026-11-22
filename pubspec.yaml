@@ -136,6 +136,7 @@ flutter:
     - assets/pages/hafs-1441/
     - assets/brand/
     - assets/tasbih/
+    - assets/prayer/
 
   fonts:
     # Interface numbers outside the mushaf: digits and number signs cut from

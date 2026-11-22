@@ -14,7 +14,11 @@ import '../../../core/settings/app_settings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/look_kit.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../audio/audio_downloads_screen.dart' show confirmDeleteDownload;
 import '../../audio/background_recitations.dart';
+import '../../prayer/data/adhan_catalog.dart';
+import '../../prayer/data/adhan_downloads.dart';
+import '../../prayer/presentation/adhan_library_screen.dart' show MuezzinAvatar;
 import '../../audio/player_bar.dart';
 import '../../audio/recitation.dart';
 import '../../books/books_providers.dart';
@@ -87,6 +91,7 @@ class DownloadsCenterScreen extends ConsumerWidget {
                         children: [
                           const _MushafSection(),
                           const _RecitationsSection(),
+                          const _AdhanSection(),
                           const _ResourcesSection(),
                           Text(
                             l.downloadInBackgroundNote,
@@ -503,6 +508,98 @@ class _ResourcesSection extends ConsumerWidget {
           ],
         );
       },
+    );
+  }
+}
+
+/// «الأذان»: the adhan library's recordings, each with its muezzin's
+/// photo, downloaded and deleted as in the library.
+class _AdhanSection extends ConsumerWidget {
+  const _AdhanSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final adhan = ref.watch(adhanDownloadsProvider);
+    final downloads = ref.watch(backgroundDownloadsProvider);
+    final arabic = l.localeName == 'ar';
+    final digits = NumberFormatter(Localizations.localeOf(context));
+    return ListenableBuilder(
+      listenable: Listenable.merge([adhan.changes, downloads.tasks]),
+      builder: (context, _) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _SectionHeader(
+            sectionKey: 'adhan',
+            title: l.downloadsSectionAdhan,
+            onDownloadAll: null,
+          ),
+          for (final m in muezzins)
+            Builder(
+              builder: (context) {
+                final st = adhan.stateOf(m.slug);
+                final name = m.name(arabic);
+                final status = switch (st.phase) {
+                  AdhanPhase.installed => l.downloadsOnDevice(
+                    _mb(context, st.bytes),
+                  ),
+                  AdhanPhase.downloading => l.adhanDownloading(
+                    '${digits((st.progress * 100).round())}٪',
+                  ),
+                  AdhanPhase.paused => l.adhanPausedState,
+                  AdhanPhase.failed => l.adhanFailedState,
+                  AdhanPhase.idle => l.downloadsAvailableShort,
+                };
+                final Widget action = switch (st.phase) {
+                  AdhanPhase.installed => IconButton(
+                    tooltip: l.adhanDelete(name),
+                    onPressed: () async {
+                      final ok = await confirmDeleteDownload(
+                        context,
+                        title: l.adhanDeleteTitle(name),
+                        body: l.adhanDeleteBody,
+                      );
+                      if (ok) await adhan.delete(m.slug);
+                    },
+                    icon: const Icon(Icons.delete_outline),
+                  ),
+                  AdhanPhase.downloading => IconButton(
+                    tooltip: l.downloadPause,
+                    onPressed: () => adhan.pause(m.slug),
+                    icon: const Icon(Icons.pause),
+                  ),
+                  AdhanPhase.paused => IconButton(
+                    tooltip: l.downloadResume,
+                    onPressed: () => adhan.resume(m.slug),
+                    icon: const Icon(Icons.play_arrow),
+                  ),
+                  AdhanPhase.failed => IconButton(
+                    tooltip: l.downloadRetry,
+                    onPressed: () => adhan.download(m.slug, label: name),
+                    icon: const Icon(Icons.refresh),
+                  ),
+                  AdhanPhase.idle => IconButton(
+                    tooltip: l.adhanDownload(name),
+                    onPressed: () => adhan.download(m.slug, label: name),
+                    icon: const Icon(Icons.download),
+                  ),
+                };
+                return DownloadRow(
+                  key: ValueKey('downloads-adhan-${m.slug}'),
+                  leading: MuezzinAvatar(muezzin: m, size: 40),
+                  title: name,
+                  status: '$status · ${l.adhanLicense(adhanLicense)}',
+                  fraction: st.progress,
+                  done:
+                      st.phase != AdhanPhase.downloading &&
+                      st.phase != AdhanPhase.paused,
+                  actions: [SizedBox(width: 48, child: Center(child: action))],
+                );
+              },
+            ),
+          const SizedBox(height: 8),
+        ],
+      ),
     );
   }
 }

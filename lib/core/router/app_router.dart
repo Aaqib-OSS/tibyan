@@ -18,6 +18,11 @@ import '../../features/hifz/presentation/progress_tabs.dart'
     show RecitationSessionScreen;
 import '../../features/audio/audio_downloads_screen.dart';
 import '../../features/home/home_screen.dart';
+import '../../features/prayer/domain/prayer_settings.dart' show PrayerKind;
+import '../../features/prayer/presentation/adhan_library_screen.dart';
+import '../../features/prayer/presentation/adhan_screen.dart';
+import '../../features/prayer/presentation/prayer_settings_screen.dart';
+import '../../features/prayer/presentation/prayer_times_screen.dart';
 import '../../features/search/search_screen.dart';
 import '../../features/khatma/presentation/journal_screen.dart';
 import '../../features/khatma/presentation/khatma_screen.dart';
@@ -303,6 +308,43 @@ final appRouterProvider = Provider<GoRouter>(
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+      // «مواقيت الصلاة», its settings, the adhan library, and the
+      // full-screen adhan an alert opens.
+      GoRoute(
+        path: prayerTimesLocation,
+        builder: (context, state) =>
+            const LookTheme(child: PrayerTimesScreen()),
+        routes: [
+          GoRoute(
+            path: 'settings',
+            builder: (context, state) =>
+                const LookTheme(child: PrayerSettingsScreen()),
+          ),
+          GoRoute(
+            path: 'library',
+            builder: (context, state) =>
+                const LookTheme(child: AdhanLibraryScreen()),
+          ),
+          GoRoute(
+            path: 'adhan',
+            builder: (context, state) {
+              final q = state.uri.queryParameters;
+              final prayer =
+                  PrayerKind.values
+                      .where((p) => p.name == q['p'])
+                      .firstOrNull ??
+                  PrayerKind.maghrib;
+              final ms = int.tryParse(q['at'] ?? '');
+              return AdhanScreen(
+                prayer: prayer,
+                at: ms == null
+                    ? null
+                    : DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true),
+              );
+            },
           ),
         ],
       ),
