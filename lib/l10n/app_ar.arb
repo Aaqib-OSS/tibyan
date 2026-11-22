@@ -4195,5 +4195,68 @@
         "type": "String"
       }
     }
-  }
+  },
+  "trackerTitle": "صلواتي",
+  "trackerOpen": "صلواتي: سجل صلواتك",
+  "prayedAction": "صليت",
+  "prayedOnTime": "في وقتها",
+  "prayedLate": "متأخرة",
+  "prayedJamaah": "في جماعة",
+  "prayedClear": "إلغاء التسجيل",
+  "prayedAsk": "كيف صليت {prayer}؟",
+  "@prayedAsk": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "trackerNotMarked": "لم تُسجَّل",
+  "trackerPrevDay": "اليوم السابق",
+  "trackerNextDay": "اليوم التالي",
+  "qadaTitle": "القضاء",
+  "qadaNote": "عدّاد خاص بك: أضف ما فاتك، وسجّل ما قضيته.",
+  "qadaAdd": "أضف {prayer} فائتة",
+  "@qadaAdd": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "qadaSettle": "قضيت {prayer}",
+  "@qadaSettle": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "weekTitle": "آخر سبعة أيام",
+  "weekSummary": "سجّلت {n} من {total} صلاة",
+  "@weekSummary": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "weekBreakdown": "في وقتها {onTime} · متأخرة {late} · في جماعة {jamaah}",
+  "@weekBreakdown": {
+    "placeholders": {
+      "onTime": {
+        "type": "String"
+      },
+      "late": {
+        "type": "String"
+      },
+      "jamaah": {
+        "type": "String"
+      }
+    }
+  },
+  "weekGentle": "كل صلاة تسجّلها تُحسب، ويمكنك البدء من جديد في أي يوم."
 }

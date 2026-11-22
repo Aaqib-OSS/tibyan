@@ -250,6 +250,9 @@ class AdhanService : Service() {
                     stop,
                 ).build(),
             )
+            .apply {
+                if (!preview) AdhanGate.prayedAction(this@AdhanService, payload, 6)?.let { addAction(it) }
+            }
             .build()
     }
 

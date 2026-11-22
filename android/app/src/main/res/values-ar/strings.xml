@@ -46,6 +46,7 @@
     <string name="adhan_channel_name">الأذان</string>
     <string name="adhan_stop">إيقاف</string>
     <string name="adhan_play">تشغيل الأذان</string>
+    <string name="adhan_prayed">صليت</string>
     <string name="adhan_notice_channel_name">وقت الأذان (إشعار)</string>
     <string name="adhan_silent_channel_name">وقت الأذان (صامت)</string>
 </resources>

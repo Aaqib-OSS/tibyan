@@ -369,6 +369,9 @@ void _startKhatma(ProviderContainer container) {
       unawaited(
         openOverHome(container.read(appRouterProvider), switch (uri.path) {
           '/adhan' => '$prayerTimesLocation/adhan?${uri.query}',
+          // «صليت» on an adhan alert: the log, asking about that prayer.
+          '/log' =>
+            '$prayerTimesLocation/tracker?mark=${uri.queryParameters['p'] ?? ''}',
           // An occasion reminder: the Hijri calendar.
           '/hijri' => '$prayerTimesLocation/hijri',
           _ => prayerTimesLocation,
