@@ -25,6 +25,11 @@
          in the system settings; without it a notification is shown). -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <!-- Only in the full-screen adhan build (FULLSCREEN_ADHAN=true); removed
+         from the default build by the placeholder. -->
+    <uses-permission
+        android:name="android.permission.USE_FULL_SCREEN_INTENT"
+        tools:node="${fullScreenIntentNode}"/>
     <!-- androidx.credentials (via google_sign_in_android) pulls in
          androidx.biometric, which adds these. The app never shows a
          biometric prompt itself; Google sign-in runs its own UI. -->
@@ -146,6 +151,16 @@
             android:name=".AdhanService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="false"/>
+        <!-- The full-screen adhan over the lock screen (that build only
+             can open it: it needs USE_FULL_SCREEN_INTENT). -->
+        <activity
+            android:name=".AdhanFullScreenActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.DeviceDefault.NoActionBar"/>
         <receiver
             android:name=".AdhanAlarmReceiver"
             android:exported="false">

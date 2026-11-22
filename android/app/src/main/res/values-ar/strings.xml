@@ -45,4 +45,5 @@
     <!-- «مواقيت الصلاة»: the adhan service's notification. -->
     <string name="adhan_channel_name">الأذان</string>
     <string name="adhan_stop">إيقاف</string>
+    <string name="adhan_open_app">فتح تبيان</string>
 </resources>

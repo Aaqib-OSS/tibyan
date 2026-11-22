@@ -103,6 +103,20 @@ class AdhanService : Service() {
             @Suppress("DEPRECATION")
             Notification.Builder(this).setPriority(Notification.PRIORITY_HIGH)
         }
+        // The full-screen adhan build only: over the lock screen.
+        if (fullScreenAllowed(nm)) {
+            val full = PendingIntent.getActivity(
+                this,
+                2,
+                Intent(this, AdhanFullScreenActivity::class.java)
+                    .putExtra("title", title)
+                    .putExtra("body", body)
+                    .putExtra("payload", payload)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            )
+            b.setFullScreenIntent(full, true)
+        }
         return b.setSmallIcon(R.drawable.ic_stat_tibyan)
             .setContentTitle(title)
             .setContentText(body)
@@ -119,6 +133,18 @@ class AdhanService : Service() {
                 ).build(),
             )
             .build()
+    }
+
+    /** Declared (FULLSCREEN_ADHAN build) and, on Android 14+, allowed. */
+    private fun fullScreenAllowed(nm: NotificationManager): Boolean {
+        val declared = try {
+            packageManager.getPackageInfo(packageName, android.content.pm.PackageManager.GET_PERMISSIONS)
+                .requestedPermissions?.contains("android.permission.USE_FULL_SCREEN_INTENT") == true
+        } catch (_: Exception) {
+            false
+        }
+        if (!declared) return false
+        return Build.VERSION.SDK_INT < 34 || nm.canUseFullScreenIntent()
     }
 
     private fun startSession(title: String) {
@@ -240,6 +266,7 @@ class AdhanService : Service() {
         session?.release()
         session = null
         onPlaying?.invoke(false)
+        onFinished?.invoke()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             stopForeground(STOP_FOREGROUND_REMOVE)
         } else {
@@ -270,6 +297,9 @@ class AdhanService : Service() {
 
         /** Told when the adhan starts and stops (the app's screen). */
         var onPlaying: ((Boolean) -> Unit)? = null
+
+        /** Told when the adhan ends (closes the full-screen adhan). */
+        var onFinished: (() -> Unit)? = null
 
         fun start(
             ctx: Context,

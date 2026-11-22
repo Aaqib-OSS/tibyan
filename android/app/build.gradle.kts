@@ -29,6 +29,15 @@ val tibyanStore: String = (project.findProperty("dart-defines") as String?)
     ?: "play"
 val huaweiBuild = tibyanStore == "huawei"
 
+// The optional full-screen adhan over the lock screen, from
+// `--dart-define=FULLSCREEN_ADHAN=true` (docs/RELEASE.md). Only that build
+// declares USE_FULL_SCREEN_INTENT; the default build removes it.
+val fullScreenAdhan: Boolean = (project.findProperty("dart-defines") as String?)
+    ?.split(",")
+    ?.mapNotNull { runCatching { String(Base64.getDecoder().decode(it)) }.getOrNull() }
+    ?.any { it == "FULLSCREEN_ADHAN=true" }
+    ?: false
+
 android {
     namespace = "app.tibyan.tibyan"
     compileSdk = flutter.compileSdkVersion
@@ -45,6 +54,8 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "app.tibyan.tibyan"
+        manifestPlaceholders["fullScreenIntentNode"] =
+            if (fullScreenAdhan) "merge" else "remove"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

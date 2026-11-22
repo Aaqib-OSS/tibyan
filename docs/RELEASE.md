@@ -59,6 +59,17 @@ iOS وmacOS:
 2. **بعد قبول أول إرسال:** شغّل الـ workflow و`publish` مفعّل. ينشئ إرسالاً جديداً بالحزمة عبر `msstore publish` بأسرار `MSSTORE_TENANT_ID` و`MSSTORE_CLIENT_ID` و`MSSTORE_CLIENT_SECRET` و`MSSTORE_SELLER_ID`.
 3. **كل تشغيل بـ `publish` مفعّل يحتاج موافقة أحمد في كل مرة.**
 
+4. **التشغيل عند بدء الجهاز (مواقيت الصلاة):** حزمة المتجر فيها `startup_task` (`TibyanTray`، المعامل `--tray`) في `msix_config`. ويندوز يشغّل التطبيق عند الدخول، فيبدأ مخفيًا في شريط النظام إن كانت المواقيت وشريط النظام مفعّلين، ويطفئه المستخدم من «مدير المهام › تطبيقات بدء التشغيل».
+
+## أندرويد: شاشة الأذان الكاملة (اختياري)
+
+- **البناء الافتراضي** لا يعلن `USE_FULL_SCREEN_INTENT` (يحذفه الـ placeholder `fullScreenIntentNode=remove`). هذا ما يُرفع لجوجل بلاي ما لم يُقرَّر غير ذلك:
+  `flutter build appbundle --release`
+- **نسخة الشاشة الكاملة** تعلن الإذن وتفتح `AdhanFullScreenActivity` فوق شاشة القفل عند الأذان:
+  `flutter build appbundle --release --dart-define=FULLSCREEN_ADHAN=true`
+  (ويمكن جمعها مع `--dart-define=TIBYAN_STORE=huawei`.) جوجل بلاي يقصر هذا الإذن على تطبيقات المنبّه والاتصال، فيلزم تصريح في Play Console قبل رفعها، وعلى أندرويد ١٤ فأحدث يمنحه المستخدم من الإعدادات.
+- للتحقق: `aapt dump permissions build/app/outputs/flutter-apk/app-release.apk | grep FULL_SCREEN` لا يُظهر شيئًا في البناء الافتراضي.
+
 ## رموز الأعطال (GlitchTip)
 
 ملحق Sentry لـ Gradle (`io.sentry.android.gradle` في `android/app/build.gradle.kts`) يكتب في كل بناء أندرويد مُصغَّر (R8) معرّف UUID لملف الـ mapping داخل `assets/sentry-debug-meta.properties`، فيعرف GlitchTip أي mapping يفك تشويش العطل. يرفع الـ mapping وقت البناء فقط إذا كان `SENTRY_AUTH_TOKEN` موجودا (`set -a; source ~/.config/tibyan/glitchtip.env; set +a` قبل البناء). بدونه يبني دون اتصال ولا يفشل (كما في CI). باقي خصائص الملحق مطفأة. بعد البناء شغّل `tools/upload_symbols.sh <N>`: يرفع رموز Dart والمكتبات الأصلية وdSYMs، ويعيد رفع الـ mapping بنفس الـ UUID المضمَّن (`sentry-cli upload-proguard --uuid`)، ويخرج بخطأ إن فشل الرفع.
