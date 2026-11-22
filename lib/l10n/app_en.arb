@@ -459,7 +459,7 @@
   "playerError": "The recitation could not play. Check the connection or download the surah.",
   "playerSettings": "Listening settings",
   "stopListening": "Stop listening",
-  "repeatProgress": "Repeat {done} of {total}",
+  "repeatProgress": "Repeat {done}/{total}",
   "@repeatProgress": {
     "placeholders": {
       "done": {
@@ -2027,5 +2027,15 @@
         "type": "String"
       }
     }
-  }
+  },
+  "hifzRepeat": "Repeat to memorize",
+  "hifzRepeatTitle": "Repeat for memorizing",
+  "repeatFromVerse": "From verse",
+  "repeatToVerse": "To verse",
+  "repeatEachVerse": "Repeat each verse",
+  "repeatWholeRange": "Repeat the whole passage",
+  "repeatPause": "Pause between repeats",
+  "repeatStart": "Start repeating",
+  "chooseRepeatRange": "Choose verses to repeat",
+  "repeatProgressVerse": "Verse {done}/{total} · Repeat {rangeDone}/{rangeTotal}"
 }

@@ -37,6 +37,7 @@ import '../../books/presentation/asbab_section.dart';
 import '../../books/presentation/book_section.dart';
 import '../../content_extras/verse_audio_index.dart';
 import '../../audio/floating_player.dart';
+import '../../audio/ayah_repeat_sheet.dart';
 import '../../audio/player_bar.dart';
 import '../../audio/recitation.dart';
 import '../../hifz/data/hifz_repository.dart';
@@ -2140,6 +2141,19 @@ class _MushafScreenState extends ConsumerState<MushafScreen>
                 // Several verses: that stretch, repeated as set.
                 to: one ? null : range.last.ayah,
               );
+        }),
+        // One surah's verses (edition numbers, as the recitation of the
+        // edition's riwaya counts them): the repeat sheet for hifz.
+        onRepeat: act(() {
+          final first = range.first;
+          final last = range.last;
+          setState(() => _selA = _selB = null);
+          showAyahRepeatSheet(
+            context,
+            surah: first.surah,
+            from: first.ayah,
+            to: last.surah == first.surah ? last.ayah : null,
+          );
         }),
         // Tafsir and translation are keyed by Hafs numbers; from a
         // riwaya the screen also names the verse as read there.

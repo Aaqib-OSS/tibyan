@@ -416,6 +416,8 @@ class RecitationState {
     this.rangeTo,
     this.repeat = 1,
     this.repeatDone = 0,
+    this.verseRepeat = 1,
+    this.verseRepeatDone = 0,
     this.silence = Duration.zero,
     this.sleep,
     this.error,
@@ -456,6 +458,15 @@ class RecitationState {
   final int repeat;
   final int repeatDone;
 
+  /// Inside a chosen stretch, times each verse plays before the next (for
+  /// hifz); 0 repeats it until stopped. Ignored without a stretch, where
+  /// [repeat] already counts each verse.
+  final int verseRepeat;
+  final int verseRepeatDone;
+
+  /// Each verse of the stretch is repeated on its own as well.
+  bool get repeatsVerseInRange => rangeTo != null && verseRepeat != 1;
+
   /// Silence between repetitions, for repeating after the reciter.
   final Duration silence;
   final SleepTimer? sleep;
@@ -476,6 +487,8 @@ class RecitationState {
     int? Function()? rangeTo,
     int? repeat,
     int? repeatDone,
+    int? verseRepeat,
+    int? verseRepeatDone,
     Duration? silence,
     SleepTimer? Function()? sleep,
     String? Function()? error,
@@ -494,6 +507,8 @@ class RecitationState {
     rangeTo: rangeTo == null ? this.rangeTo : rangeTo(),
     repeat: repeat ?? this.repeat,
     repeatDone: repeatDone ?? this.repeatDone,
+    verseRepeat: verseRepeat ?? this.verseRepeat,
+    verseRepeatDone: verseRepeatDone ?? this.verseRepeatDone,
     silence: silence ?? this.silence,
     sleep: sleep == null ? this.sleep : sleep(),
     error: error == null ? this.error : error(),
@@ -705,6 +720,7 @@ class RecitationController extends Notifier<RecitationState> {
     final s = ref.read(settingsProvider);
     return RecitationState(
       repeat: s.repeat,
+      verseRepeat: s.verseRepeat,
       silence: Duration(seconds: s.repeatSilence),
     );
   }
@@ -739,6 +755,7 @@ class RecitationController extends Notifier<RecitationState> {
     int? to,
     int? rangeFrom,
     int? repeat,
+    int? verseRepeat,
     Duration? silence,
     bool start = true,
     bool nearSpeech = false,
@@ -765,6 +782,7 @@ class RecitationController extends Notifier<RecitationState> {
       to: to,
       rangeFrom: rangeFrom,
       repeat: repeat,
+      verseRepeat: verseRepeat,
       silence: silence,
       start: start,
       nearSpeech: nearSpeech,
@@ -778,6 +796,7 @@ class RecitationController extends Notifier<RecitationState> {
     int? to,
     int? rangeFrom,
     int? repeat,
+    int? verseRepeat,
     Duration? silence,
     bool start = true,
     bool nearSpeech = false,
@@ -853,6 +872,8 @@ class RecitationController extends Notifier<RecitationState> {
       rangeTo: () => timed ? to : null,
       repeat: repeat,
       repeatDone: 0,
+      verseRepeat: verseRepeat,
+      verseRepeatDone: 0,
       silence: silence,
       error: () => null,
       clip: () => null,
@@ -1157,6 +1178,7 @@ class RecitationController extends Notifier<RecitationState> {
       to: s.rangeTo,
       rangeFrom: s.rangeFrom,
       repeat: s.repeat,
+      verseRepeat: s.verseRepeat,
       start: s.playing || s.loading,
     );
   }
@@ -1192,15 +1214,26 @@ class RecitationController extends Notifier<RecitationState> {
   /// The verse whose end closes what is being repeated: the chosen
   /// stretch's last verse or, when each verse repeats, the verse itself.
   int? get _stretchLast {
-    if (state.rangeTo != null) return state.rangeTo;
     final a = state.ayah;
+    if (state.rangeTo != null) {
+      // Each verse of the stretch repeats first, then the stretch.
+      if (_verseLoop) return a;
+      return state.rangeTo;
+    }
     if (state.repeat == 1 || a == null || a == _verseDone) return null;
     return a;
   }
 
   /// Where the stretch starts again.
   int? get _stretchFirst =>
-      state.rangeTo != null ? state.rangeFrom : state.ayah;
+      state.rangeTo != null && !_verseLoop ? state.rangeFrom : state.ayah;
+
+  /// Inside a stretch, the verse being recited still has repetitions of
+  /// its own to go.
+  bool get _verseLoop =>
+      state.repeatsVerseInRange &&
+      state.ayah != null &&
+      state.ayah != _verseDone;
 
   bool get _rangeFinished =>
       state.rangeTo != null &&
@@ -1278,12 +1311,15 @@ class RecitationController extends Notifier<RecitationState> {
         if (_clipAfter(done, done + 1)) return;
       }
       // Each verse is repeated afresh.
-      final next = verse != state.ayah && state.rangeTo == null;
-      if (next) _verseDone = null;
+      final changed = verse != state.ayah;
+      final next = changed && state.rangeTo == null;
+      final nextInRange = changed && state.repeatsVerseInRange;
+      if (next || nextInRange) _verseDone = null;
       state = state.copyWith(
         ayah: () => verse,
         word: () => word,
         repeatDone: next ? 0 : null,
+        verseRepeatDone: nextInRange ? 0 : null,
       );
     }
   }
@@ -1310,6 +1346,18 @@ class RecitationController extends Notifier<RecitationState> {
   /// play again (so, at the end of the file, the next surah may follow).
   Future<bool> _endOfStretch() async {
     if (_ending || _rangeFinished) return !_rangeFinished;
+    if (_verseLoop) {
+      final a = state.ayah!;
+      final verseDone = state.verseRepeatDone + 1;
+      if (state.verseRepeat == 0 || verseDone < state.verseRepeat) {
+        return _again(a, () => state.copyWith(verseRepeatDone: verseDone));
+      }
+      // This verse's repetitions are done: on to the next verse, or, at
+      // the stretch's end, the stretch's own repetition.
+      _verseDone = a;
+      state = state.copyWith(verseRepeatDone: 0);
+      if (a != state.rangeTo) return false;
+    }
     final first = _stretchFirst;
     final done = state.repeatDone + 1;
     if (state.repeat != 0 && done >= state.repeat) {
@@ -1330,9 +1378,15 @@ class RecitationController extends Notifier<RecitationState> {
       state = state.copyWith(repeatDone: done);
       return false;
     }
+    return _again(first, () => state.copyWith(repeatDone: done));
+  }
+
+  /// After the silence, [first] plays again; [count] records the
+  /// repetition. A new pass over the stretch repeats each verse afresh.
+  Future<bool> _again(int? first, RecitationState Function() count) async {
     final wait = _waits;
     _inSilence = true;
-    state = state.copyWith(repeatDone: done);
+    state = count();
     // Nothing plays during the silence: the app is kept running through
     // it, or iOS suspends it in the background and the timer never ends.
     await ref.read(keepAliveProvider).during(() async {
@@ -1344,6 +1398,7 @@ class RecitationController extends Notifier<RecitationState> {
       if (wait != _waits || !state.active) return;
       await _p.seek(_repeatStart(first));
       _resumeMs = null;
+      _verseDone = null;
       state = state.copyWith(ayah: () => first, playing: true);
       _inSilence = false;
       unawaited(_p.play());
@@ -1440,7 +1495,11 @@ class RecitationController extends Notifier<RecitationState> {
       final first = state.timed ? state.rangeFrom ?? 1 : null;
       _verseDone = null;
       await _p.seek(_startOf(first));
-      state = state.copyWith(repeatDone: 0, ayah: () => first);
+      state = state.copyWith(
+        repeatDone: 0,
+        verseRepeatDone: 0,
+        ayah: () => first,
+      );
     }
     _resumeMs = null;
     unawaited(_p.play());
@@ -1480,6 +1539,7 @@ class RecitationController extends Notifier<RecitationState> {
       state = state.copyWith(
         ayah: () => target,
         repeatDone: state.rangeTo == null ? 0 : null,
+        verseRepeatDone: 0,
       );
     } finally {
       _moving = false;
@@ -1525,6 +1585,7 @@ class RecitationController extends Notifier<RecitationState> {
         to: inRange ? s.rangeTo : null,
         rangeFrom: inRange ? s.rangeFrom : null,
         repeat: repeat,
+        verseRepeat: s.verseRepeat,
         silence: s.silence,
         nearSpeech: true,
         word: word,
@@ -1552,6 +1613,7 @@ class RecitationController extends Notifier<RecitationState> {
         repeat: repeat,
         // A stretch whose repetitions were done plays afresh.
         repeatDone: inRange && !_rangeFinished ? null : 0,
+        verseRepeatDone: 0,
       );
     } finally {
       _moving = false;
@@ -1565,6 +1627,42 @@ class RecitationController extends Notifier<RecitationState> {
   void setRepeat(int times) {
     state = state.copyWith(repeat: times);
     unawaited(ref.read(settingsProvider.notifier).setRepeat(times));
+  }
+
+  /// Sets how many times each verse of a chosen stretch plays before the
+  /// next, and keeps it for the next time.
+  void setVerseRepeat(int times) {
+    state = state.copyWith(verseRepeat: times, verseRepeatDone: 0);
+    unawaited(ref.read(settingsProvider.notifier).setVerseRepeat(times));
+  }
+
+  /// Repeats [from]..[to] of [surah] for memorizing: each verse
+  /// [verseRepeat] times, then the whole stretch [repeat] times, with
+  /// [silence] between repetitions (0 = until stopped). The choices are
+  /// kept for the next time.
+  Future<void> playRepeat(
+    int surah, {
+    required int from,
+    required int to,
+    required int verseRepeat,
+    required int repeat,
+    required Duration silence,
+  }) async {
+    final settings = ref.read(settingsProvider.notifier);
+    await settings.setVerseRepeat(verseRepeat);
+    await settings.setRepeat(repeat);
+    await settings.setRepeatSilence(silence.inSeconds);
+    final (a, b) = from <= to ? (from, to) : (to, from);
+    // One verse: its own count is the stretch's.
+    final one = a == b;
+    await play(
+      surah,
+      from: a,
+      to: b,
+      repeat: one ? verseRepeat : repeat,
+      verseRepeat: one ? 1 : verseRepeat,
+      silence: silence,
+    );
   }
 
   /// Sets the recitation speed, now and for the next time.
@@ -1591,6 +1689,8 @@ class RecitationController extends Notifier<RecitationState> {
       rangeTo: () => a,
       repeatDone: 0,
       repeat: state.repeat == 1 ? 0 : null,
+      verseRepeat: 1,
+      verseRepeatDone: 0,
     );
   }
 
@@ -1601,6 +1701,7 @@ class RecitationController extends Notifier<RecitationState> {
       rangeFrom: () => null,
       rangeTo: () => null,
       repeatDone: 0,
+      verseRepeatDone: 0,
     );
   }
 

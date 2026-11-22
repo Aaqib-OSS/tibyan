@@ -605,7 +605,7 @@
   "playerError": "تعذر تشغيل التلاوة. تأكد من الاتصال بالإنترنت أو حمّل السورة.",
   "playerSettings": "إعدادات الاستماع",
   "stopListening": "إيقاف الاستماع",
-  "repeatProgress": "التكرار {done} من {total}",
+  "repeatProgress": "التكرار {done}/{total}",
   "@repeatProgress": {
     "placeholders": {
       "done": {
@@ -3731,6 +3731,32 @@
   "@cellularPausedBody": {
     "placeholders": {
       "size": {
+        "type": "String"
+      }
+    }
+  },
+  "hifzRepeat": "كرر للحفظ",
+  "hifzRepeatTitle": "التكرار للحفظ",
+  "repeatFromVerse": "من الآية",
+  "repeatToVerse": "إلى الآية",
+  "repeatEachVerse": "تكرار كل آية",
+  "repeatWholeRange": "تكرار المقطع كاملًا",
+  "repeatPause": "سكوت بين التكرارات",
+  "repeatStart": "ابدأ التكرار",
+  "chooseRepeatRange": "اختر آيات للتكرار",
+  "repeatProgressVerse": "الآية {done}/{total} · التكرار {rangeDone}/{rangeTotal}",
+  "@repeatProgressVerse": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      },
+      "rangeDone": {
+        "type": "String"
+      },
+      "rangeTotal": {
         "type": "String"
       }
     }

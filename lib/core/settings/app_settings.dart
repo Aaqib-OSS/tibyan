@@ -180,6 +180,7 @@ class AppSettings {
     this.tapJumpFromWord = false,
     this.repeat = 1,
     this.repeatSilence = 0,
+    this.verseRepeat = 1,
     this.playbackSpeed = 1.0,
     this.underVerse = const [],
     this.splitTranslation = false,
@@ -310,6 +311,10 @@ class AppSettings {
 
   /// Seconds of silence between repetitions, to repeat after the reciter.
   final int repeatSilence;
+
+  /// Times each verse plays inside a chosen stretch before the next
+  /// (for hifz); 0 repeats it until stopped.
+  final int verseRepeat;
 
   /// Recitation speed (1.0 as recorded).
   final double playbackSpeed;
@@ -474,6 +479,7 @@ class AppSettings {
     bool? tapJumpFromWord,
     int? repeat,
     int? repeatSilence,
+    int? verseRepeat,
     double? playbackSpeed,
     List<int>? underVerse,
     bool? splitTranslation,
@@ -540,6 +546,7 @@ class AppSettings {
     tapJumpFromWord: tapJumpFromWord ?? this.tapJumpFromWord,
     repeat: repeat ?? this.repeat,
     repeatSilence: repeatSilence ?? this.repeatSilence,
+    verseRepeat: verseRepeat ?? this.verseRepeat,
     playbackSpeed: playbackSpeed ?? this.playbackSpeed,
     underVerse: underVerse ?? this.underVerse,
     splitTranslation: splitTranslation ?? this.splitTranslation,

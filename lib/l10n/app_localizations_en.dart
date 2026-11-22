@@ -843,7 +843,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String repeatProgress(String done, String total) {
-    return 'Repeat $done of $total';
+    return 'Repeat $done/$total';
   }
 
   @override
@@ -5379,4 +5379,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cellularWait => 'Wait for Wi‑Fi';
+
+  @override
+  String get hifzRepeat => 'Repeat to memorize';
+
+  @override
+  String get hifzRepeatTitle => 'Repeat for memorizing';
+
+  @override
+  String get repeatFromVerse => 'From verse';
+
+  @override
+  String get repeatToVerse => 'To verse';
+
+  @override
+  String get repeatEachVerse => 'Repeat each verse';
+
+  @override
+  String get repeatWholeRange => 'Repeat the whole passage';
+
+  @override
+  String get repeatPause => 'Pause between repeats';
+
+  @override
+  String get repeatStart => 'Start repeating';
+
+  @override
+  String get chooseRepeatRange => 'Choose verses to repeat';
+
+  @override
+  String repeatProgressVerse(
+    String done,
+    String total,
+    String rangeDone,
+    String rangeTotal,
+  ) {
+    return 'Verse $done/$total · Repeat $rangeDone/$rangeTotal';
+  }
 }

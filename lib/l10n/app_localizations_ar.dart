@@ -854,7 +854,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String repeatProgress(String done, String total) {
-    return 'التكرار $done من $total';
+    return 'التكرار $done/$total';
   }
 
   @override
@@ -5439,4 +5439,41 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cellularWait => 'انتظار Wi‑Fi';
+
+  @override
+  String get hifzRepeat => 'كرر للحفظ';
+
+  @override
+  String get hifzRepeatTitle => 'التكرار للحفظ';
+
+  @override
+  String get repeatFromVerse => 'من الآية';
+
+  @override
+  String get repeatToVerse => 'إلى الآية';
+
+  @override
+  String get repeatEachVerse => 'تكرار كل آية';
+
+  @override
+  String get repeatWholeRange => 'تكرار المقطع كاملًا';
+
+  @override
+  String get repeatPause => 'سكوت بين التكرارات';
+
+  @override
+  String get repeatStart => 'ابدأ التكرار';
+
+  @override
+  String get chooseRepeatRange => 'اختر آيات للتكرار';
+
+  @override
+  String repeatProgressVerse(
+    String done,
+    String total,
+    String rangeDone,
+    String rangeTotal,
+  ) {
+    return 'الآية $done/$total · التكرار $rangeDone/$rangeTotal';
+  }
 }
