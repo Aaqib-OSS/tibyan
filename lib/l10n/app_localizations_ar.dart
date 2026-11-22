@@ -5946,6 +5946,90 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adhanInUseFull => 'الأذان كاملًا';
 
   @override
+  String get hijriCalendarTitle => 'التقويم الهجري';
+
+  @override
+  String get hijriOpenCalendar => 'افتح التقويم الهجري';
+
+  @override
+  String get hijriPrevMonth => 'الشهر السابق';
+
+  @override
+  String get hijriNextMonth => 'الشهر التالي';
+
+  @override
+  String get hijriBackToToday => 'اليوم';
+
+  @override
+  String get hijriTodayLabel => 'اليوم';
+
+  @override
+  String hijriAdjustment(String days) {
+    return 'تعديل التاريخ: $days يوم';
+  }
+
+  @override
+  String get occasionsTitle => 'المناسبات';
+
+  @override
+  String get occasionNext => 'المناسبة القادمة';
+
+  @override
+  String get occasionNewYear => 'رأس السنة الهجرية';
+
+  @override
+  String get occasionAshura => 'عاشوراء';
+
+  @override
+  String get occasionRamadanStart => 'أول رمضان';
+
+  @override
+  String get occasionLastTen => 'العشر الأواخر من رمضان';
+
+  @override
+  String get occasionEidFitr => 'عيد الفطر';
+
+  @override
+  String get occasionArafah => 'يوم عرفة';
+
+  @override
+  String get occasionEidAdha => 'عيد الأضحى';
+
+  @override
+  String get occasionTashreeq => 'أيام التشريق';
+
+  @override
+  String occasionIn(int count, String n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'بعد $n يومًا',
+      few: 'بعد $n أيام',
+      two: 'بعد يومين',
+      one: 'غدًا',
+      zero: 'اليوم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get occasionOngoing => 'جارية الآن';
+
+  @override
+  String occasionTomorrow(String name) {
+    return 'غدًا: $name';
+  }
+
+  @override
+  String get occasionChannel => 'تذكير المناسبات';
+
+  @override
+  String get occasionRemindersTitle => 'تذكير قبل المناسبات بيوم';
+
+  @override
+  String get occasionRemindersNote => 'إشعار في المساء قبل كل مناسبة';
+
+  @override
   String get qiblaTitle => 'القبلة';
 
   @override

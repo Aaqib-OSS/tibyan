@@ -16,6 +16,7 @@ import '../domain/prayer_settings.dart';
 import '../prayer_providers.dart';
 import 'prayer_alarms.dart';
 import 'prayer_desktop.dart';
+import 'occasion_reminders.dart';
 import 'prayer_native.dart';
 
 final prayerNativeProvider = Provider<PrayerNative>((ref) => PrayerNative());
@@ -119,6 +120,15 @@ class PrayerRuntime {
             .sync(_c.read(prayerSettingsProvider), _l);
       } catch (e) {
         debugPrint('prayer alerts: $e');
+      }
+      try {
+        await syncOccasionReminders(
+          _c.read(reminderSchedulerProvider),
+          _c.read(prayerSettingsProvider),
+          _l,
+        );
+      } catch (e) {
+        debugPrint('occasion reminders: $e');
       }
     });
   }

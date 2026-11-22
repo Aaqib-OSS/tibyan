@@ -12,6 +12,7 @@ import '../domain/prayer_calc.dart';
 import '../domain/prayer_settings.dart';
 import '../prayer_providers.dart';
 import '../services/prayer_alarms.dart';
+import 'hijri_calendar_screen.dart' show hijriCalendarLocation;
 import 'prayer_alert_sheet.dart';
 import 'prayer_enable.dart';
 import 'prayer_widgets.dart';
@@ -220,9 +221,40 @@ class _NextCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              dateLine(l, today, settings.hijriOffset),
-              style: TextStyle(color: t.muted, fontSize: 13),
+            // A tap on the date opens the Hijri calendar.
+            Semantics(
+              button: true,
+              hint: l.hijriOpenCalendar,
+              child: InkWell(
+                key: const ValueKey('prayer-hijri-date'),
+                borderRadius: BorderRadius.circular(8),
+                onTap: () => context.push(hijriCalendarLocation),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 48),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          dateLine(l, today, settings.hijriOffset),
+                          style: TextStyle(
+                            color: t.muted,
+                            fontSize: 13,
+                            decoration: TextDecoration.underline,
+                            decorationColor: t.muted.withValues(alpha: .5),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Icon(
+                        Icons.calendar_month_outlined,
+                        size: 18,
+                        color: t.control,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
             if (next != null) ...[
               const SizedBox(height: 6),
