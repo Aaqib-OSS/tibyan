@@ -15,7 +15,7 @@ const _ar = <String, SourceText>{
   'seen-arabic-adhkar': (
     title: 'أذكار الصباح والمساء',
     publisher: 'Seen-Arabic — Morning and Evening Adhkar DB (MIT)',
-    license: 'رخصة MIT، «Copyright (c) 2024 Seen Arabic»؛ النصوص معروضة كما نُشرت دون تعديل',
+    license: 'رخصة MIT، «Copyright (c) 2024 Seen Arabic»؛ النصوص معروضة كما نُشرت دون تعديل، وتُرك مدخل واحد (رقم 29) لأن مصدره يضعّف الحديث',
     credit: 'Seen-Arabic — Morning and Evening Adhkar DB (MIT)',
   ),
   'hisn-almuslim': (
@@ -195,7 +195,7 @@ const _en = <String, SourceText>{
   'seen-arabic-adhkar': (
     title: 'Morning and evening adhkar',
     publisher: 'Seen-Arabic — Morning and Evening Adhkar DB (MIT)',
-    license: 'MIT License, «Copyright (c) 2024 Seen Arabic»; the texts are shown exactly as published',
+    license: 'MIT License, «Copyright (c) 2024 Seen Arabic»; the texts are shown exactly as published, with one entry (no. 29) left out because its source grades the hadith weak',
     credit: 'Seen-Arabic — Morning and Evening Adhkar DB (MIT)',
   ),
   'hisn-almuslim': (
