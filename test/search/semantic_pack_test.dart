@@ -73,7 +73,7 @@ void main() {
   });
 
   test('the shipped spec points at the mirror and is in the list', () {
-    expect(PagePackSpec.semantic.url, contains('tibyan.ahmedhelal.dev'));
+    expect(PagePackSpec.semantic.url, contains('altibyan.app'));
     expect(PagePackSpec.semantic.sha256, hasLength(64));
     expect(PagePackSpec.all, contains(PagePackSpec.semantic));
   });

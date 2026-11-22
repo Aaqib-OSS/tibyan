@@ -18,6 +18,8 @@ import '../../l10n/app_localizations.dart';
 import '../hifz/hifz_providers.dart';
 import '../khatma/domain/khatmah.dart' show EntryPoint;
 import '../khatma/khatma_providers.dart';
+import '../prayer/presentation/prayer_times_screen.dart'
+    show prayerTimesLocation;
 import '../tasbih/presentation/tasbih_screen.dart'
     show tasbihIcon, tasbihLocation;
 import '../tasbih/tasbih_providers.dart' show tasbihTodayProvider;
@@ -95,12 +97,6 @@ class HomeScreen extends ConsumerWidget {
         onTap: () => context.push('/mushaf/tafsir?s=$surah&a=$ayah'),
       ),
       (
-        icon: railIcon(RailItem.search),
-        label: l.sectionSearch,
-        note: null,
-        onTap: () => context.go('/search'),
-      ),
-      (
         icon: railIcon(RailItem.khatma),
         label: l.sectionKhatma,
         note: portion != null
@@ -123,6 +119,12 @@ class HomeScreen extends ConsumerWidget {
             ? l.tasbihTileToday(digits(tasbihToday))
             : l.tasbihTileStart,
         onTap: () => context.push(tasbihLocation),
+      ),
+      (
+        icon: Icons.mosque_outlined,
+        label: l.prayerTimesTitle,
+        note: l.prayerTileNote,
+        onTap: () => context.push(prayerTimesLocation),
       ),
       (
         icon: railIcon(RailItem.tasmee),
@@ -899,12 +901,6 @@ class _ElderlyHome extends ConsumerWidget {
                   icon: Icons.headphones_outlined,
                   label: l.sectionListen,
                   onTap: () => context.push('/mushaf/audio'),
-                ),
-                const SizedBox(height: 16),
-                _BigAction(
-                  icon: Icons.search,
-                  label: l.sectionSearch,
-                  onTap: () => context.go('/search'),
                 ),
                 const SizedBox(height: 16),
                 _BigAction(

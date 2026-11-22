@@ -17,6 +17,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
+import 'features/prayer/domain/prayer_settings.dart' show PrayerSettings;
+import 'features/prayer/prayer_providers.dart' show prayerSettingsKey;
+import 'features/prayer/data/adhan_downloads.dart';
+import 'features/prayer/presentation/prayer_times_screen.dart'
+    show prayerTimesLocation;
+import 'features/prayer/services/prayer_runtime.dart';
 import 'features/group_khatma/data/group_khatma_api.dart';
 import 'features/settings/report/problem_report.dart';
 import 'core/crash/crash_reporting.dart';
@@ -42,6 +48,7 @@ import 'features/audio/timing_updates.dart';
 import 'features/audio/word_timing_packs.dart';
 import 'features/khatma/khatma_providers.dart';
 import 'features/khatma/domain/day.dart';
+import 'core/ui/raster_guard.dart';
 import 'features/khatma/services/home_widget_sync.dart';
 import 'features/khatma/services/verse_of_day.dart';
 import 'features/khatma/services/reminder_scheduler.dart';
@@ -56,8 +63,10 @@ import 'features/mushaf/presentation/widgets/illuminated_frame.dart'
 import 'features/tasmee/data/background_model_download.dart';
 import 'l10n/app_localizations.dart';
 
-Future<void> main() async {
+Future<void> main([List<String> args = const []]) async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Pictures of widgets wait for the surface after a return (Android).
+  installRasterGuard();
   startupMark('binding');
   if (const bool.fromEnvironment('PROF')) {
     unawaited(
@@ -88,7 +97,14 @@ Future<void> main() async {
   startupMark('theme+flags');
   final prefs = await SharedPreferences.getInstance();
   // On the desktop: the window's size and place, as last left.
-  await DesktopWindow.init(prefs, title: 'Tibyan');
+  // Started at login (`--tray`, the Store build's StartupTask and the Run
+  // key / autostart entry): hidden in the tray, when the tray is on.
+  final prayerPrefs = PrayerSettings.decode(prefs.getString(prayerSettingsKey));
+  await DesktopWindow.init(
+    prefs,
+    title: 'Tibyan',
+    hidden: args.contains('--tray') && prayerPrefs.enabled && prayerPrefs.tray,
+  );
   startupMark('prefs+window');
   final content = await ContentDatabase.openBundled(rootBundle);
   final packRoot = await getApplicationSupportDirectory();
@@ -144,7 +160,8 @@ Future<void> main() async {
   // while the app was closed reaches its handler.
   container
     ..read(backgroundModelDownloadProvider)
-    ..read(backgroundRecitationsProvider);
+    ..read(backgroundRecitationsProvider)
+    ..read(adhanDownloadsProvider);
   unawaited(
     container
         .read(backgroundPacksProvider)
@@ -166,6 +183,7 @@ Future<void> main() async {
   _startCarBrowsing(container);
   _startLiveActivity(container);
   _startKhatma(container);
+  _startPrayer(container);
   // Windows installer builds: check for a new Setup.exe (no-op elsewhere).
   windowsUpdater.start();
   startupMark('main-done');
@@ -240,6 +258,25 @@ Future<void> _refreshTimings(
   } catch (_) {
     // Nothing to do: the bundled timings are used.
   }
+}
+
+/// Prayer times: alerts planned 7 days ahead, planned again at every
+/// launch, resume and change; the app plays the adhan itself where it does
+/// (desktop tray, Apple platforms in front) and shows its screen.
+void _startPrayer(ProviderContainer container) {
+  PrayerRuntime(
+    container,
+    onAdhan: (prayer, at) async {
+      await container.read(appRouterReadyProvider).future;
+      unawaited(
+        openOverHome(
+          container.read(appRouterProvider),
+          '$prayerTimesLocation/adhan?p=${prayer.name}'
+          '&at=${at.millisecondsSinceEpoch}',
+        ),
+      );
+    },
+  ).start();
 }
 
 /// Keeps the khatma's reminders (rolling) and the home screen widget up to
@@ -325,10 +362,26 @@ void _startKhatma(ProviderContainer container) {
     if (link == null) return;
     // Google Assistant's «open app feature»: the shortcut's own link.
     final uri = assistantFeatureLink(link) ?? link;
+    // A prayer alert: the full-screen adhan (or the times).
+    if (uri.scheme == 'tibyan' && uri.host == 'prayer') {
+      container.read(launchTargetProvider).value = true;
+      await container.read(appRouterReadyProvider).future;
+      unawaited(
+        openOverHome(
+          container.read(appRouterProvider),
+          uri.path == '/adhan'
+              ? '$prayerTimesLocation/adhan?${uri.query}'
+              : prayerTimesLocation,
+        ),
+      );
+      return;
+    }
     if (uri.toString() == weeklyReportLink) {
       container.read(launchTargetProvider).value = true;
       await container.read(appRouterReadyProvider).future;
-      unawaited(container.read(appRouterProvider).push(weeklyReportLocation));
+      unawaited(
+        openOverHome(container.read(appRouterProvider), weeklyReportLocation),
+      );
       return;
     }
     // A group khatma link: https://altibyan.app/k/<id> (universal / app
@@ -341,7 +394,10 @@ void _startKhatma(ProviderContainer container) {
       container.read(launchTargetProvider).value = true;
       await container.read(appRouterReadyProvider).future;
       unawaited(
-        container.read(appRouterProvider).push('/khatma/group/$groupId'),
+        openOverHome(
+          container.read(appRouterProvider),
+          '/khatma/group/$groupId',
+        ),
       );
       return;
     }
@@ -370,7 +426,7 @@ void _startKhatma(ProviderContainer container) {
     // running app goes at once: the signal is already given.
     container.read(launchTargetProvider).value = true;
     await container.read(appRouterReadyProvider).future;
-    container.read(appRouterProvider).go(route);
+    await openOverHome(container.read(appRouterProvider), route);
   }
 
   // A download's notification opens the Downloads screen, which only
@@ -378,7 +434,7 @@ void _startKhatma(ProviderContainer container) {
   container.read(backgroundDownloadsProvider).onNotificationTap = () async {
     container.read(launchTargetProvider).value = true;
     await container.read(appRouterReadyProvider).future;
-    unawaited(container.read(appRouterProvider).push('/downloads'));
+    unawaited(openOverHome(container.read(appRouterProvider), '/downloads'));
   };
 
   final reminders = container.read(reminderSchedulerProvider);

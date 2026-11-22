@@ -7,6 +7,7 @@ import 'package:path/path.dart' as p;
 
 import 'model_manifest.dart';
 import 'model_store.dart';
+import '../../../core/net/server.dart';
 
 enum NetworkKind { wifi, cellular, offline, unknown }
 
@@ -87,7 +88,7 @@ class ModelChecksumMismatch extends ModelDownloadException {
 /// [download] again resumes it.
 class ModelDownloader {
   ModelDownloader({required this.store, http.Client? client, this.network})
-    : _client = client ?? http.Client(),
+    : _client = client ?? FallbackClient(),
       _ownsClient = client == null;
 
   final ModelStore store;

@@ -72,12 +72,12 @@ void main() {
       // The mirror first, then the source, with the same path.
       final dosari = reciters.firstWhere((r) => r.id == 10);
       expect(surahUrls(dosari, 2).map((u) => u.toString()), [
-        'https://tibyan.ahmedhelal.dev/mirror/sources/recitations/quran/yasser_ad-dussary/002.mp3',
+        'https://altibyan.app/mirror/sources/recitations/quran/yasser_ad-dussary/002.mp3',
         'https://download.quranicaudio.com/quran/yasser_ad-dussary/002.mp3',
       ]);
       final muaiqly = reciters.firstWhere((r) => r.id == 15);
       expect(surahUrls(muaiqly, 2).map((u) => u.toString()), [
-        'https://tibyan.ahmedhelal.dev/mirror/sources/recitations/quran/maher_almu3aiqly/year1440/002.mp3',
+        'https://altibyan.app/mirror/sources/recitations/quran/maher_almu3aiqly/year1440/002.mp3',
         'https://download.quranicaudio.com/quran/maher_almu3aiqly/year1440/002.mp3',
       ]);
     },

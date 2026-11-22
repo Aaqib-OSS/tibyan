@@ -80,7 +80,9 @@ dependencies:
   window_manager: ^0.5.2
   google_sign_in: ^7.2.0
   in_app_review: ^2.0.12
-
+  adhan: ^2.0.0+1
+  hijri: ^3.0.1
+  tray_manager: ^0.5.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -111,6 +113,12 @@ msix_config:
   # microphone: tasmee and hifz voice recording work on Windows.
   capabilities: internetClient, microphone
   store: true
+  # «مواقيت الصلاة»: opens at login hidden in the tray so the adhan plays
+  # (the user can turn it off in Task Manager › Startup apps).
+  startup_task:
+    task_id: TibyanTray
+    enabled: true
+    parameters: --tray
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -134,6 +142,7 @@ flutter:
     - assets/pages/hafs-1441/
     - assets/brand/
     - assets/tasbih/
+    - assets/prayer/
 
   fonts:
     # Interface numbers outside the mushaf: digits and number signs cut from

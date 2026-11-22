@@ -18,6 +18,7 @@ import '../../core/theme/theme_tokens.dart';
 import '../../l10n/app_localizations.dart';
 import '../khatma/khatma_providers.dart' show homeWidgetSyncProvider;
 import '../khatma/services/home_widget_sync.dart';
+import '../../core/ui/raster_guard.dart';
 import 'widget_art.dart';
 
 final widgetLookSyncProvider = Provider<WidgetLookSync>((ref) {
@@ -126,6 +127,12 @@ class WidgetLookSync {
         for (final face in WidgetFace.values) {
           for (final shape in WidgetShape.values) {
             final art = buildWidgetArt(face, shape, look, l);
+            // Android: not while the app is in the background, where the
+            // engine has no surface to draw the picture with
+            // (raster_guard.dart); the drawing goes on once it is back.
+            while (!canRasterizeNow()) {
+              await Future<void>.delayed(const Duration(milliseconds: 500));
+            }
             final png = await _paint(art.art, art.size, ratio);
             if (png == null) continue;
             final key = widgetArtKey(face, shape, s, m);

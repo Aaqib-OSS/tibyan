@@ -23,7 +23,7 @@ import java.util.Locale
  * and the app marks the portion read the next time it runs
  * (`takePending` in home_widget_sync.dart).
  */
-class ActionsWidgetProvider : HomeWidgetProvider() {
+class ActionsWidgetProvider : AsyncWidgetProvider() {
   override fun onUpdate(
       context: Context,
       appWidgetManager: AppWidgetManager,
@@ -79,8 +79,8 @@ class ActionsWidgetProvider : HomeWidgetProvider() {
     }
   }
 
-  override fun onReceive(context: Context, intent: Intent) {
-    if (intent.action != PORTION_DONE) return super.onReceive(context, intent)
+  override fun handle(context: Context, intent: Intent) {
+    if (intent.action != PORTION_DONE) return super.handle(context, intent)
     val prefs = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
     val queue = prefs.getString(PENDING, "") ?: ""
     prefs

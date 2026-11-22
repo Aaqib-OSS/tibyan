@@ -548,7 +548,7 @@ void main() {
       final (c, _) = await recitation(
         client: MockClient((r) async {
           await Future<void>.delayed(
-            Duration(milliseconds: r.url.host.startsWith('tibyan') ? 100 : 5),
+            Duration(milliseconds: r.url.host == 'altibyan.app' ? 100 : 5),
           );
           return http.Response.bytes(List.filled(32768, 0), 206);
         }),
@@ -556,14 +556,14 @@ void main() {
       final reciter = (await FakeRepo().reciters()).first;
       final hosts = c.read(audioHostsProvider.notifier);
       // Not measured yet: the mirror first, as before.
-      expect(hosts.urls(reciter, 2).first.host, 'tibyan.ahmedhelal.dev');
+      expect(hosts.urls(reciter, 2).first.host, 'altibyan.app');
       await hosts.measure(reciter);
       expect(c.read(audioHostsProvider), {
         'server1.mp3quran.net': AudioHost.source,
       });
       expect(hosts.urls(reciter, 2).map((u) => u.host), [
         'server1.mp3quran.net',
-        'tibyan.ahmedhelal.dev',
+        'altibyan.app',
       ]);
     });
   });

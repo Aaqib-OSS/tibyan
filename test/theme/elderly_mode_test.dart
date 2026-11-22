@@ -124,7 +124,7 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('elderly home: three main tasks and settings, each labelled', (
+  testWidgets('elderly home: main tasks and settings, each labelled', (
     tester,
   ) async {
     final handle = tester.ensureSemantics();
@@ -135,7 +135,8 @@ void main() {
     );
     expect(find.text('متابعة القراءة'), findsOneWidget);
     expect(find.text('الاستماع'), findsOneWidget);
-    expect(find.text('البحث'), findsOneWidget);
+    // Search is in the top bar of the full home, not a task here.
+    expect(find.text('البحث'), findsNothing);
     expect(find.text('الإعدادات'), findsOneWidget);
     // Nothing else from the full home.
     expect(find.text('التفسير'), findsNothing);

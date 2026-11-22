@@ -16,12 +16,13 @@
 import '../../features/books/data/book_pack.dart';
 import '../../features/content_extras/english_tafsir.dart';
 import '../../features/content_extras/verse_audio_index.dart';
+import '../net/server.dart';
 
 /// The one switch for every test pack below.
 const includeTestPacks = true;
 
 /// Where every test pack lives.
-const testPacksBaseUrl = 'https://tibyan.ahmedhelal.dev/mirror/test/';
+const testPacksBaseUrl = '$serverBase/mirror/test/';
 
 /// The mark every test title carries.
 const testTitleMarkAr = '(مسودة للاختبار)';

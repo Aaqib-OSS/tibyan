@@ -21,7 +21,7 @@ import es.antonborri.home_widget.HomeWidgetProvider
  * `tasbih_pending` (home_widget's preferences) until the app adds it to the
  * log; the dhikr opens the misbaha.
  */
-class TasbihWidgetProvider : HomeWidgetProvider() {
+class TasbihWidgetProvider : AsyncWidgetProvider() {
   override fun onUpdate(
       context: Context,
       appWidgetManager: AppWidgetManager,
@@ -106,8 +106,8 @@ class TasbihWidgetProvider : HomeWidgetProvider() {
       newOptions: Bundle,
   ) = redraw(context, this, intArrayOf(appWidgetId))
 
-  override fun onReceive(context: Context, intent: Intent) {
-    if (intent.action != COUNT) return super.onReceive(context, intent)
+  override fun handle(context: Context, intent: Intent) {
+    if (intent.action != COUNT) return super.handle(context, intent)
     val prefs = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
     prefs.edit().putInt(PENDING, prefs.getInt(PENDING, 0) + 1).apply()
     val v = context.getSystemService(Vibrator::class.java)

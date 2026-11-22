@@ -128,8 +128,8 @@ void main() {
     );
     await guidelines(tester);
     expect(
-      tester.getSemantics(find.bySemanticsLabel(RegExp('^البحث'))),
-      isSemantics(label: 'البحث', isButton: true, hasTapAction: true),
+      tester.getSemantics(find.bySemanticsLabel(RegExp('^الاستماع'))),
+      isSemantics(label: 'الاستماع', isButton: true, hasTapAction: true),
     );
     expect(
       tester.getSemantics(find.bySemanticsLabel(RegExp('^تبيان'))),

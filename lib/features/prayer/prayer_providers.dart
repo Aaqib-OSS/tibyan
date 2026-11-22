@@ -1,0 +1,54 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/settings/settings_controller.dart';
+import 'data/cities.dart';
+import 'domain/prayer_settings.dart';
+
+/// The preferences key of [PrayerSettings].
+const prayerSettingsKey = 'prayer.settings.v1';
+
+/// «مواقيت الصلاة»: every choice, kept on the device.
+class PrayerSettingsController extends Notifier<PrayerSettings> {
+  @override
+  PrayerSettings build() => PrayerSettings.decode(
+    ref.read(sharedPreferencesProvider).getString(prayerSettingsKey),
+  );
+
+  Future<void> update(PrayerSettings Function(PrayerSettings) change) async {
+    state = change(state);
+    await ref
+        .read(sharedPreferencesProvider)
+        .setString(prayerSettingsKey, state.encode());
+  }
+
+  Future<void> setSound(PrayerKind p, AlertSound s) =>
+      update((x) => x.copyWith(sounds: {...x.sounds, p: s}));
+
+  Future<void> setReminder(PrayerKind p, int minutes) =>
+      update((x) => x.copyWith(reminders: {...x.reminders, p: minutes}));
+
+  Future<void> setOffset(PrayerKind p, int minutes) => update(
+    (x) => x.copyWith(
+      offsets: {
+        ...x.offsets,
+        p: minutes.clamp(-PrayerSettings.maxOffset, PrayerSettings.maxOffset),
+      },
+    ),
+  );
+
+  /// «تطبيق على كل الصلوات»: [p]'s sound and reminder for all five.
+  Future<void> applyToAll(PrayerKind p) => update(
+    (x) => x.copyWith(
+      sounds: {for (final q in obligatoryPrayers) q: x.soundOf(p)},
+      reminders: {for (final q in obligatoryPrayers) q: x.reminderOf(p)},
+    ),
+  );
+}
+
+final prayerSettingsProvider =
+    NotifierProvider<PrayerSettingsController, PrayerSettings>(
+      PrayerSettingsController.new,
+    );
+
+/// The offline city list, read once from the app's assets.
+final cityListProvider = FutureProvider<CityList>((ref) => CityList.load());
