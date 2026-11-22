@@ -50,7 +50,16 @@ class PlannedAlert {
     required this.prayerAt,
     this.minutes = 0,
     this.ramadan = false,
+    this.late = false,
+    this.key = '',
   });
+
+  /// Its minute was still running when planned: it fires at once, and
+  /// only the first time (see [planAlerts]'s `lateFired`).
+  final bool late;
+
+  /// The alert's identity across plans: its slot and original time.
+  final String key;
 
   final int id;
 
@@ -78,6 +87,29 @@ int _slot(PrayerKind p, AlertKind k) => switch (k) {
   AlertKind.iftar => 15,
 };
 
+/// An alert's identity: its slot and the time it was meant for.
+String lateKey(int slot, DateTime at) =>
+    '$slot@${at.toUtc().millisecondsSinceEpoch}';
+
+/// [fired] with the late alerts of [plan] added, keeping a day's worth.
+Set<String> recordLate(
+  Set<String> fired,
+  List<PlannedAlert> plan,
+  DateTime now,
+) {
+  final keep = now.toUtc().subtract(const Duration(days: 1));
+  return {
+    for (final k in fired)
+      if (DateTime.fromMillisecondsSinceEpoch(
+        int.tryParse(k.split('@').last) ?? 0,
+        isUtc: true,
+      ).isAfter(keep))
+        k,
+    for (final a in plan)
+      if (a.late) a.key,
+  };
+}
+
 /// Every alert of the next [prayerDaysAhead] days at the place (from its
 /// today), after [now], earliest first. [adhanReady]: the adhan recording
 /// is on the device; until then a prayer set to the adhan sounds the
@@ -87,6 +119,7 @@ List<PlannedAlert> planAlerts({
   required DateTime now,
   required bool adhanReady,
   int? limit,
+  Set<String> lateFired = const {},
 }) {
   final place = settings.place;
   if (!settings.enabled || place == null) return const [];
@@ -103,7 +136,12 @@ List<PlannedAlert> planAlerts({
       // late: prayer times switched on at 14:35:55 still sound Asr's
       // 14:35 adhan), at once.
       if (!at.add(const Duration(minutes: 1)).isAfter(now)) return;
-      if (!at.isAfter(now)) at = now.add(lateFireDelay);
+      final key = lateKey(_slot(p, k), at);
+      final late = !at.isAfter(now);
+      // Planned again within that minute (the app came back after the
+      // adhan was stopped, a setting changed): it does not fire twice.
+      if (late && lateFired.contains(key)) return;
+      if (late) at = now.add(lateFireDelay);
       out.add(
         PlannedAlert(
           id: prayerIdBase + d * _slotsPerDay + _slot(p, k),
@@ -114,6 +152,8 @@ List<PlannedAlert> planAlerts({
           prayerAt: prayerAt,
           minutes: minutes,
           ramadan: ramadan && p == PrayerKind.maghrib,
+          late: late,
+          key: key,
         ),
       );
     }
