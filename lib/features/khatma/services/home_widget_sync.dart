@@ -167,6 +167,39 @@ class NoHomeWidget implements HomeWidgetSync {
   }
 }
 
+/// Whether [platform] has home screen widgets: Android and iOS through the
+/// `home_widget` plugin, macOS through its own WidgetKit extension
+/// ([MacHomeWidgetSync]). Windows, Linux and the web have none, and the
+/// plugin has no implementation there (`MissingPluginException` on
+/// `home_widget/updates`), so nothing may call it.
+bool homeWidgetsSupported([TargetPlatform? platform, bool web = kIsWeb]) {
+  if (web) return false;
+  return switch (platform ?? defaultTargetPlatform) {
+    TargetPlatform.android ||
+    TargetPlatform.iOS ||
+    TargetPlatform.macOS => true,
+    _ => false,
+  };
+}
+
+/// Whether [platform] may call the `home_widget` plugin (Android, iOS).
+bool homeWidgetPluginSupported([TargetPlatform? platform, bool web = kIsWeb]) {
+  if (web) return false;
+  final p = platform ?? defaultTargetPlatform;
+  return p == TargetPlatform.android || p == TargetPlatform.iOS;
+}
+
+/// The widget sync for [platform]: the plugin on Android and iOS, the app's
+/// own channel on macOS, and nothing on Windows, Linux and the web.
+HomeWidgetSync homeWidgetSyncFor([
+  TargetPlatform? platform,
+  bool web = kIsWeb,
+]) {
+  if (homeWidgetPluginSupported(platform, web)) return PluginHomeWidgetSync();
+  if (homeWidgetsSupported(platform, web)) return MacHomeWidgetSync();
+  return NoHomeWidget();
+}
+
 /// The `home_widget` plugin: Android's `KhatmaWidgetProvider` and the iOS
 /// `TibyanWidget` extension read these keys.
 class PluginHomeWidgetSync implements HomeWidgetSync {
@@ -188,8 +221,13 @@ class PluginHomeWidgetSync implements HomeWidgetSync {
   static const androidTasbihProvider = 'app.tibyan.tibyan.TasbihWidgetProvider';
   static const iosTasbihKind = 'TibyanTasbihWidget';
 
+  /// The plugin exists on Android and iOS only; elsewhere every call is a
+  /// no-op (no `MissingPluginException`).
+  bool get _supported => homeWidgetPluginSupported();
+
   @override
   Future<void> saveFile(String key, Uint8List bytes, String ext) async {
+    if (!_supported) return;
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       await HomeWidget.setAppGroupId(appGroup);
     }
@@ -198,6 +236,7 @@ class PluginHomeWidgetSync implements HomeWidgetSync {
 
   @override
   Future<void> writeLooks(Map<String, String> entries) async {
+    if (!_supported) return;
     try {
       if (defaultTargetPlatform == TargetPlatform.iOS) {
         await HomeWidget.setAppGroupId(appGroup);
@@ -223,6 +262,7 @@ class PluginHomeWidgetSync implements HomeWidgetSync {
 
   @override
   Future<void> writeVerses(Map<String, String> entries) async {
+    if (!_supported) return;
     try {
       if (defaultTargetPlatform == TargetPlatform.iOS) {
         await HomeWidget.setAppGroupId(appGroup);
@@ -249,6 +289,7 @@ class PluginHomeWidgetSync implements HomeWidgetSync {
   Future<void> write(WidgetData data) async {
     // The watch shows today's portion from the same keys.
     await WatchBridge.push(widgetEntries(data));
+    if (!_supported) return;
     try {
       if (defaultTargetPlatform == TargetPlatform.iOS) {
         await HomeWidget.setAppGroupId(appGroup);
@@ -271,6 +312,7 @@ class PluginHomeWidgetSync implements HomeWidgetSync {
 
   @override
   Future<Uri?> launchUri() async {
+    if (!_supported) return null;
     try {
       return await HomeWidget.initiallyLaunchedFromHomeWidget();
     } catch (_) {
@@ -279,10 +321,12 @@ class PluginHomeWidgetSync implements HomeWidgetSync {
   }
 
   @override
-  Stream<Uri?> get taps => HomeWidget.widgetClicked;
+  Stream<Uri?> get taps =>
+      _supported ? HomeWidget.widgetClicked : const Stream<Uri?>.empty();
 
   @override
   Future<List<WidgetAction>> takePending() async {
+    if (!_supported) return const [];
     try {
       if (defaultTargetPlatform == TargetPlatform.iOS) {
         await HomeWidget.setAppGroupId(appGroup);

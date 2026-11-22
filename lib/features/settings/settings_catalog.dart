@@ -27,6 +27,7 @@ import 'report/report_screen.dart' show reportLocation;
 import '../tasbih/presentation/tasbih_screen.dart'
     show tasbihIcon, tasbihLocation;
 import '../tasbih/presentation/tasbih_settings_tiles.dart';
+import '../khatma/services/home_widget_sync.dart' show homeWidgetsSupported;
 import 'home_widgets_card.dart';
 import 'settings_widgets.dart';
 import 'windows_update_tile.dart';
@@ -78,7 +79,10 @@ enum SettingsSection {
     about => l.settingsSectionAboutHint,
   };
 
-  List<SettingsGroup> get groups => settingsCatalog[this]!;
+  List<SettingsGroup> get groups => [
+    for (final g in settingsCatalog[this]!)
+      if (g.shown()) g,
+  ];
 }
 
 typedef SettingBuilder = Widget Function(BuildContext context, WidgetRef ref);
@@ -110,12 +114,23 @@ Widget _none(BuildContext c, WidgetRef r) => const SizedBox.shrink();
 
 /// A titled group of settings within a section.
 class SettingsGroup {
-  const SettingsGroup(this.icon, this.title, this.entries);
+  const SettingsGroup(
+    this.icon,
+    this.title,
+    this.entries, {
+    this.shown = _always,
+  });
 
   final IconData icon;
   final String Function(AppLocalizations l) title;
   final List<SettingEntry> entries;
+
+  /// Whether this group exists on the running platform (drawn and found
+  /// by search).
+  final bool Function() shown;
 }
+
+bool _always() => true;
 
 /// Every setting, once, in its section.
 final Map<SettingsSection, List<SettingsGroup>> settingsCatalog = {
@@ -172,7 +187,7 @@ final Map<SettingsSection, List<SettingsGroup>> settingsCatalog = {
         (c, r) => const HomeWidgetsCard(),
         keywords: 'ودجت ودجات أداة أدوات الشاشة الرئيسية آية اليوم widget widgets home screen verse of the day',
       ),
-    ]),
+    ], shown: homeWidgetsSupported),
   ],
   SettingsSection.mushaf: [
     SettingsGroup(Icons.menu_book_outlined, (l) => l.editionLabel, [
