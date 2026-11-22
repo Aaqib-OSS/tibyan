@@ -54,6 +54,12 @@ class AdhkarItem {
   );
 }
 
+/// Entries left out of the screen, by their published `order`. The bundled
+/// files stay byte-for-byte as published; only the display skips these.
+/// 29 (the salawat ten times): its source grades the hadith weak («ضعيف
+/// الترغيب»), so it is left out, as in the misbaha.
+const excludedAdhkarOrders = {29};
+
 List<AdhkarItem> parseAdhkar(String json) => [
   for (final e in jsonDecode(json) as List)
     AdhkarItem.fromJson(e as Map<String, dynamic>),
@@ -72,7 +78,7 @@ Future<List<AdhkarItem>> loadAdhkar(
   );
   return [
     for (final a in all)
-      if (a.isFor(time)) a,
+      if (a.isFor(time) && !excludedAdhkarOrders.contains(a.order)) a,
   ];
 }
 

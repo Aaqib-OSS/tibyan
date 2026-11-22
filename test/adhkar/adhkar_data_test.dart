@@ -40,6 +40,10 @@ void main() {
       expect(en, hasLength(34));
       expect(ar.where((a) => a.isFor(AdhkarTime.morning)), hasLength(26));
       expect(ar.where((a) => a.isFor(AdhkarTime.evening)), hasLength(24));
+      // Shown: entry 29 left out (its source grades the hadith weak).
+      final shown = ar.where((a) => !excludedAdhkarOrders.contains(a.order));
+      expect(shown.where((a) => a.isFor(AdhkarTime.morning)), hasLength(25));
+      expect(shown.where((a) => a.isFor(AdhkarTime.evening)), hasLength(23));
       // The same Arabic text in both files; English adds its translation.
       for (var i = 0; i < ar.length; i++) {
         expect(en[i].content, ar[i].content);
@@ -186,6 +190,18 @@ void main() {
     ) async {
       final c = await pump(tester, const AdhkarScreen());
       expect(find.byKey(const ValueKey('adhkar-item-1')), findsOneWidget);
+      expect(find.textContaining('من ٢٥'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('adhkar-item-31')),
+        400,
+        scrollable: find.byType(Scrollable).last,
+      );
+      expect(find.byKey(const ValueKey('adhkar-item-29')), findsNothing);
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('adhkar-item-1')),
+        -400,
+        scrollable: find.byType(Scrollable).last,
+      );
       // Item 4 is said three times.
       final tap = find.byKey(const ValueKey('adhkar-tap-4'));
       await tester.ensureVisible(tap);
