@@ -13,6 +13,7 @@ import 'package:tibyan/core/theme/app_theme.dart';
 import 'package:tibyan/core/theme/theme_registry.dart';
 import 'package:tibyan/core/theme/theme_tokens.dart';
 import 'package:tibyan/core/ui/share_text.dart';
+import 'package:tibyan/features/audio/player_bar.dart';
 import 'package:tibyan/features/audio/recitation.dart';
 import 'package:tibyan/features/books/books_providers.dart';
 import 'package:tibyan/features/books/data/book_pack.dart';
@@ -275,9 +276,22 @@ void main() {
       await tester.pumpAndSettle();
       await settle(tester);
       expect(verse(1, 7), findsOneWidget);
-      // On Android the text selection takes horizontal drags first (as it
-      // did before); iOS hands them to the pages.
     }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+    testWidgets('swipes turn the pages on Android too', (tester) async {
+      await pump(tester, surah: 2, ayah: 1, packs: []);
+      // Right to left: the next page lies to the right.
+      await tester.fling(find.byType(PageView), const Offset(300, 0), 1500);
+      await tester.pumpAndSettle();
+      await settle(tester);
+      expect(verse(2, 2), findsOneWidget);
+      await tester.fling(find.byType(PageView), const Offset(-300, 0), 1500);
+      await tester.pumpAndSettle();
+      await tester.fling(find.byType(PageView), const Offset(-300, 0), 1500);
+      await tester.pumpAndSettle();
+      await settle(tester);
+      expect(verse(1, 7), findsOneWidget);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
   });
 
   group('(d) card actions', () {
@@ -330,5 +344,7 @@ void main() {
     await tester.pumpAndSettle();
     await settle(tester);
     expect(verse(2, 5), findsOneWidget);
+    // The player's controls come into the sheet while reciting.
+    expect(find.byType(PlayerBar), findsOneWidget);
   });
 }

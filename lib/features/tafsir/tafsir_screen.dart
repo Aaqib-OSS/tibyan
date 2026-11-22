@@ -5,6 +5,7 @@ import '../../core/ui/app_toast.dart';
 import '../../core/ui/look_kit.dart';
 import '../../core/ui/share_text.dart';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,6 +16,7 @@ import '../../core/settings/settings_controller.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/mushaf_digits.dart';
 import '../../l10n/app_localizations.dart';
+import '../audio/player_bar.dart';
 import '../audio/recitation.dart';
 import '../books/books_providers.dart';
 import '../books/data/book_pack.dart';
@@ -122,6 +124,7 @@ class _TafsirScreenState extends ConsumerState<TafsirScreen> {
   /// after the last (up to the 113th): landing there moves to the
   /// neighbouring surah.
   int get _lead => _surah > 1 ? 1 : 0;
+  late final _dragger = _PageDragger(() => _pages);
   int _pageOf(int ayah) => ayah - 1 + _lead;
 
   @override
@@ -338,6 +341,7 @@ class _TafsirScreenState extends ConsumerState<TafsirScreen> {
                       final v = ayahs[a];
                       return _VersePage(
                         key: ValueKey('tafsir-verse-${v.surah}:${v.number}'),
+                        pages: _dragger,
                         ayah: v,
                       );
                     },
@@ -375,6 +379,13 @@ class _TafsirScreenState extends ConsumerState<TafsirScreen> {
                   ],
                 ),
                 Expanded(child: body),
+                // The mushaf's player is under the sheet: its controls
+                // come along while a recitation is on.
+                if (ref.watch(recitationProvider.select((s) => s.active)))
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(12, 4, 12, 0),
+                    child: PlayerBar(),
+                  ),
                 bottomBar,
               ],
             )
@@ -534,9 +545,12 @@ class _RiwayaNote extends ConsumerWidget {
 }
 
 class _VersePage extends ConsumerWidget {
-  const _VersePage({super.key, required this.ayah});
+  const _VersePage({super.key, required this.ayah, required this.pages});
 
   final AyahRow ayah;
+
+  /// Turns the pages on a touch swipe over the texts.
+  final _PageDragger pages;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -636,171 +650,186 @@ class _VersePage extends ConsumerWidget {
       ref.read(recitationProvider.notifier).play(k.surah, from: k.ayah);
     }
 
+    // On Android the text selection would take horizontal touch drags
+    // first; this detector sits under it, so it wins them and turns the
+    // page. Long-press selection and mouse drags still select.
     return SelectionArea(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // Wide screens show the texts side by side for comparison.
-          final wide = constraints.maxWidth >= 720 && cards.length > 1;
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-            children: [
-              if (items.length > 1) ...[
-                Semantics(
-                  container: true,
-                  label: l.tafsirChoices,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        FilterChip(
-                          key: const ValueKey('tafsir-compare'),
-                          label: Text(l.tafsirCompare),
-                          tooltip: l.tafsirCompareHint,
-                          selected: compare,
-                          materialTapTargetSize: MaterialTapTargetSize.padded,
-                          onSelected: controller.setTafsirCompare,
-                        ),
-                        if (!compare)
-                          for (final i in items)
-                            Padding(
-                              padding: const EdgeInsetsDirectional.only(
-                                start: 8,
-                              ),
-                              child: ChoiceChip(
-                                key: ValueKey('tafsir-chip-${i.$1}'),
-                                label: Text(i.$2),
-                                selected: i.$1 == chosen?.$1,
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.padded,
-                                onSelected: (_) =>
-                                    controller.setTafsirChoice(i.$1),
-                              ),
-                            ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-              ],
-              Semantics(
-                button: true,
-                hint: l.tafsirPlayVerse,
-                child: Material(
-                  type: MaterialType.transparency,
-                  child: InkWell(
-                    key: const ValueKey('tafsir-verse'),
-                    borderRadius: BorderRadius.circular(14),
-                    onTap: playVerse,
-                    child: Ink(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: t.bg,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: t.border),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: GestureDetector(
+        supportedDevices: const {
+          PointerDeviceKind.touch,
+          PointerDeviceKind.stylus,
+          PointerDeviceKind.invertedStylus,
+          PointerDeviceKind.trackpad,
+        },
+        onHorizontalDragStart: pages.start,
+        onHorizontalDragUpdate: pages.update,
+        onHorizontalDragEnd: pages.end,
+        onHorizontalDragCancel: pages.cancel,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Wide screens show the texts side by side for comparison.
+            final wide = constraints.maxWidth >= 720 && cards.length > 1;
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+              children: [
+                if (items.length > 1) ...[
+                  Semantics(
+                    container: true,
+                    label: l.tafsirChoices,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
                         children: [
-                          Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(text: '${ayah.displayBody} '),
-                                TextSpan(
-                                  text: ayah.displayNumber,
-                                  style: TextStyle(color: t.marker),
+                          FilterChip(
+                            key: const ValueKey('tafsir-compare'),
+                            label: Text(l.tafsirCompare),
+                            tooltip: l.tafsirCompareHint,
+                            selected: compare,
+                            materialTapTargetSize: MaterialTapTargetSize.padded,
+                            onSelected: controller.setTafsirCompare,
+                          ),
+                          if (!compare)
+                            for (final i in items)
+                              Padding(
+                                padding: const EdgeInsetsDirectional.only(
+                                  start: 8,
                                 ),
-                              ],
-                            ),
-                            textDirection: TextDirection.rtl,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: 'UthmanicHafs',
-                              fontSize: 24,
-                              height: 2,
-                              color: t.ink,
-                            ),
-                          ),
-                          Icon(
-                            Icons.play_circle_outline,
-                            size: 22,
-                            color: t.marker,
-                          ),
+                                child: ChoiceChip(
+                                  key: ValueKey('tafsir-chip-${i.$1}'),
+                                  label: Text(i.$2),
+                                  selected: i.$1 == chosen?.$1,
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.padded,
+                                  onSelected: (_) =>
+                                      controller.setTafsirChoice(i.$1),
+                                ),
+                              ),
                         ],
                       ),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              // «استمع للتفسير» (flag tafsir_audio), when a recording has
-              // the verse; nothing otherwise.
-              TafsirAudioButtons(surah: ayah.surah, ayah: ayah.number),
-              if (cards.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    children: [
-                      Text(
-                        l.tafsirNoneShown,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: t.muted),
-                      ),
-                      const SizedBox(height: 12),
-                      FilledButton.tonalIcon(
-                        style: FilledButton.styleFrom(
-                          minimumSize: const Size(48, 48),
-                        ),
-                        onPressed: () => showTafsirSettings(context),
-                        icon: const Icon(Icons.tune),
-                        label: Text(l.tafsirChooseTexts),
-                      ),
-                    ],
-                  ),
-                )
-              else if (wide)
-                IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      for (final (i, c) in cards.indexed) ...[
-                        if (i > 0) const SizedBox(width: 12),
-                        Expanded(child: c),
-                      ],
-                    ],
-                  ),
-                )
-              else
-                for (final (i, c) in cards.indexed) ...[
-                  if (i > 0) const SizedBox(height: 12),
-                  c,
+                  const SizedBox(height: 8),
                 ],
-              // The English tafsir pack (flag english_tafsir), English
-              // interface only; nothing otherwise.
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: EnglishTafsirSection(
-                  surah: ayah.surah,
-                  ayah: ayah.number,
+                Semantics(
+                  button: true,
+                  hint: l.tafsirPlayVerse,
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: InkWell(
+                      key: const ValueKey('tafsir-verse'),
+                      borderRadius: BorderRadius.circular(14),
+                      onTap: playVerse,
+                      child: Ink(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: t.bg,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: t.border),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(text: '${ayah.displayBody} '),
+                                  TextSpan(
+                                    text: ayah.displayNumber,
+                                    style: TextStyle(color: t.marker),
+                                  ),
+                                ],
+                              ),
+                              textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'UthmanicHafs',
+                                fontSize: 24,
+                                height: 2,
+                                color: t.ink,
+                              ),
+                            ),
+                            Icon(
+                              Icons.play_circle_outline,
+                              size: 22,
+                              color: t.marker,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              // Reviewed occasions of revelation, when the feature is on
-              // and a pack has some for this verse; nothing otherwise.
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: AsbabSection(surah: ayah.surah, ayah: ayah.number),
-              ),
-              // Reviewed munasabat, under the same conditions.
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: BookSection(
-                  spec: BookSectionSpec.munasabat,
-                  surah: ayah.surah,
-                  ayah: ayah.number,
+                const SizedBox(height: 16),
+                // «استمع للتفسير» (flag tafsir_audio), when a recording has
+                // the verse; nothing otherwise.
+                TafsirAudioButtons(surah: ayah.surah, ayah: ayah.number),
+                if (cards.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        Text(
+                          l.tafsirNoneShown,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: t.muted),
+                        ),
+                        const SizedBox(height: 12),
+                        FilledButton.tonalIcon(
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size(48, 48),
+                          ),
+                          onPressed: () => showTafsirSettings(context),
+                          icon: const Icon(Icons.tune),
+                          label: Text(l.tafsirChooseTexts),
+                        ),
+                      ],
+                    ),
+                  )
+                else if (wide)
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        for (final (i, c) in cards.indexed) ...[
+                          if (i > 0) const SizedBox(width: 12),
+                          Expanded(child: c),
+                        ],
+                      ],
+                    ),
+                  )
+                else
+                  for (final (i, c) in cards.indexed) ...[
+                    if (i > 0) const SizedBox(height: 12),
+                    c,
+                  ],
+                // The English tafsir pack (flag english_tafsir), English
+                // interface only; nothing otherwise.
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: EnglishTafsirSection(
+                    surah: ayah.surah,
+                    ayah: ayah.number,
+                  ),
                 ),
-              ),
-            ],
-          );
-        },
+                // Reviewed occasions of revelation, when the feature is on
+                // and a pack has some for this verse; nothing otherwise.
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: AsbabSection(surah: ayah.surah, ayah: ayah.number),
+                ),
+                // Reviewed munasabat, under the same conditions.
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: BookSection(
+                    spec: BookSectionSpec.munasabat,
+                    surah: ayah.surah,
+                    ayah: ayah.number,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -1100,4 +1129,23 @@ class _TafsirSettingsSheet extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// A horizontal drag handed to the pages' scroll position, as the
+/// PageView's own Scrollable would do it.
+class _PageDragger {
+  _PageDragger(this._controller);
+
+  final PageController Function() _controller;
+  Drag? _drag;
+
+  void start(DragStartDetails d) {
+    final c = _controller();
+    if (!c.hasClients) return;
+    _drag = c.position.drag(d, () => _drag = null);
+  }
+
+  void update(DragUpdateDetails d) => _drag?.update(d);
+  void end(DragEndDetails d) => _drag?.end(d);
+  void cancel() => _drag?.cancel();
 }
