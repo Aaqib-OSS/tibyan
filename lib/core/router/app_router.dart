@@ -340,6 +340,7 @@ final appRouterProvider = Provider<GoRouter>(
               final ms = int.tryParse(q['at'] ?? '');
               return AdhanScreen(
                 prayer: prayer,
+                test: q['test'] == '1',
                 at: ms == null
                     ? null
                     : DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true),

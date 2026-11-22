@@ -66,6 +66,7 @@ class PrayerRuntime {
   void start() {
     instance = this;
     AdhanDownloads.displayName = _l.adhanLibraryTitle;
+    _c.read(prayerNativeProvider).stopLabel = _l.adhanStop;
     _c.listen(prayerSettingsProvider, (_, _) => schedule());
     final adhan = _c.read(adhanDownloadsProvider);
     adhan.changes.addListener(schedule);
@@ -141,6 +142,7 @@ class PrayerRuntime {
     final files = await _c.read(prayerAlarmsProvider).adhanFiles(s, full: full);
     if (files.isEmpty) return;
     final l = _l;
+    _c.read(prayerNativeProvider).stopLabel = l.adhanStop;
     await _c
         .read(prayerNativeProvider)
         .play(
@@ -149,6 +151,7 @@ class PrayerRuntime {
           body: l.adhanByMuezzin(
             muezzinOf(s.muezzin).name(l.localeName == 'ar'),
           ),
+          volume: s.adhanVolume,
         );
   }
 

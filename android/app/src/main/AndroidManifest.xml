@@ -146,16 +146,6 @@
             android:name=".AdhanService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="false"/>
-        <!-- The full-screen adhan over the lock screen (that build only
-             can open it: it needs the full-screen intent permission). -->
-        <activity
-            android:name=".AdhanFullScreenActivity"
-            android:exported="false"
-            android:excludeFromRecents="true"
-            android:showWhenLocked="true"
-            android:turnScreenOn="true"
-            android:taskAffinity=""
-            android:theme="@android:style/Theme.DeviceDefault.NoActionBar"/>
         <receiver
             android:name=".AdhanAlarmReceiver"
             android:exported="false">

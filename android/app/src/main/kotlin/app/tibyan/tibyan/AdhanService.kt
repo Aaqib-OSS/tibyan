@@ -33,6 +33,24 @@ class AdhanService : Service() {
     private var index = 0
     private var screenOff: BroadcastReceiver? = null
     private var preview = false
+    private var stopLabel = ""
+    private var volume = AlarmVolume.DEFAULT
+    private val alarmVolume by lazy {
+        val am = getSystemService(AUDIO_SERVICE) as android.media.AudioManager
+        AlarmVolume(object : AlarmVolume.Stream {
+            override val max get() = am.getStreamMaxVolume(android.media.AudioManager.STREAM_ALARM)
+            override var level: Int
+                get() = am.getStreamVolume(android.media.AudioManager.STREAM_ALARM)
+                set(v) {
+                    try {
+                        am.setStreamVolume(android.media.AudioManager.STREAM_ALARM, v, 0)
+                    } catch (e: SecurityException) {
+                        // Do-Not-Disturb owns the alarm stream: respected.
+                        Log.w(TAG, "alarm volume not changed", e)
+                    }
+                }
+        })
+    }
     private var toneTried = false
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -47,7 +65,10 @@ class AdhanService : Service() {
         val body = intent?.getStringExtra("body") ?: ""
         val payload = intent?.getStringExtra("payload") ?: ""
         preview = intent?.getBooleanExtra("preview", false) ?: false
+        volume = intent?.getDoubleExtra("volume", AlarmVolume.DEFAULT) ?: AlarmVolume.DEFAULT
         toneTried = false
+        // In the app's language (the system's may differ).
+        stopLabel = intent?.getStringExtra("stopLabel") ?: getString(R.string.adhan_stop)
         val notification = notification(title, body, payload)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(
@@ -103,16 +124,18 @@ class AdhanService : Service() {
             @Suppress("DEPRECATION")
             Notification.Builder(this).setPriority(Notification.PRIORITY_HIGH)
         }
-        // The full-screen adhan build only: over the lock screen.
+        // The full-screen adhan build only: the app's own (Flutter)
+        // full-screen adhan, shown over the lock screen.
         if (fullScreenAllowed(nm)) {
+            val lock = Intent(this, MainActivity::class.java)
+                .setAction(Intent.ACTION_VIEW)
+                .putExtra(MainActivity.EXTRA_LOCK_SCREEN, true)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            if (payload.isNotEmpty()) lock.data = Uri.parse(payload)
             val full = PendingIntent.getActivity(
                 this,
                 2,
-                Intent(this, AdhanFullScreenActivity::class.java)
-                    .putExtra("title", title)
-                    .putExtra("body", body)
-                    .putExtra("payload", payload)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                lock,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
             b.setFullScreenIntent(full, true)
@@ -128,7 +151,7 @@ class AdhanService : Service() {
             .addAction(
                 Notification.Action.Builder(
                     null,
-                    getString(R.string.adhan_stop),
+                    stopLabel,
                     stop,
                 ).build(),
             )
@@ -213,7 +236,8 @@ class AdhanService : Service() {
             val p = MediaPlayer()
             p.setAudioAttributes(
                 AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    // The alarm stream: heard with the ringer or media muted.
+                    .setUsage(AudioAttributes.USAGE_ALARM)
                     .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                     .build(),
             )
@@ -234,7 +258,10 @@ class AdhanService : Service() {
                 if (isTone || preview) finish() else playTone()
                 true
             }
-            p.setOnPreparedListener { it.start() }
+            p.setOnPreparedListener {
+                alarmVolume.apply(volume)
+                it.start()
+            }
             player = p
             p.prepareAsync()
         } catch (e: Exception) {
@@ -256,6 +283,7 @@ class AdhanService : Service() {
 
     private fun finish() {
         releasePlayer()
+        alarmVolume.restore()
         screenOff?.let {
             try {
                 unregisterReceiver(it)
@@ -278,6 +306,7 @@ class AdhanService : Service() {
 
     override fun onDestroy() {
         releasePlayer()
+        alarmVolume.restore()
         screenOff?.let {
             try {
                 unregisterReceiver(it)
@@ -308,9 +337,13 @@ class AdhanService : Service() {
             body: String,
             payload: String,
             preview: Boolean = false,
+            volume: Double = AlarmVolume.DEFAULT,
+            stopLabel: String? = null,
         ) {
             val i = Intent(ctx, AdhanService::class.java)
                 .putExtra("preview", preview)
+                .putExtra("volume", volume)
+                .putExtra("stopLabel", stopLabel)
                 .putStringArrayListExtra("files", ArrayList(files))
                 .putExtra("title", title)
                 .putExtra("body", body)

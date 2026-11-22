@@ -47,5 +47,4 @@
     <!-- «مواقيت الصلاة»: the adhan service's notification. -->
     <string name="adhan_channel_name">Adhan</string>
     <string name="adhan_stop">Stop</string>
-    <string name="adhan_open_app">Open Tibyan</string>
 </resources>

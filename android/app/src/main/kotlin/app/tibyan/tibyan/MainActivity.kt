@@ -174,7 +174,49 @@ class MainActivity : AudioServiceActivity() {
         return true
     }
 
-    private companion object {
-        const val SAVE_REQUEST = 7301
+    /** Opened over the lock screen by the full-screen adhan. */
+    var overLockScreen = false
+        private set
+
+    override fun onCreate(savedInstanceState: android.os.Bundle?) {
+        showOverLockScreen(intent)
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        showOverLockScreen(intent)
+        super.onNewIntent(intent)
+    }
+
+    private fun showOverLockScreen(i: Intent?) {
+        if (i?.getBooleanExtra(EXTRA_LOCK_SCREEN, false) != true) return
+        overLockScreen = true
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
+        }
+    }
+
+    /** The adhan screen closed: back behind the lock screen. */
+    /** [open]: the reader wants the app (asks to unlock); else back
+     *  behind the lock screen. */
+    fun leaveLockScreen(open: Boolean) {
+        if (!overLockScreen) return
+        overLockScreen = false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(false)
+            setTurnScreenOn(false)
+        }
+        if (open && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val km = getSystemService(KEYGUARD_SERVICE) as android.app.KeyguardManager
+            km.requestDismissKeyguard(this, null)
+        } else if (!open) {
+            moveTaskToBack(true)
+        }
+    }
+
+    companion object {
+        private const val SAVE_REQUEST = 7301
+        const val EXTRA_LOCK_SCREEN = "app.tibyan.ADHAN_LOCK_SCREEN"
     }
 }

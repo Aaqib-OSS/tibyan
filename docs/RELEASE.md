@@ -65,7 +65,7 @@ iOS وmacOS:
 
 - **البناء الافتراضي** لا يعلن `USE_FULL_SCREEN_INTENT` (الإذن في `android/app/src/fullscreen/AndroidManifest.xml` ولا يُدمج إلا مع هذا الخيار). هذا ما يُرفع لجوجل بلاي ما لم يُقرَّر غير ذلك:
   `flutter build appbundle --release`
-- **نسخة الشاشة الكاملة** تعلن الإذن وتفتح `AdhanFullScreenActivity` فوق شاشة القفل عند الأذان:
+- **نسخة الشاشة الكاملة** تعلن الإذن وتعرض شاشة الأذان الكاملة نفسها من التطبيق (Flutter، بلغة التطبيق) فوق شاشة القفل عند الأذان:
   `flutter build appbundle --release --dart-define=FULLSCREEN_ADHAN=true`
   (ويمكن جمعها مع `--dart-define=TIBYAN_STORE=huawei`.) جوجل بلاي يقصر هذا الإذن على تطبيقات المنبّه والاتصال، فيلزم تصريح في Play Console قبل رفعها، وعلى أندرويد ١٤ فأحدث يمنحه المستخدم من الإعدادات.
 - للتحقق: `aapt dump permissions build/app/outputs/flutter-apk/app-release.apk | grep FULL_SCREEN` لا يُظهر شيئًا في البناء الافتراضي.

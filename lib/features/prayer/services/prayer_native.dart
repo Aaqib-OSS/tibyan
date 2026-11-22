@@ -17,7 +17,12 @@ class NativeAdhan {
     required this.body,
     required this.files,
     required this.payload,
+    this.volume = 0.7,
+    this.stopLabel,
   });
+
+  /// «إيقاف» in the app's language.
+  final String? stopLabel;
 
   final int id;
   final DateTime at;
@@ -28,7 +33,12 @@ class NativeAdhan {
   final List<String> files;
   final String payload;
 
+  /// «مستوى صوت الأذان» (0…1).
+  final double volume;
+
   Map<String, Object?> toMap() => {
+    'volume': volume,
+    'stopLabel': stopLabel,
     'id': id,
     'at': at.millisecondsSinceEpoch,
     'title': title,
@@ -89,6 +99,7 @@ class PrayerNative {
     String body = '',
     String payload = '',
     bool preview = false,
+    double volume = 0.7,
   }) async {
     if (files.isEmpty) return;
     if (_mobileOrMac) {
@@ -101,6 +112,8 @@ class PrayerNative {
         // Only the library's preview may stream from the server; an
         // alert plays downloaded files (or the tone).
         'preview': preview,
+        'volume': volume,
+        'stopLabel': stopLabel,
       });
       return;
     }
@@ -118,6 +131,7 @@ class PrayerNative {
     unawaited(() async {
       try {
         await player.setAudioSources(sources);
+        await player.setVolume(volume.clamp(0.0, 1.0));
         await player.play();
         await player.processingStateStream.firstWhere(
           (s) => s == ProcessingState.completed,
@@ -146,6 +160,16 @@ class PrayerNative {
       'alerts': [for (final a in alerts) a.toMap()],
     });
   }
+
+  /// Android: the full-screen adhan closed; leave the lock screen again.
+  Future<void> leaveLockScreen({bool open = false}) async {
+    if (Platform.isAndroid) {
+      await _call<void>('leaveLockScreen', {'open': open});
+    }
+  }
+
+  /// «إيقاف» on the Android notification, in the app's language.
+  String stopLabel = 'إيقاف';
 
   /// Android: «جرّب الأذان» through the adhan alarm and service.
   Future<void> testAdhan(NativeAdhan a) async {

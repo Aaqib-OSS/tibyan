@@ -50,6 +50,8 @@ class PrayerNative(
                         call.argument<String>("body") ?: "",
                         call.argument<String>("payload") ?: "",
                         call.argument<Boolean>("preview") ?: false,
+                        call.argument<Double>("volume") ?: AlarmVolume.DEFAULT,
+                        call.argument<String>("stopLabel"),
                     )
                     result.success(null)
                 }
@@ -66,6 +68,10 @@ class PrayerNative(
                     // «جرّب الأذان»: the same exact alarm and service as a
                     // real alert, a few seconds from now.
                     AdhanAlarms.test(ctx, call.arguments as Map<String, Any?>)
+                    result.success(null)
+                }
+                "leaveLockScreen" -> {
+                    (activity as? MainActivity)?.leaveLockScreen(call.argument<Boolean>("open") ?: false)
                     result.success(null)
                 }
                 "canExact" -> result.success(AdhanAlarms.canExact(ctx))
@@ -200,6 +206,8 @@ object AdhanAlarms {
             o.put("title", a["title"] as? String ?: "")
             o.put("body", a["body"] as? String ?: "")
             o.put("payload", a["payload"] as? String ?: "")
+            o.put("volume", (a["volume"] as? Number)?.toDouble() ?: AlarmVolume.DEFAULT)
+            o.put("stopLabel", a["stopLabel"] as? String ?: "")
             o.put("files", JSONArray((a["files"] as? List<*>) ?: emptyList<String>()))
             now.put(o)
         }
@@ -216,6 +224,8 @@ object AdhanAlarms {
         o.put("title", alert["title"] as? String ?: "")
         o.put("body", alert["body"] as? String ?: "")
         o.put("payload", alert["payload"] as? String ?: "")
+        o.put("volume", (alert["volume"] as? Number)?.toDouble() ?: AlarmVolume.DEFAULT)
+        o.put("stopLabel", alert["stopLabel"] as? String ?: "")
         o.put("files", JSONArray((alert["files"] as? List<*>) ?: emptyList<String>()))
         val am = ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         if (canExact(ctx)) {
@@ -234,6 +244,8 @@ object AdhanAlarms {
                     o.optString("title"),
                     o.optString("body"),
                     o.optString("payload"),
+                    volume = o.optDouble("volume", AlarmVolume.DEFAULT),
+                    stopLabel = o.optString("stopLabel").ifEmpty { null },
                 )
             }, (o.getLong("at") - System.currentTimeMillis()).coerceAtLeast(0))
         }
@@ -286,6 +298,8 @@ class AdhanAlarmReceiver : BroadcastReceiver() {
             o.optString("title"),
             o.optString("body"),
             o.optString("payload"),
+            volume = o.optDouble("volume", AlarmVolume.DEFAULT),
+            stopLabel = o.optString("stopLabel").ifEmpty { null },
         )
     }
 }

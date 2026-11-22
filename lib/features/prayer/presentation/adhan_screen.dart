@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -368,7 +369,15 @@ class AdhanScenePainter extends CustomPainter {
 /// full adhan starts if its time was within the last minutes and nothing
 /// plays yet) or by the app when it starts the adhan itself.
 class AdhanScreen extends ConsumerStatefulWidget {
-  const AdhanScreen({super.key, required this.prayer, this.at});
+  const AdhanScreen({
+    super.key,
+    required this.prayer,
+    this.at,
+    this.test = false,
+  });
+
+  /// «جرّب الأذان»: the scene only, no claim of a prayer time.
+  final bool test;
 
   final PrayerKind prayer;
   final DateTime? at;
@@ -388,7 +397,9 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
     if (at != null) {
       final late = DateTime.now().difference(at);
       final native = ref.read(prayerNativeProvider);
-      if (!late.isNegative &&
+      // Android's adhan service is already playing it.
+      if (!Platform.isAndroid &&
+          !late.isNegative &&
           late < AdhanScreen.startWithin &&
           !native.playing.value) {
         unawaited(PrayerRuntime.instance?.playAdhan(widget.prayer));
@@ -433,11 +444,14 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
                         style: ink.copyWith(fontSize: 14),
                       ),
                     const SizedBox(height: 56),
-                    Text(l.adhanNowLabel, style: ink.copyWith(fontSize: 18)),
+                    if (!widget.test)
+                      Text(l.adhanNowLabel, style: ink.copyWith(fontSize: 18)),
                     Semantics(
                       header: true,
                       child: Text(
-                        l.adhanOf(prayerName(l, widget.prayer)),
+                        widget.test
+                            ? l.adhanTestBody
+                            : l.adhanOf(prayerName(l, widget.prayer)),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: scene.title,
@@ -447,7 +461,7 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
                         ),
                       ),
                     ),
-                    if (at != null && place != null)
+                    if (!widget.test && at != null && place != null)
                       Text(
                         formatPrayerTime(l, at, place),
                         style: ink.copyWith(
@@ -472,7 +486,18 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
                             borderRadius: BorderRadius.circular(18),
                           ),
                         ),
-                        onPressed: playing ? native.stop : null,
+                        // Always enabled: over the lock screen the app may
+                        // not know yet that the service plays.
+                        onPressed: () async {
+                          await native.stop();
+                          await native.leaveLockScreen();
+                          if (!context.mounted) return;
+                          if (context.canPop()) {
+                            context.pop();
+                          } else {
+                            context.go('/prayer');
+                          }
+                        },
                         child: Text(
                           l.adhanStop,
                           style: const TextStyle(
@@ -496,7 +521,10 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
                           borderRadius: BorderRadius.circular(18),
                         ),
                       ),
-                      onPressed: () => context.go('/prayer'),
+                      onPressed: () async {
+                        await native.leaveLockScreen(open: true);
+                        if (context.mounted) context.go('/prayer');
+                      },
                       child: Text(l.adhanOpenTimes),
                     ),
                   ],

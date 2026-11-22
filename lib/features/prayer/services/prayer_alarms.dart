@@ -251,6 +251,8 @@ class PrayerAlarms {
             body: t.body,
             files: files,
             payload: alertPayload(a),
+            volume: s.adhanVolume,
+            stopLabel: l.adhanStop,
           ),
         );
         continue;
@@ -300,8 +302,18 @@ class PrayerAlarms {
   }) async {
     final at = DateTime.now().add(testDelay);
     final files = await adhanFiles(s);
-    final title = l.prayerAdhanNow(prayerName(l, PrayerKind.maghrib));
-    final body = l.adhanTestBody;
+    // A test never claims a real prayer time: its own title, the next
+    // prayer's scene.
+    final place = s.place;
+    final scene = place == null
+        ? PrayerKind.maghrib
+        : nextPrayer(place, DateTime.now(), s)?.prayer ?? PrayerKind.maghrib;
+    final title = l.adhanTestBody;
+    final slugNow = adhanSlugFor(s.muezzin, adhan.isInstalled);
+    final body = slugNow == null
+        ? l.soundTone
+        : l.adhanByMuezzin(muezzinOf(slugNow).name(l.localeName == 'ar'));
+    final payload = 'tibyan://prayer/adhan?p=${scene.name}&test=1';
     if (Platform.isAndroid) {
       await native.testAdhan(
         NativeAdhan(
@@ -310,7 +322,9 @@ class PrayerAlarms {
           title: title,
           body: body,
           files: files,
-          payload: 'tibyan://prayer',
+          payload: payload,
+          volume: s.adhanVolume,
+          stopLabel: l.adhanStop,
         ),
       );
       return;
@@ -330,7 +344,7 @@ class PrayerAlarms {
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         title: title,
         body: body,
-        payload: 'tibyan://prayer',
+        payload: payload,
       );
       return;
     }
