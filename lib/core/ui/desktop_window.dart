@@ -22,7 +22,11 @@ class DesktopWindow with WindowListener {
   static const _kBounds = 'window.bounds';
   static const _kMaximized = 'window.maximized';
 
-  static Future<void> init(SharedPreferences prefs, {String? title}) async {
+  static Future<void> init(
+    SharedPreferences prefs, {
+    String? title,
+    bool hidden = false,
+  }) async {
     if (!isDesktopPlatform) return;
     await windowManager.ensureInitialized();
     final saved = _read(prefs);
@@ -38,6 +42,8 @@ class DesktopWindow with WindowListener {
         if (prefs.getBool(_kMaximized) ?? false) {
           await windowManager.maximize();
         }
+        // Opened at login into the tray: stays hidden until asked for.
+        if (hidden) return;
         await windowManager.show();
         await windowManager.focus();
       },

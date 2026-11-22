@@ -3735,6 +3735,322 @@
       }
     }
   },
+  "prayerTimesTitle": "مواقيت الصلاة",
+  "prayerTileNote": "المواقيت والأذان",
+  "prayerFajr": "الفجر",
+  "prayerShuruq": "الشروق",
+  "prayerDuha": "الضحى",
+  "prayerDhuhr": "الظهر",
+  "prayerAsr": "العصر",
+  "prayerMaghrib": "المغرب",
+  "prayerIsha": "العشاء",
+  "timeAm": "ص",
+  "timePm": "م",
+  "prayerAdhanNow": "حان الآن موعد أذان {prayer}",
+  "@prayerAdhanNow": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "prayerTimeOf": "حان وقت {prayer}",
+  "@prayerTimeOf": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "prayerIftarNow": "حان موعد الإفطار: أذان المغرب",
+  "prayerBefore": "{count, plural, =1{بقيت دقيقة على أذان {prayer}} =2{بقيت دقيقتان على أذان {prayer}} few{بقي {n} دقائق على أذان {prayer}} other{بقي {n} دقيقة على أذان {prayer}}}",
+  "@prayerBefore": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "n": {
+        "type": "String"
+      },
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "prayerBeforeImsak": "{count, plural, =1{بقيت دقيقة على الإمساك} =2{بقيت دقيقتان على الإمساك} few{بقي {n} دقائق على الإمساك} other{بقي {n} دقيقة على الإمساك}}",
+  "@prayerBeforeImsak": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "prayerBeforeIftar": "{count, plural, =1{بقيت دقيقة على الإفطار} =2{بقيت دقيقتان على الإفطار} few{بقي {n} دقائق على الإفطار} other{بقي {n} دقيقة على الإفطار}}",
+  "@prayerBeforeIftar": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "prayerChannel": "الأذان ومواقيت الصلاة",
+  "prayerReminderChannel": "التذكير قبل الصلاة",
+  "prayerIn": "بعد {time}",
+  "@prayerIn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "prayerHoursMinutes": "{h} ساعة و {m} دقيقة",
+  "@prayerHoursMinutes": {
+    "placeholders": {
+      "h": {
+        "type": "String"
+      },
+      "m": {
+        "type": "String"
+      }
+    }
+  },
+  "prayerMinutesOnly": "{m} دقيقة",
+  "@prayerMinutesOnly": {
+    "placeholders": {
+      "m": {
+        "type": "String"
+      }
+    }
+  },
+  "prayerChangePlace": "تغيير",
+  "prayerEnableTitle": "فعّل مواقيت الصلاة",
+  "prayerEnableBody": "تُحسب المواقيت على جهازك دون اتصال، ويصلك تنبيه عند كل صلاة.",
+  "prayerEnable": "تفعيل",
+  "prayerEnabledSwitch": "تنبيهات الصلاة",
+  "prayerLocateMe": "حدّد موقعي",
+  "prayerLocateNote": "مرة واحدة، بدقة تقريبية، ولا يُتتبَّع موقعك.",
+  "prayerLocateFailed": "تعذّر تحديد الموقع. اختر مدينتك من القائمة.",
+  "prayerChooseCity": "اختر المدينة",
+  "prayerSearchCity": "ابحث عن مدينة",
+  "prayerNoCity": "لا توجد مدينة بهذا الاسم",
+  "prayerMethodLine": "طريقة الحساب: {method} · العصر: {asr}",
+  "@prayerMethodLine": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      },
+      "asr": {
+        "type": "String"
+      }
+    }
+  },
+  "prayerSettingsTitle": "إعدادات المواقيت",
+  "prayerSectionPlace": "الموقع",
+  "prayerSectionCalc": "الحساب",
+  "prayerSectionAdhan": "الأذان",
+  "prayerSectionExtra": "تنبيهات إضافية",
+  "prayerSectionRamadan": "رمضان",
+  "prayerSectionDesktop": "سطح المكتب",
+  "prayerMethod": "طريقة الحساب",
+  "prayerMethodAuto": "تلقائي حسب البلد ({method})",
+  "@prayerMethodAuto": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "methodEgyptian": "الهيئة المصرية العامة للمساحة",
+  "methodUmmAlQura": "أم القرى، مكة المكرمة",
+  "methodMwl": "رابطة العالم الإسلامي",
+  "methodKarachi": "جامعة العلوم الإسلامية، كراتشي",
+  "methodNorthAmerica": "الجمعية الإسلامية لأمريكا الشمالية",
+  "methodDubai": "دبي",
+  "methodKuwait": "الكويت",
+  "methodQatar": "قطر",
+  "methodSingapore": "سنغافورة",
+  "methodTurkey": "رئاسة الشؤون الدينية التركية",
+  "methodMoonsighting": "لجنة رؤية الهلال",
+  "prayerAsrRule": "حساب العصر",
+  "asrShafii": "الجمهور (شافعي)",
+  "asrHanafi": "حنفي",
+  "prayerHijriOffset": "تعديل التاريخ الهجري",
+  "prayerHijriOffsetNote": "تقويم أم القرى، مع تعديل يوم أو يومين لمطابقة بلدك",
+  "prayerDays": "{n} يوم",
+  "@prayerDays": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "prayerSoundAtTime": "الصوت عند دخول الوقت",
+  "soundSilent": "إشعار صامت",
+  "soundTone": "نغمة هادئة",
+  "soundAdhan": "أذان",
+  "prayerMuezzin": "المؤذن",
+  "prayerMuezzinState": "{name} · {state}",
+  "@prayerMuezzinState": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "adhanDownloaded": "محمّل",
+  "adhanNotDownloaded": "غير محمّل",
+  "adhanDownloading": "جاري التحميل… {percent}",
+  "@adhanDownloading": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "adhanPausedState": "متوقف مؤقتًا",
+  "adhanFailedState": "تعذّر التحميل",
+  "adhanUntilDownloaded": "حتى يكتمل تحميل الأذان تُستعمل النغمة الهادئة.",
+  "prayerReminderBefore": "تذكير قبل الأذان",
+  "reminderNone": "بدون",
+  "reminderMinutes": "{n} د",
+  "@reminderMinutes": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "prayerOffset": "تعديل الوقت يدويًا",
+  "prayerOffsetNote": "لمطابقة مسجد الحي",
+  "prayerOffsetValue": "{value} د",
+  "@prayerOffsetValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "minuteLess": "دقيقة أقل",
+  "minuteMore": "دقيقة أكثر",
+  "prayerApplyAll": "تطبيق على كل الصلوات",
+  "prayerApplied": "طُبّق على كل الصلوات",
+  "adhanLength": "طول الأذان",
+  "adhanFull": "الأذان كاملًا",
+  "adhanShort": "حتى «حي على الصلاة»",
+  "adhanAppleNote": "في آيفون وماك يُسمع في الإشعار مطلع الأذان فقط (٣٠ ثانية بحد أقصى)، والضغط على الإشعار يكمل الأذان في التطبيق.",
+  "prayerDuaAfter": "الدعاء بعد الأذان",
+  "prayerDuaAfterNote": "بصوت الشيخ الشعراوي، يُشغَّل بعد انتهاء الأذان",
+  "prayerShuruqAlert": "تنبيه الشروق",
+  "prayerDuhaAlert": "تنبيه الضحى",
+  "prayerDuhaNote": "بعد الشروق بعشرين دقيقة",
+  "prayerSuhoorAlert": "تذكير قبل الإمساك",
+  "prayerIftarAlert": "تذكير قبل الإفطار",
+  "prayerRamadanNote": "تعمل هذه التنبيهات تلقائيًا في رمضان فقط",
+  "prayerTray": "البقاء في شريط النظام",
+  "prayerTrayNote": "إغلاق النافذة يبقي التطبيق ليشغّل الأذان كاملًا",
+  "prayerLaunchAtLogin": "التشغيل عند بدء الجهاز",
+  "prayerDesktopAskTitle": "الأذان على الكمبيوتر",
+  "prayerDesktopAskBody": "ليُسمع الأذان كاملًا يلزم أن يبقى التطبيق يعمل في شريط النظام. هل تريد إبقاءه هناك وتشغيله عند بدء الجهاز؟",
+  "prayerDesktopYes": "نعم",
+  "prayerDesktopNo": "ليس الآن",
+  "prayerTrayShow": "فتح تبيان",
+  "prayerTrayQuit": "إنهاء",
+  "prayerExactTitle": "السماح بالتنبيه في الوقت تمامًا",
+  "prayerExactBody": "ليبدأ الأذان في وقته تمامًا، اسمح لتبيان بضبط المنبّهات من إعدادات النظام. بدونه يصلك إشعار بالنغمة.",
+  "prayerExactOpen": "فتح الإعدادات",
+  "prayerNotifDenied": "التنبيهات متوقفة لتبيان من إعدادات النظام.",
+  "adhanLibraryTitle": "مكتبة الأذان",
+  "adhanLibraryIntro": "اختر المؤذن، واستمع للمعاينة قبل التحميل. يُحمَّل كل أذان مرة واحدة ويعمل بعدها دون اتصال.",
+  "adhanLicense": "تحت رخصة المشاع الإبداعي {license}",
+  "@adhanLicense": {
+    "placeholders": {
+      "license": {
+        "type": "String"
+      }
+    }
+  },
+  "adhanSelected": "المختار",
+  "adhanSelect": "اختيار",
+  "adhanPreview": "معاينة {name}",
+  "@adhanPreview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adhanDownload": "تحميل {name}",
+  "@adhanDownload": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adhanDelete": "حذف {name}",
+  "@adhanDelete": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adhanDeleteTitle": "حذف أذان {name}؟",
+  "@adhanDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adhanDeleteBody": "يُحذف من جهازك، ويمكنك تحميله مرة أخرى.",
+  "adhanByMuezzin": "بصوت الشيخ {name}",
+  "@adhanByMuezzin": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adhanStop": "إيقاف الأذان",
+  "adhanOpenTimes": "فتح المواقيت",
+  "adhanNowLabel": "حان الآن موعد",
+  "adhanOf": "أذان {prayer}",
+  "@adhanOf": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadsSectionAdhan": "الأذان",
+  "adhanSourcesTitle": "مكتبة الأذان",
+  "adhanSourcesBody": "تسجيلات الأذان والدعاء من مكتبة تبيان، تحت رخصة المشاع الإبداعي {license}.",
+  "@adhanSourcesBody": {
+    "placeholders": {
+      "license": {
+        "type": "String"
+      }
+    }
+  },
+  "citiesSourceTitle": "قائمة المدن",
+  "citiesSourceBody": "GeoNames (geonames.org)، تحت رخصة المشاع الإبداعي CC BY 4.0.",
+  "adhanTest": "جرّب الأذان",
+  "adhanTestBody": "تجربة الأذان",
+  "adhanTestScheduled": "يبدأ الأذان بعد ١٠ ثوانٍ، كما في التنبيه الحقيقي.",
+  "adhanVolume": "مستوى صوت الأذان",
+  "adhanVolumeNote": "يُسمع الأذان بهذا المستوى ولو كان الجرس أو الوسائط صامتة، ثم يعود صوت الجهاز كما كان. أزرار الصوت تخفضه أثناء الأذان.",
+  "adhanVolumeAppleNote": "في آيفون وماك يتبع صوت التنبيه مستوى صوت الجهاز؛ هذا المستوى للأذان داخل التطبيق فقط.",
+  "adhanVolumePreview": "معاينة المستوى",
   "searchModeRoot": "بالجذر",
   "searchRootHint": "اكتب جذرًا، مثل «رحم» أو «ر ح م»",
   "searchRootFound": "الجذر «{root}»",

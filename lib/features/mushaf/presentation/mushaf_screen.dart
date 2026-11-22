@@ -3,6 +3,8 @@ import '../../tafsir/tafsir_screen.dart';
 import 'dart:async';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
+
 import 'package:flutter/rendering.dart' show RenderRepaintBoundary;
 
 import '../../../core/review/review_prompt.dart';
@@ -330,11 +332,15 @@ class _MushafScreenState extends ConsumerState<MushafScreen>
     // The weights of the pages, at hand before the first page counts.
     ref.read(quranIndexProvider.future).ignore();
     ref.read(editionPagesProvider(ref.read(editionProvider)).future).ignore();
-    // The picture is taken on leaving focus, while the window's surface is
-    // still there: by «hidden» Android may have released it, and Impeller's
-    // OpenGL backend (Huawei, no Vulkan) crashed drawing the snapshot then.
+    // The picture is taken on leaving focus elsewhere. On Android even
+    // «inactive» is too late: the engine draws the picture after the call,
+    // when the surface may be gone, and Impeller's OpenGL backend crashed
+    // then (GlitchTip 14/15, raster_guard.dart). There it is taken once the
+    // page has settled instead (_scheduleSnapshot).
     _lifecycle = AppLifecycleListener(
-      onInactive: _captureSnapshot,
+      onInactive: defaultTargetPlatform == TargetPlatform.android
+          ? null
+          : _captureSnapshot,
       onHide: _tracker.end,
       onShow: _trackPage,
     );
@@ -807,8 +813,23 @@ class _MushafScreenState extends ConsumerState<MushafScreen>
     );
   }
 
+  Timer? _shotTimer;
+
+  /// Android: the picture for «متابعة القراءة» is taken while the app is
+  /// in front, [_shotDelay] after the last turn (not on leaving it).
+  void _scheduleSnapshot() {
+    if (defaultTargetPlatform != TargetPlatform.android) return;
+    _shotTimer?.cancel();
+    _shotTimer = Timer(_shotDelay, () {
+      if (mounted) _captureSnapshot();
+    });
+  }
+
+  static const _shotDelay = Duration(milliseconds: 1500);
+
   @override
   void deactivate() {
+    _shotTimer?.cancel();
     _captureSnapshot();
     super.deactivate();
   }
@@ -881,6 +902,7 @@ class _MushafScreenState extends ConsumerState<MushafScreen>
       _test.newPage();
     });
     _trackPage();
+    _scheduleSnapshot();
     unawaited(_memoPageTurned());
     if (_page < 1) return;
     final ayahs = await ref.read(pageAyahsProvider(_page).future);

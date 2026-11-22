@@ -5441,6 +5441,492 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cellularWait => 'انتظار Wi‑Fi';
 
   @override
+  String get prayerTimesTitle => 'مواقيت الصلاة';
+
+  @override
+  String get prayerTileNote => 'المواقيت والأذان';
+
+  @override
+  String get prayerFajr => 'الفجر';
+
+  @override
+  String get prayerShuruq => 'الشروق';
+
+  @override
+  String get prayerDuha => 'الضحى';
+
+  @override
+  String get prayerDhuhr => 'الظهر';
+
+  @override
+  String get prayerAsr => 'العصر';
+
+  @override
+  String get prayerMaghrib => 'المغرب';
+
+  @override
+  String get prayerIsha => 'العشاء';
+
+  @override
+  String get timeAm => 'ص';
+
+  @override
+  String get timePm => 'م';
+
+  @override
+  String prayerAdhanNow(String prayer) {
+    return 'حان الآن موعد أذان $prayer';
+  }
+
+  @override
+  String prayerTimeOf(String prayer) {
+    return 'حان وقت $prayer';
+  }
+
+  @override
+  String get prayerIftarNow => 'حان موعد الإفطار: أذان المغرب';
+
+  @override
+  String prayerBefore(int count, String n, String prayer) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'بقي $n دقيقة على أذان $prayer',
+      few: 'بقي $n دقائق على أذان $prayer',
+      two: 'بقيت دقيقتان على أذان $prayer',
+      one: 'بقيت دقيقة على أذان $prayer',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String prayerBeforeImsak(int count, String n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'بقي $n دقيقة على الإمساك',
+      few: 'بقي $n دقائق على الإمساك',
+      two: 'بقيت دقيقتان على الإمساك',
+      one: 'بقيت دقيقة على الإمساك',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String prayerBeforeIftar(int count, String n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'بقي $n دقيقة على الإفطار',
+      few: 'بقي $n دقائق على الإفطار',
+      two: 'بقيت دقيقتان على الإفطار',
+      one: 'بقيت دقيقة على الإفطار',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get prayerChannel => 'الأذان ومواقيت الصلاة';
+
+  @override
+  String get prayerReminderChannel => 'التذكير قبل الصلاة';
+
+  @override
+  String prayerIn(String time) {
+    return 'بعد $time';
+  }
+
+  @override
+  String prayerHoursMinutes(String h, String m) {
+    return '$h ساعة و $m دقيقة';
+  }
+
+  @override
+  String prayerMinutesOnly(String m) {
+    return '$m دقيقة';
+  }
+
+  @override
+  String get prayerChangePlace => 'تغيير';
+
+  @override
+  String get prayerEnableTitle => 'فعّل مواقيت الصلاة';
+
+  @override
+  String get prayerEnableBody =>
+      'تُحسب المواقيت على جهازك دون اتصال، ويصلك تنبيه عند كل صلاة.';
+
+  @override
+  String get prayerEnable => 'تفعيل';
+
+  @override
+  String get prayerEnabledSwitch => 'تنبيهات الصلاة';
+
+  @override
+  String get prayerLocateMe => 'حدّد موقعي';
+
+  @override
+  String get prayerLocateNote => 'مرة واحدة، بدقة تقريبية، ولا يُتتبَّع موقعك.';
+
+  @override
+  String get prayerLocateFailed =>
+      'تعذّر تحديد الموقع. اختر مدينتك من القائمة.';
+
+  @override
+  String get prayerChooseCity => 'اختر المدينة';
+
+  @override
+  String get prayerSearchCity => 'ابحث عن مدينة';
+
+  @override
+  String get prayerNoCity => 'لا توجد مدينة بهذا الاسم';
+
+  @override
+  String prayerMethodLine(String method, String asr) {
+    return 'طريقة الحساب: $method · العصر: $asr';
+  }
+
+  @override
+  String get prayerSettingsTitle => 'إعدادات المواقيت';
+
+  @override
+  String get prayerSectionPlace => 'الموقع';
+
+  @override
+  String get prayerSectionCalc => 'الحساب';
+
+  @override
+  String get prayerSectionAdhan => 'الأذان';
+
+  @override
+  String get prayerSectionExtra => 'تنبيهات إضافية';
+
+  @override
+  String get prayerSectionRamadan => 'رمضان';
+
+  @override
+  String get prayerSectionDesktop => 'سطح المكتب';
+
+  @override
+  String get prayerMethod => 'طريقة الحساب';
+
+  @override
+  String prayerMethodAuto(String method) {
+    return 'تلقائي حسب البلد ($method)';
+  }
+
+  @override
+  String get methodEgyptian => 'الهيئة المصرية العامة للمساحة';
+
+  @override
+  String get methodUmmAlQura => 'أم القرى، مكة المكرمة';
+
+  @override
+  String get methodMwl => 'رابطة العالم الإسلامي';
+
+  @override
+  String get methodKarachi => 'جامعة العلوم الإسلامية، كراتشي';
+
+  @override
+  String get methodNorthAmerica => 'الجمعية الإسلامية لأمريكا الشمالية';
+
+  @override
+  String get methodDubai => 'دبي';
+
+  @override
+  String get methodKuwait => 'الكويت';
+
+  @override
+  String get methodQatar => 'قطر';
+
+  @override
+  String get methodSingapore => 'سنغافورة';
+
+  @override
+  String get methodTurkey => 'رئاسة الشؤون الدينية التركية';
+
+  @override
+  String get methodMoonsighting => 'لجنة رؤية الهلال';
+
+  @override
+  String get prayerAsrRule => 'حساب العصر';
+
+  @override
+  String get asrShafii => 'الجمهور (شافعي)';
+
+  @override
+  String get asrHanafi => 'حنفي';
+
+  @override
+  String get prayerHijriOffset => 'تعديل التاريخ الهجري';
+
+  @override
+  String get prayerHijriOffsetNote =>
+      'تقويم أم القرى، مع تعديل يوم أو يومين لمطابقة بلدك';
+
+  @override
+  String prayerDays(String n) {
+    return '$n يوم';
+  }
+
+  @override
+  String get prayerSoundAtTime => 'الصوت عند دخول الوقت';
+
+  @override
+  String get soundSilent => 'إشعار صامت';
+
+  @override
+  String get soundTone => 'نغمة هادئة';
+
+  @override
+  String get soundAdhan => 'أذان';
+
+  @override
+  String get prayerMuezzin => 'المؤذن';
+
+  @override
+  String prayerMuezzinState(String name, String state) {
+    return '$name · $state';
+  }
+
+  @override
+  String get adhanDownloaded => 'محمّل';
+
+  @override
+  String get adhanNotDownloaded => 'غير محمّل';
+
+  @override
+  String adhanDownloading(String percent) {
+    return 'جاري التحميل… $percent';
+  }
+
+  @override
+  String get adhanPausedState => 'متوقف مؤقتًا';
+
+  @override
+  String get adhanFailedState => 'تعذّر التحميل';
+
+  @override
+  String get adhanUntilDownloaded =>
+      'حتى يكتمل تحميل الأذان تُستعمل النغمة الهادئة.';
+
+  @override
+  String get prayerReminderBefore => 'تذكير قبل الأذان';
+
+  @override
+  String get reminderNone => 'بدون';
+
+  @override
+  String reminderMinutes(String n) {
+    return '$n د';
+  }
+
+  @override
+  String get prayerOffset => 'تعديل الوقت يدويًا';
+
+  @override
+  String get prayerOffsetNote => 'لمطابقة مسجد الحي';
+
+  @override
+  String prayerOffsetValue(String value) {
+    return '$value د';
+  }
+
+  @override
+  String get minuteLess => 'دقيقة أقل';
+
+  @override
+  String get minuteMore => 'دقيقة أكثر';
+
+  @override
+  String get prayerApplyAll => 'تطبيق على كل الصلوات';
+
+  @override
+  String get prayerApplied => 'طُبّق على كل الصلوات';
+
+  @override
+  String get adhanLength => 'طول الأذان';
+
+  @override
+  String get adhanFull => 'الأذان كاملًا';
+
+  @override
+  String get adhanShort => 'حتى «حي على الصلاة»';
+
+  @override
+  String get adhanAppleNote =>
+      'في آيفون وماك يُسمع في الإشعار مطلع الأذان فقط (٣٠ ثانية بحد أقصى)، والضغط على الإشعار يكمل الأذان في التطبيق.';
+
+  @override
+  String get prayerDuaAfter => 'الدعاء بعد الأذان';
+
+  @override
+  String get prayerDuaAfterNote =>
+      'بصوت الشيخ الشعراوي، يُشغَّل بعد انتهاء الأذان';
+
+  @override
+  String get prayerShuruqAlert => 'تنبيه الشروق';
+
+  @override
+  String get prayerDuhaAlert => 'تنبيه الضحى';
+
+  @override
+  String get prayerDuhaNote => 'بعد الشروق بعشرين دقيقة';
+
+  @override
+  String get prayerSuhoorAlert => 'تذكير قبل الإمساك';
+
+  @override
+  String get prayerIftarAlert => 'تذكير قبل الإفطار';
+
+  @override
+  String get prayerRamadanNote => 'تعمل هذه التنبيهات تلقائيًا في رمضان فقط';
+
+  @override
+  String get prayerTray => 'البقاء في شريط النظام';
+
+  @override
+  String get prayerTrayNote =>
+      'إغلاق النافذة يبقي التطبيق ليشغّل الأذان كاملًا';
+
+  @override
+  String get prayerLaunchAtLogin => 'التشغيل عند بدء الجهاز';
+
+  @override
+  String get prayerDesktopAskTitle => 'الأذان على الكمبيوتر';
+
+  @override
+  String get prayerDesktopAskBody =>
+      'ليُسمع الأذان كاملًا يلزم أن يبقى التطبيق يعمل في شريط النظام. هل تريد إبقاءه هناك وتشغيله عند بدء الجهاز؟';
+
+  @override
+  String get prayerDesktopYes => 'نعم';
+
+  @override
+  String get prayerDesktopNo => 'ليس الآن';
+
+  @override
+  String get prayerTrayShow => 'فتح تبيان';
+
+  @override
+  String get prayerTrayQuit => 'إنهاء';
+
+  @override
+  String get prayerExactTitle => 'السماح بالتنبيه في الوقت تمامًا';
+
+  @override
+  String get prayerExactBody =>
+      'ليبدأ الأذان في وقته تمامًا، اسمح لتبيان بضبط المنبّهات من إعدادات النظام. بدونه يصلك إشعار بالنغمة.';
+
+  @override
+  String get prayerExactOpen => 'فتح الإعدادات';
+
+  @override
+  String get prayerNotifDenied => 'التنبيهات متوقفة لتبيان من إعدادات النظام.';
+
+  @override
+  String get adhanLibraryTitle => 'مكتبة الأذان';
+
+  @override
+  String get adhanLibraryIntro =>
+      'اختر المؤذن، واستمع للمعاينة قبل التحميل. يُحمَّل كل أذان مرة واحدة ويعمل بعدها دون اتصال.';
+
+  @override
+  String adhanLicense(String license) {
+    return 'تحت رخصة المشاع الإبداعي $license';
+  }
+
+  @override
+  String get adhanSelected => 'المختار';
+
+  @override
+  String get adhanSelect => 'اختيار';
+
+  @override
+  String adhanPreview(String name) {
+    return 'معاينة $name';
+  }
+
+  @override
+  String adhanDownload(String name) {
+    return 'تحميل $name';
+  }
+
+  @override
+  String adhanDelete(String name) {
+    return 'حذف $name';
+  }
+
+  @override
+  String adhanDeleteTitle(String name) {
+    return 'حذف أذان $name؟';
+  }
+
+  @override
+  String get adhanDeleteBody => 'يُحذف من جهازك، ويمكنك تحميله مرة أخرى.';
+
+  @override
+  String adhanByMuezzin(String name) {
+    return 'بصوت الشيخ $name';
+  }
+
+  @override
+  String get adhanStop => 'إيقاف الأذان';
+
+  @override
+  String get adhanOpenTimes => 'فتح المواقيت';
+
+  @override
+  String get adhanNowLabel => 'حان الآن موعد';
+
+  @override
+  String adhanOf(String prayer) {
+    return 'أذان $prayer';
+  }
+
+  @override
+  String get downloadsSectionAdhan => 'الأذان';
+
+  @override
+  String get adhanSourcesTitle => 'مكتبة الأذان';
+
+  @override
+  String adhanSourcesBody(String license) {
+    return 'تسجيلات الأذان والدعاء من مكتبة تبيان، تحت رخصة المشاع الإبداعي $license.';
+  }
+
+  @override
+  String get citiesSourceTitle => 'قائمة المدن';
+
+  @override
+  String get citiesSourceBody =>
+      'GeoNames (geonames.org)، تحت رخصة المشاع الإبداعي CC BY 4.0.';
+
+  @override
+  String get adhanTest => 'جرّب الأذان';
+
+  @override
+  String get adhanTestBody => 'تجربة الأذان';
+
+  @override
+  String get adhanTestScheduled =>
+      'يبدأ الأذان بعد ١٠ ثوانٍ، كما في التنبيه الحقيقي.';
+
+  @override
+  String get adhanVolume => 'مستوى صوت الأذان';
+
+  @override
+  String get adhanVolumeNote =>
+      'يُسمع الأذان بهذا المستوى ولو كان الجرس أو الوسائط صامتة، ثم يعود صوت الجهاز كما كان. أزرار الصوت تخفضه أثناء الأذان.';
+
+  @override
+  String get adhanVolumeAppleNote =>
+      'في آيفون وماك يتبع صوت التنبيه مستوى صوت الجهاز؛ هذا المستوى للأذان داخل التطبيق فقط.';
+
+  @override
+  String get adhanVolumePreview => 'معاينة المستوى';
+
+  @override
   String get searchModeRoot => 'بالجذر';
 
   @override

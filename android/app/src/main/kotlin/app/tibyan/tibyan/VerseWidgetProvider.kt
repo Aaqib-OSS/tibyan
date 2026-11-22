@@ -19,7 +19,7 @@ import java.util.Locale
  * `vod_ref_…`, `vod_uri_…`), so the day changes over without the app. A tap
  * opens the verse in the mushaf. Always right to left: the verse is Arabic.
  */
-class VerseWidgetProvider : HomeWidgetProvider() {
+class VerseWidgetProvider : AsyncWidgetProvider() {
   override fun onUpdate(
       context: Context,
       appWidgetManager: AppWidgetManager,

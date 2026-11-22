@@ -44,4 +44,7 @@
     <string name="wl_mode_light">Light</string>
     <string name="wl_mode_night">Night</string>
     <string name="wl_config_done">Done</string>
+    <!-- «مواقيت الصلاة»: the adhan service's notification. -->
+    <string name="adhan_channel_name">Adhan</string>
+    <string name="adhan_stop">Stop</string>
 </resources>

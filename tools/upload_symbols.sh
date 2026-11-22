@@ -13,8 +13,14 @@
 #                          R8 mapping if present
 # dSYMs are also copied to ~/.config/tibyan/dsyms/<build>/ (kept, never committed).
 #
-# Needs sentry-cli (brew install getsentry/tools/sentry-cli) and ~/.config/tibyan/glitchtip.env
-# with SENTRY_URL, SENTRY_ORG, SENTRY_PROJECT, SENTRY_AUTH_TOKEN (chmod 600, never committed).
+#   - Flutter engine:      the unstripped libflutter.so for this SDK's engine (bin/internal/
+#                          engine.version), from Google's flutter_infra_release bucket. The APK
+#                          ships a stripped engine, so without this the SIGSEGVs inside
+#                          libflutter.so stay unreadable. Cached in ~/.cache/tibyan/engine-symbols.
+#
+# Needs sentry-cli (brew install getsentry/tools/sentry-cli) and SENTRY_URL, SENTRY_ORG,
+# SENTRY_PROJECT, SENTRY_AUTH_TOKEN: from the environment (CI secrets) or else from
+# ~/.config/tibyan/glitchtip.env (chmod 600). Never commit the token.
 set -euo pipefail
 
 BUILD="${1:-}"
@@ -24,8 +30,13 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
 ENV_FILE="$HOME/.config/tibyan/glitchtip.env"
-[ -f "$ENV_FILE" ] || { echo "Missing $ENV_FILE" >&2; exit 1; }
-set -a; source "$ENV_FILE"; set +a
+if [ -z "${SENTRY_AUTH_TOKEN:-}" ]; then
+  [ -f "$ENV_FILE" ] || { echo "Set SENTRY_AUTH_TOKEN (and SENTRY_URL/ORG/PROJECT) or create $ENV_FILE" >&2; exit 1; }
+  set -a; source "$ENV_FILE"; set +a
+fi
+for v in SENTRY_URL SENTRY_ORG SENTRY_PROJECT SENTRY_AUTH_TOKEN; do
+  [ -n "${!v:-}" ] || { echo "Missing $v" >&2; exit 1; }
+done
 export SENTRY_URL SENTRY_ORG SENTRY_PROJECT SENTRY_AUTH_TOKEN
 command -v sentry-cli >/dev/null || { echo "Install sentry-cli: brew install getsentry/tools/sentry-cli" >&2; exit 1; }
 
@@ -63,6 +74,25 @@ if [ "$FOUND" -eq 1 ]; then up "$KEEP"; else echo "No dSYMs found for build $BUI
 for d in build/app/intermediates/merged_native_libs/release build/app/outputs/native-debug-symbols/release; do
   [ -d "$d" ] && up "$d"
 done
+# Flutter engine symbols (unstripped libflutter.so for every Android ABI we ship).
+ENGINE="$(cat "$(dirname "$(dirname "$(readlink -f "$(command -v flutter)")")")/bin/internal/engine.version" 2>/dev/null || true)"
+if [ -n "$ENGINE" ]; then
+  CACHE="$HOME/.cache/tibyan/engine-symbols/$ENGINE"
+  for abi in arm64 arm x64; do
+    dir="$CACHE/android-$abi-release"
+    if [ ! -f "$dir/libflutter.so" ]; then
+      mkdir -p "$dir"
+      url="https://storage.googleapis.com/flutter_infra_release/flutter/$ENGINE/android-$abi-release/symbols.zip"
+      echo "== engine symbols: $url"
+      curl -fsSL -o "$dir/symbols.zip" "$url" && unzip -oq "$dir/symbols.zip" -d "$dir" && rm -f "$dir/symbols.zip" \
+        || { echo "Could not fetch engine symbols for android-$abi ($ENGINE)." >&2; continue; }
+    fi
+    up "$dir"
+  done
+else
+  echo "No Flutter engine version found (is flutter on PATH?); engine symbols skipped." >&2
+fi
+
 # R8 mapping: the Sentry Gradle plugin (android/app/build.gradle.kts) embeds its UUID in the
 # APK/AAB and uploads it during the build when SENTRY_AUTH_TOKEN is set. Re-upload here as
 # well, tagged with the same UUID, so a build made without the token can still be fixed up.

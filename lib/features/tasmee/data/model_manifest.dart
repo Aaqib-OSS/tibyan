@@ -1,3 +1,5 @@
+import '../../../core/net/server.dart';
+
 /// The recognition model the app uses: NVIDIA's Arabic FastConformer (CTC
 /// branch, int8), CC-BY-4.0.
 const recitationModelId = 'nvidia-ar-fastconformer-ctc';
@@ -5,13 +7,13 @@ const recitationModelId = 'nvidia-ar-fastconformer-ctc';
 /// Where the recognition model's manifest is published: Tibyan's mirror,
 /// in its own folder (`mirror/recitation-models/<id>/`, files under `<version>/`).
 const recitationModelManifestUrl =
-    'https://tibyan.ahmedhelal.dev/mirror/recitation-models/'
+    '$serverBase/mirror/recitation-models/'
     '$recitationModelId/manifest.json';
 
 /// The first beta model (Whisper, Tarteel). It stays on the mirror only to
 /// compare recognisers; the app no longer downloads it.
 const whisperComparisonManifestUrl =
-    'https://tibyan.ahmedhelal.dev/mirror/recitation-models/'
+    '$serverBase/mirror/recitation-models/'
     'tarteel-whisper-base-ar-quran/manifest.json';
 
 /// Models an earlier build may have installed and nothing uses now: removed
