@@ -37,6 +37,7 @@ class _FakeRecitation extends RecitationController {
     int? to,
     int? rangeFrom,
     int? repeat,
+    int? verseRepeat,
     Duration? silence,
     bool start = true,
     bool nearSpeech = false,
