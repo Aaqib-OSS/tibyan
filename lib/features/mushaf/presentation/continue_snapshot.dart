@@ -14,6 +14,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../../core/settings/app_settings.dart';
 import '../../../core/settings/settings_controller.dart';
+import '../../../core/ui/raster_guard.dart';
 import '../../../core/theme/app_theme.dart' show routeTransitionOverride;
 import '../data/compiled_svg.dart';
 import '../mushaf_providers.dart';
@@ -296,6 +297,7 @@ void captureContinueSnapshot(
   double devicePixelRatio,
 ) {
   if (boundary == null || !boundary.attached || !boundary.hasSize) return;
+  if (!canRasterizeNow()) return;
   try {
     final ratio = devicePixelRatio.clamp(1.0, ContinueSnapshots.maxPixelRatio);
     final image = boundary.toImageSync(pixelRatio: ratio);

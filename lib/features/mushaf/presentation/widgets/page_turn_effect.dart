@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../../../core/settings/app_settings.dart';
+import '../../../../core/ui/raster_guard.dart';
 
 /// Draws one item of the mushaf's pager with the chosen «تأثير قلب الصفحة».
 ///
@@ -125,6 +126,8 @@ class _PageTurnEffectState extends State<PageTurnEffect> {
   /// Draws a shader once, off screen and tiny, so the first turn does not
   /// pay for preparing it.
   static void _warm(ui.FragmentProgram program) {
+    // Not while Android has no surface for it (raster_guard.dart).
+    if (!canRasterizeNow()) return;
     ui.Image? blank;
     try {
       final rec = ui.PictureRecorder();
@@ -207,6 +210,7 @@ class _PageTurnEffectState extends State<PageTurnEffect> {
       Rect.fromLTWH(0, 0, w + 0.0, h + 0.0),
       Paint()..filterQuality = FilterQuality.none,
     );
+    if (!canRasterizeNow()) return null;
     final pic = rec.endRecording();
     try {
       return _halves[i] = pic.toImageSync(w, h);
@@ -262,6 +266,8 @@ class _PageTurnEffectState extends State<PageTurnEffect> {
   /// The page as it was last painted, or null when it was not (off screen).
   ui.Image? _snap() {
     if (_snapshot != null) return _snapshot;
+    // Not while Android has no surface for it (raster_guard.dart).
+    if (!canRasterizeNow()) return null;
     try {
       // The boundary may be moving in the tree as the turn starts (its
       // element inactive for the moment): no snapshot this frame then.

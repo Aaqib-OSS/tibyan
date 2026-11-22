@@ -63,6 +63,20 @@ iOS وmacOS:
 
 ملحق Sentry لـ Gradle (`io.sentry.android.gradle` في `android/app/build.gradle.kts`) يكتب في كل بناء أندرويد مُصغَّر (R8) معرّف UUID لملف الـ mapping داخل `assets/sentry-debug-meta.properties`، فيعرف GlitchTip أي mapping يفك تشويش العطل. يرفع الـ mapping وقت البناء فقط إذا كان `SENTRY_AUTH_TOKEN` موجودا (`set -a; source ~/.config/tibyan/glitchtip.env; set +a` قبل البناء). بدونه يبني دون اتصال ولا يفشل (كما في CI). باقي خصائص الملحق مطفأة. بعد البناء شغّل `tools/upload_symbols.sh <N>`: يرفع رموز Dart والمكتبات الأصلية وdSYMs، ويعيد رفع الـ mapping بنفس الـ UUID المضمَّن (`sentry-cli upload-proguard --uuid`)، ويخرج بخطأ إن فشل الرفع.
 
+### رموز محرّك Flutter والأعطال الأصلية (libflutter.so)
+
+الـ APK يحمل نسخة مجرَّدة من `libflutter.so`، فأعطال SIGSEGV داخل المحرّك تصل GlitchTip عناوين بلا أسماء. `tools/upload_symbols.sh <N>` صار يرفع أيضا النسخة غير المجرَّدة لمحرّك الـ SDK الحالي (`bin/internal/engine.version`) لكل ABI (arm64، arm، x64)، من `storage.googleapis.com/flutter_infra_release/flutter/<engine>/android-<abi>-release/symbols.zip`، ويحفظها في `~/.cache/tibyan/engine-symbols/`. شغّله بنفس نسخة Flutter التي بُني بها الإصدار.
+
+المفاتيح: يقرأ السكربت `SENTRY_URL` و`SENTRY_ORG` و`SENTRY_PROJECT` و`SENTRY_AUTH_TOKEN` من البيئة (أسرار CI)، وإن غاب الرمز يقرأها من `~/.config/tibyan/glitchtip.env`. لا يُكتب أي رمز في المستودع.
+
+قراءة يدوية لعطل أصلي: الإزاحة = `instruction_addr - image_addr` لكل إطار من `libflutter.so` في JSON الحدث، ثم:
+
+```bash
+tools/symbolicate_native.sh 0x50efb8 0x83b7ec   # --engine <hash> لإصدار بُني بمحرّك آخر
+```
+
+ملاحظة: أحداث GlitchTip المخزّنة حاليا لا تحمل `debug_meta` (معرّفات البناء)، فقد لا يربط الخادم الرموز المرفوعة بالأعطال تلقائيا؛ القراءة اليدوية أعلاه تعمل دائما ما دام الإصدار بُني بالمحرّك المذكور.
+
 ## فحص قبل الوسم
 
 `ci.yml` (format وanalyze وtest) و`native.yml` (بناء أندرويد وiOS وmacOS مع الامتدادات) خضراء على الفرع الذي يُدمج.

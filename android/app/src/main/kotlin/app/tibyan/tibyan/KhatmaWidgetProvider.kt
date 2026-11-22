@@ -19,7 +19,7 @@ import java.util.Locale
  * so the widget shows the right day without the app being opened. A tap
  * opens the app on the portion's first page.
  */
-class KhatmaWidgetProvider : HomeWidgetProvider() {
+class KhatmaWidgetProvider : AsyncWidgetProvider() {
   override fun onUpdate(
       context: Context,
       appWidgetManager: AppWidgetManager,
