@@ -19,6 +19,12 @@
          (flutter_local_notifications). They are inexact, so no exact-alarm
          permission is asked for. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- «مواقيت الصلاة»: «حدّد موقعي» asks once for an approximate
+         position (no fine location, no background location), and the
+         adhan starts at its time from an exact alarm (the user allows it
+         in the system settings; without it a notification is shown). -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <application
         android:label="@string/app_name"
         android:name="${applicationName}"
@@ -128,6 +134,20 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON"/>
+            </intent-filter>
+        </receiver>
+        <!-- «مواقيت الصلاة»: the adhan plays in its own media service. -->
+        <service
+            android:name=".AdhanService"
+            android:foregroundServiceType="mediaPlayback"
+            android:exported="false"/>
+        <receiver
+            android:name=".AdhanAlarmReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED"/>
             </intent-filter>
         </receiver>
         <!-- Khatma reminders (flutter_local_notifications). -->

@@ -21,10 +21,13 @@ import java.io.File
 class MainActivity : AudioServiceActivity() {
     private var pendingSave: Pair<List<String>, MethodChannel.Result>? = null
     private var tasbih: TasbihNative? = null
+    private var prayer: PrayerNative? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         tasbih = TasbihNative(applicationContext, flutterEngine.dartExecutor.binaryMessenger)
+        // «مواقيت الصلاة»: one coarse position, the adhan and its alarms.
+        prayer = PrayerNative(this, flutterEngine.dartExecutor.binaryMessenger)
         // «الساعة»: today's portion and the dhikr to the Wear OS app; its
         // counts are announced to the misbaha while the app runs.
         WatchBridge(applicationContext, flutterEngine.dartExecutor.binaryMessenger)
@@ -115,6 +118,9 @@ class MainActivity : AudioServiceActivity() {
         grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        val granted = grantResults.isNotEmpty() &&
+            grantResults[0] == PackageManager.PERMISSION_GRANTED
+        if (prayer?.onPermissionResult(requestCode, granted) == true) return
         if (requestCode != SAVE_REQUEST) return
         val (paths, result) = pendingSave ?: return
         pendingSave = null
