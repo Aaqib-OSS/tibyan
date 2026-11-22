@@ -16,6 +16,7 @@ import '../domain/prayer_settings.dart';
 import '../prayer_providers.dart';
 import 'prayer_alarms.dart';
 import 'prayer_desktop.dart';
+import 'occasion_reminders.dart';
 import 'prayer_native.dart';
 
 final prayerNativeProvider = Provider<PrayerNative>((ref) => PrayerNative());
@@ -27,8 +28,15 @@ final prayerAlarmsProvider = Provider<PrayerAlarms>((ref) {
         reminders is LocalReminderScheduler ? reminders.plugin() : null,
     native: ref.watch(prayerNativeProvider),
     adhan: ref.watch(adhanDownloadsProvider),
+    readLate: () =>
+        (ref.read(sharedPreferencesProvider).getStringList(_lateKey) ?? [])
+            .toSet(),
+    writeLate: (v) =>
+        ref.read(sharedPreferencesProvider).setStringList(_lateKey, v.toList()),
   );
 });
+
+const _lateKey = 'prayer.lateFired.v1';
 
 final prayerDesktopProvider = Provider<PrayerDesktop>(
   (ref) => PrayerDesktop(ref.watch(prayerNativeProvider)),
@@ -113,6 +121,15 @@ class PrayerRuntime {
       } catch (e) {
         debugPrint('prayer alerts: $e');
       }
+      try {
+        await syncOccasionReminders(
+          _c.read(reminderSchedulerProvider),
+          _c.read(prayerSettingsProvider),
+          _l,
+        );
+      } catch (e) {
+        debugPrint('occasion reminders: $e');
+      }
     });
   }
 
@@ -127,16 +144,25 @@ class PrayerRuntime {
     if (!desktop && !_front) return;
     for (final a in _plan) {
       if (a.kind != AlertKind.atTime || a.sound != AlertSound.adhan) continue;
-      if (_played.contains(a.id)) continue;
+      if (wasPlayed(a.prayerAt)) continue;
+      if (_c.read(prayerNativeProvider).stoppedRecently) continue;
       if (a.at.isAfter(now) || !a.at.isAfter(since)) continue;
       if (now.difference(a.at) > const Duration(minutes: 2)) continue;
-      _played.add(a.id);
+      markPlayed(a.prayerAt);
       await playAdhan(a.prayer);
       onAdhan?.call(a.prayer, a.prayerAt);
     }
   }
 
   /// Plays the chosen adhan now (and the dua after it when chosen).
+  /// Whether the adhan of the prayer at [prayerAt] already played (each
+  /// prayer's adhan starts by itself once).
+  bool wasPlayed(DateTime prayerAt) =>
+      _played.contains(prayerAt.millisecondsSinceEpoch);
+
+  void markPlayed(DateTime prayerAt) =>
+      _played.add(prayerAt.millisecondsSinceEpoch);
+
   Future<void> playAdhan(PrayerKind prayer, {bool? full}) async {
     final s = _c.read(prayerSettingsProvider);
     final files = await _c.read(prayerAlarmsProvider).adhanFiles(s, full: full);

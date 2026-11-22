@@ -11,6 +11,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ServiceInfo
 import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.media.session.MediaSession
@@ -19,6 +21,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import org.json.JSONObject
 
 /**
  * Plays the adhan (then the dua, when chosen) as a media-playback
@@ -52,23 +55,56 @@ class AdhanService : Service() {
         })
     }
     private var toneTried = false
+    private var focus: AudioFocusRequest? = null
+    private val focusListener = AudioManager.OnAudioFocusChangeListener { change ->
+        // A call (or another app) takes the sound: the adhan ends, and
+        // never comes back by itself when the focus returns.
+        if (change == AudioManager.AUDIOFOCUS_LOSS ||
+            change == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
+        ) {
+            finish()
+        }
+    }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) {
-            finish()
+            userStop()
             return START_NOT_STICKY
         }
-        val files = intent?.getStringArrayListExtra("files") ?: arrayListOf()
-        val title = intent?.getStringExtra("title") ?: ""
-        val body = intent?.getStringExtra("body") ?: ""
-        val payload = intent?.getStringExtra("payload") ?: ""
+        val alertJson = intent?.getStringExtra("alert")
+        val alert = alertJson?.let {
+            try {
+                JSONObject(it)
+            } catch (_: Exception) {
+                null
+            }
+        }
+        // «تشغيل الأذان» on the notice: the full adhan, asked for.
+        val manual = intent?.action == ACTION_PLAY ||
+            (intent?.getBooleanExtra("manual", false) ?: false)
+        if (intent?.action == ACTION_PLAY) AdhanGate.cancelNotice(this)
+        val files = if (intent?.action == ACTION_PLAY && alert != null) {
+            alert.optJSONArray("files")?.let { a -> (0 until a.length()).map { a.getString(it) } }
+                ?: emptyList()
+        } else {
+            intent?.getStringArrayListExtra("files") ?: arrayListOf()
+        }
+        val title = intent?.getStringExtra("title") ?: alert?.optString("title") ?: ""
+        val body = intent?.getStringExtra("body") ?: alert?.optString("body") ?: ""
+        val payload = intent?.getStringExtra("payload") ?: alert?.optString("payload") ?: ""
         preview = intent?.getBooleanExtra("preview", false) ?: false
-        volume = intent?.getDoubleExtra("volume", AlarmVolume.DEFAULT) ?: AlarmVolume.DEFAULT
+        volume = if (intent?.hasExtra("volume") == true) {
+            intent.getDoubleExtra("volume", AlarmVolume.DEFAULT)
+        } else {
+            alert?.optDouble("volume", AlarmVolume.DEFAULT) ?: AlarmVolume.DEFAULT
+        }
         toneTried = false
         // In the app's language (the system's may differ).
-        stopLabel = intent?.getStringExtra("stopLabel") ?: getString(R.string.adhan_stop)
+        stopLabel = intent?.getStringExtra("stopLabel")
+            ?: alert?.optString("stopLabel")?.ifEmpty { null }
+            ?: getString(R.string.adhan_stop)
         val notification = notification(title, body, payload)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(
@@ -78,6 +114,22 @@ class AdhanService : Service() {
             )
         } else {
             startForeground(NOTIFICATION_ID, notification)
+        }
+        // The foreground notice is up (required); now whether to sound.
+        if (!preview && !manual && AdhanGate.heldByStop(this, manual = false)) {
+            // Stopped moments ago: a duplicate alarm or a re-sent start.
+            finish()
+            return START_NOT_STICKY
+        }
+        if (!preview && AdhanGate.inCall(this)) {
+            finish()
+            alert?.let { AdhanGate.postNotice(this, it, silent = true) }
+            return START_NOT_STICKY
+        }
+        if (!requestFocus()) {
+            finish()
+            if (!preview) alert?.let { AdhanGate.postNotice(this, it, silent = true) }
+            return START_NOT_STICKY
         }
         releasePlayer()
         // An alert with nothing on the device still sounds: the tone.
@@ -89,6 +141,48 @@ class AdhanService : Service() {
         playing = true
         onPlaying?.invoke(true)
         return START_NOT_STICKY
+    }
+
+    private fun requestFocus(): Boolean {
+        val am = getSystemService(AUDIO_SERVICE) as AudioManager
+        val granted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val req = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+                .setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build(),
+                )
+                .setOnAudioFocusChangeListener(focusListener)
+                .build()
+            focus = req
+            am.requestAudioFocus(req)
+        } else {
+            @Suppress("DEPRECATION")
+            am.requestAudioFocus(
+                focusListener,
+                AudioManager.STREAM_ALARM,
+                AudioManager.AUDIOFOCUS_GAIN_TRANSIENT,
+            )
+        }
+        return granted == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+    }
+
+    private fun abandonFocus() {
+        val am = getSystemService(AUDIO_SERVICE) as AudioManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            focus?.let { am.abandonAudioFocusRequest(it) }
+        } else {
+            @Suppress("DEPRECATION")
+            am.abandonAudioFocus(focusListener)
+        }
+        focus = null
+    }
+
+    /** The reader stopped it: it does not start again for a while. */
+    private fun userStop() {
+        AdhanGate.markStopped(this)
+        finish()
     }
 
     private fun notification(title: String, body: String, payload: String): Notification {
@@ -192,8 +286,8 @@ class AdhanService : Service() {
             setCallback(object : MediaSession.Callback() {
                 // Headset or media buttons stop it; the volume keys only
                 // change the volume (the system does that for the session).
-                override fun onStop() = finish()
-                override fun onPause() = finish()
+                override fun onStop() = userStop()
+                override fun onPause() = userStop()
             })
             isActive = true
         }
@@ -207,7 +301,7 @@ class AdhanService : Service() {
     private fun listenScreenOff() {
         if (screenOff != null) return
         screenOff = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) = finish()
+            override fun onReceive(context: Context, intent: Intent) = userStop()
         }
         val filter = IntentFilter(Intent.ACTION_SCREEN_OFF)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -293,6 +387,7 @@ class AdhanService : Service() {
 
     private fun finish() {
         releasePlayer()
+        abandonFocus()
         alarmVolume.restore()
         screenOff?.let {
             try {
@@ -318,6 +413,7 @@ class AdhanService : Service() {
     override fun onDestroy() {
         playing = false
         releasePlayer()
+        abandonFocus()
         alarmVolume.restore()
         screenOff?.let {
             try {
@@ -333,6 +429,7 @@ class AdhanService : Service() {
         const val CHANNEL = "app.tibyan.adhan"
         const val NOTIFICATION_ID = 7400
         const val ACTION_STOP = "app.tibyan.ADHAN_STOP"
+        const val ACTION_PLAY = "app.tibyan.ADHAN_PLAY"
         private const val TAG = "TibyanAdhan"
         private const val TONE = "tone:"
 
@@ -355,8 +452,12 @@ class AdhanService : Service() {
             preview: Boolean = false,
             volume: Double = AlarmVolume.DEFAULT,
             stopLabel: String? = null,
+            manual: Boolean = false,
+            alert: JSONObject? = null,
         ) {
             val i = Intent(ctx, AdhanService::class.java)
+                .putExtra("manual", manual)
+                .putExtra("alert", alert?.toString())
                 .putExtra("preview", preview)
                 .putExtra("volume", volume)
                 .putExtra("stopLabel", stopLabel)

@@ -605,7 +605,7 @@
   "playerError": "تعذر تشغيل التلاوة. تأكد من الاتصال بالإنترنت أو حمّل السورة.",
   "playerSettings": "إعدادات الاستماع",
   "stopListening": "إيقاف الاستماع",
-  "repeatProgress": "التكرار {done}/{total}",
+  "repeatProgress": "التكرار {done} من {total}",
   "@repeatProgress": {
     "placeholders": {
       "done": {
@@ -4051,6 +4051,59 @@
   "adhanVolumeNote": "يُسمع الأذان بهذا المستوى ولو كان الجرس أو الوسائط صامتة، ثم يعود صوت الجهاز كما كان. أزرار الصوت تخفضه أثناء الأذان.",
   "adhanVolumeAppleNote": "في آيفون وماك يتبع صوت التنبيه مستوى صوت الجهاز؛ هذا المستوى للأذان داخل التطبيق فقط.",
   "adhanVolumePreview": "معاينة المستوى",
+  "adhanPlay": "تشغيل الأذان",
+  "adhanInUseTitle": "عندما يكون الهاتف قيد الاستخدام",
+  "adhanInUseNote": "أي عندما تكون الشاشة مفتوحة وغير مقفلة، أو يعمل فيديو أو صوت آخر. أثناء المكالمات يصل إشعار صامت فقط مع زر «تشغيل الأذان».",
+  "adhanInUseNotify": "إشعار فقط",
+  "adhanInUseShort": "«حي على الصلاة» فقط",
+  "adhanInUseFull": "الأذان كاملًا",
+  "hijriCalendarTitle": "التقويم الهجري",
+  "hijriOpenCalendar": "افتح التقويم الهجري",
+  "hijriPrevMonth": "الشهر السابق",
+  "hijriNextMonth": "الشهر التالي",
+  "hijriBackToToday": "اليوم",
+  "hijriTodayLabel": "اليوم",
+  "hijriAdjustment": "تعديل التاريخ: {days} يوم",
+  "@hijriAdjustment": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "occasionsTitle": "المناسبات",
+  "occasionNext": "المناسبة القادمة",
+  "occasionNewYear": "رأس السنة الهجرية",
+  "occasionAshura": "عاشوراء",
+  "occasionRamadanStart": "أول رمضان",
+  "occasionLastTen": "العشر الأواخر من رمضان",
+  "occasionEidFitr": "عيد الفطر",
+  "occasionArafah": "يوم عرفة",
+  "occasionEidAdha": "عيد الأضحى",
+  "occasionTashreeq": "أيام التشريق",
+  "occasionIn": "{count, plural, =0{اليوم} =1{غدًا} =2{بعد يومين} few{بعد {n} أيام} other{بعد {n} يومًا}}",
+  "@occasionIn": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "occasionOngoing": "جارية الآن",
+  "occasionTomorrow": "غدًا: {name}",
+  "@occasionTomorrow": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "occasionChannel": "تذكير المناسبات",
+  "occasionRemindersTitle": "تذكير قبل المناسبات بيوم",
+  "occasionRemindersNote": "إشعار في المساء قبل كل مناسبة",
   "hifzRepeat": "كرر للحفظ",
   "hifzRepeatTitle": "التكرار للحفظ",
   "repeatFromVerse": "من الآية",

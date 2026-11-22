@@ -56,7 +56,11 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
       if (!Platform.isAndroid &&
           !late.isNegative &&
           late < AdhanScreen.startWithin &&
-          !native.playing.value) {
+          !native.playing.value &&
+          // Stopped moments ago: reopening the screen does not restart it.
+          !native.stoppedRecently &&
+          PrayerRuntime.instance?.wasPlayed(at) != true) {
+        PrayerRuntime.instance?.markPlayed(at);
         unawaited(PrayerRuntime.instance?.playAdhan(widget.prayer));
       }
     }

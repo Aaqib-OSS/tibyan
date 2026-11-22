@@ -19,7 +19,23 @@ class NativeAdhan {
     required this.payload,
     this.volume = 0.7,
     this.stopLabel,
-  });
+    this.playLabel,
+    DateTime? prayerAt,
+    this.shortFiles = const [],
+    this.inUse = 'notify',
+  }) : prayerAt = prayerAt ?? at;
+
+  /// «تشغيل الأذان» in the app's language (the notice's action).
+  final String? playLabel;
+
+  /// The prayer's own time: the alert's identity (it fires once).
+  final DateTime prayerAt;
+
+  /// The short cut («حي على الصلاة»), for the phone in use.
+  final List<String> shortFiles;
+
+  /// [InUseAdhan]'s name.
+  final String inUse;
 
   /// «إيقاف» in the app's language.
   final String? stopLabel;
@@ -45,6 +61,10 @@ class NativeAdhan {
     'body': body,
     'files': files,
     'payload': payload,
+    'playLabel': playLabel,
+    'prayerAt': prayerAt.millisecondsSinceEpoch,
+    'shortFiles': shortFiles,
+    'inUse': inUse,
   };
 }
 
@@ -144,7 +164,19 @@ class PrayerNative {
     }());
   }
 
+  /// When the reader last stopped the adhan (this run).
+  DateTime? stoppedAt;
+
+  /// Stopped within [stopHold]: nothing starts it again by itself.
+  bool get stoppedRecently {
+    final at = stoppedAt;
+    return at != null && DateTime.now().difference(at) < stopHold;
+  }
+
+  static const stopHold = Duration(minutes: 2);
+
   Future<void> stop() async {
+    stoppedAt = DateTime.now();
     playing.value = false;
     if (_mobileOrMac) {
       await _call<void>('stop');
