@@ -2214,5 +2214,15 @@
   },
   "occasionChannel": "Occasion reminders",
   "occasionRemindersTitle": "Remind me the day before each occasion",
-  "occasionRemindersNote": "A notification in the evening before each occasion"
+  "occasionRemindersNote": "A notification in the evening before each occasion",
+  "hifzRepeat": "Repeat to memorize",
+  "hifzRepeatTitle": "Repeat for memorizing",
+  "repeatFromVerse": "From verse",
+  "repeatToVerse": "To verse",
+  "repeatEachVerse": "Repeat each verse",
+  "repeatWholeRange": "Repeat the whole passage",
+  "repeatPause": "Pause between repeats",
+  "repeatStart": "Start repeating",
+  "chooseRepeatRange": "Choose verses to repeat",
+  "repeatProgressVerse": "Verse {done}/{total} · Repeat {rangeDone}/{rangeTotal}"
 }

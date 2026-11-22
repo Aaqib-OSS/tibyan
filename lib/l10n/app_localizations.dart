@@ -10099,6 +10099,71 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إشعار في المساء قبل كل مناسبة'**
   String get occasionRemindersNote;
+
+  /// No description provided for @hifzRepeat.
+  ///
+  /// In ar, this message translates to:
+  /// **'كرر للحفظ'**
+  String get hifzRepeat;
+
+  /// No description provided for @hifzRepeatTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'التكرار للحفظ'**
+  String get hifzRepeatTitle;
+
+  /// No description provided for @repeatFromVerse.
+  ///
+  /// In ar, this message translates to:
+  /// **'من الآية'**
+  String get repeatFromVerse;
+
+  /// No description provided for @repeatToVerse.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلى الآية'**
+  String get repeatToVerse;
+
+  /// No description provided for @repeatEachVerse.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكرار كل آية'**
+  String get repeatEachVerse;
+
+  /// No description provided for @repeatWholeRange.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكرار المقطع كاملًا'**
+  String get repeatWholeRange;
+
+  /// No description provided for @repeatPause.
+  ///
+  /// In ar, this message translates to:
+  /// **'سكوت بين التكرارات'**
+  String get repeatPause;
+
+  /// No description provided for @repeatStart.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابدأ التكرار'**
+  String get repeatStart;
+
+  /// No description provided for @chooseRepeatRange.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر آيات للتكرار'**
+  String get chooseRepeatRange;
+
+  /// No description provided for @repeatProgressVerse.
+  ///
+  /// In ar, this message translates to:
+  /// **'الآية {done}/{total} · التكرار {rangeDone}/{rangeTotal}'**
+  String repeatProgressVerse(
+    String done,
+    String total,
+    String rangeDone,
+    String rangeTotal,
+  );
 }
 
 class _AppLocalizationsDelegate
