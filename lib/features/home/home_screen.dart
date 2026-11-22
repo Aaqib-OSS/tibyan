@@ -97,12 +97,6 @@ class HomeScreen extends ConsumerWidget {
         onTap: () => context.push('/mushaf/tafsir?s=$surah&a=$ayah'),
       ),
       (
-        icon: railIcon(RailItem.search),
-        label: l.sectionSearch,
-        note: null,
-        onTap: () => context.go('/search'),
-      ),
-      (
         icon: railIcon(RailItem.khatma),
         label: l.sectionKhatma,
         note: portion != null
@@ -907,12 +901,6 @@ class _ElderlyHome extends ConsumerWidget {
                   icon: Icons.headphones_outlined,
                   label: l.sectionListen,
                   onTap: () => context.push('/mushaf/audio'),
-                ),
-                const SizedBox(height: 16),
-                _BigAction(
-                  icon: Icons.search,
-                  label: l.sectionSearch,
-                  onTap: () => context.go('/search'),
                 ),
                 const SizedBox(height: 16),
                 _BigAction(
