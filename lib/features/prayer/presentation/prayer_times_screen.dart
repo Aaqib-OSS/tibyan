@@ -16,6 +16,8 @@ import 'prayer_alert_sheet.dart';
 import 'prayer_enable.dart';
 import 'prayer_widgets.dart';
 import 'qibla_screen.dart' show qiblaLocation;
+import 'prayer_tracker_screen.dart';
+import '../data/prayer_log_repository.dart';
 
 const prayerTimesLocation = '/prayer';
 
@@ -82,6 +84,12 @@ class _PrayerTimesScreenState extends ConsumerState<PrayerTimesScreen> {
             LookTopBar(
               title: l.prayerTimesTitle,
               actions: [
+                IconButton(
+                  key: const ValueKey('prayer-tracker'),
+                  tooltip: l.trackerOpen,
+                  onPressed: () => context.push(prayerTrackerLocation),
+                  icon: const Icon(Icons.fact_check_outlined),
+                ),
                 IconButton(
                   key: const ValueKey('prayer-qibla'),
                   tooltip: l.qiblaOpen,
@@ -277,6 +285,8 @@ class _TimesList extends ConsumerWidget {
     final t = context.tokens.colors;
     final day = computeDay(place, placeToday(place, now), settings);
     final next = nextPrayer(place, now, settings);
+    final today = placeToday(place, now);
+    final marks = ref.watch(dayMarksProvider(logDay(today))).value ?? const {};
     final rows = <Widget>[];
     for (final p in _rows) {
       final current =
@@ -312,6 +322,27 @@ class _TimesList extends ConsumerWidget {
                   ),
                 ),
               ),
+              // «صليت»: once the prayer's time has come.
+              if (obligatory && !day[p].isAfter(now))
+                IconButton(
+                  key: ValueKey('prayer-prayed-${p.name}'),
+                  tooltip: marks[p] == null
+                      ? '${l.prayedAction} · $name'
+                      : '${prayedName(l, marks[p]!)} · $name',
+                  onPressed: () => showPrayedSheet(
+                    context,
+                    ref,
+                    p,
+                    today,
+                    current: marks[p],
+                  ),
+                  icon: Icon(
+                    marks[p] == null
+                        ? Icons.radio_button_unchecked
+                        : prayedIcon(marks[p]!),
+                    color: marks[p] == null ? t.muted : t.goldText,
+                  ),
+                ),
               IconButton(
                 key: ValueKey('prayer-sound-${p.name}'),
                 tooltip: sound == null

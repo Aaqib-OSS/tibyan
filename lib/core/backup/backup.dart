@@ -82,6 +82,8 @@ class Backup {
     'hifz_goal',
     'tasbih_dhikr',
     'tasbih_day',
+    'prayer_log',
+    'qada_count',
   ];
 
   /// The backup as JSON text.
@@ -292,6 +294,18 @@ class Backup {
           Variable.withString(v['day']! as String),
           Variable.withString(v['dhikr']! as String),
           Variable.withString(device is String ? device : ''),
+        ]);
+      // «صلواتي»: one row a prayer a day; one qada count a prayer.
+      case 'prayer_log':
+        if (v['day'] is! String || v['prayer'] is! String) return null;
+        return _Where('day = ? AND prayer = ?', [
+          Variable.withString(v['day']! as String),
+          Variable.withString(v['prayer']! as String),
+        ]);
+      case 'qada_count':
+        if (v['prayer'] is! String) return null;
+        return _Where('prayer = ?', [
+          Variable.withString(v['prayer']! as String),
         ]);
       default:
         final uuid = v['uuid'];

@@ -5936,4 +5936,73 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get qiblaNoPlace =>
       'Choose your city first to find the Qibla direction.';
+
+  @override
+  String get trackerTitle => 'My prayers';
+
+  @override
+  String get trackerOpen => 'My prayers: your prayer log';
+
+  @override
+  String get prayedAction => 'I prayed';
+
+  @override
+  String get prayedOnTime => 'On time';
+
+  @override
+  String get prayedLate => 'Late';
+
+  @override
+  String get prayedJamaah => 'In congregation';
+
+  @override
+  String get prayedClear => 'Clear';
+
+  @override
+  String prayedAsk(String prayer) {
+    return 'How did you pray $prayer?';
+  }
+
+  @override
+  String get trackerNotMarked => 'Not marked';
+
+  @override
+  String get trackerPrevDay => 'Previous day';
+
+  @override
+  String get trackerNextDay => 'Next day';
+
+  @override
+  String get qadaTitle => 'Qada';
+
+  @override
+  String get qadaNote =>
+      'Your own count: add what you missed, and record what you have made up.';
+
+  @override
+  String qadaAdd(String prayer) {
+    return 'Add a missed $prayer';
+  }
+
+  @override
+  String qadaSettle(String prayer) {
+    return 'Made up a $prayer';
+  }
+
+  @override
+  String get weekTitle => 'The last seven days';
+
+  @override
+  String weekSummary(String n, String total) {
+    return 'You marked $n of $total prayers';
+  }
+
+  @override
+  String weekBreakdown(String onTime, String late, String jamaah) {
+    return 'On time $onTime · Late $late · In congregation $jamaah';
+  }
+
+  @override
+  String get weekGentle =>
+      'Every prayer you mark counts, and any day is a good day to start again.';
 }

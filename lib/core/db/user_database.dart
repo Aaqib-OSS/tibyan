@@ -5,10 +5,12 @@ import 'package:drift_flutter/drift_flutter.dart';
 
 import 'habit_tables.dart';
 import 'hifz_tables.dart';
+import 'prayer_log_tables.dart';
 import 'tasbih_tables.dart';
 
 export 'habit_tables.dart';
 export 'hifz_tables.dart';
+export 'prayer_log_tables.dart';
 export 'tasbih_tables.dart';
 
 part 'user_database.g.dart';
@@ -139,6 +141,8 @@ class ReadingPositions extends Table {
     TasbihDhikrs,
     TasbihDays,
     SyncJournal,
+    PrayerLogs,
+    QadaCounts,
   ],
 )
 class UserDatabase extends _$UserDatabase {
@@ -147,7 +151,7 @@ class UserDatabase extends _$UserDatabase {
   UserDatabase.open() : super(driftDatabase(name: 'user'));
 
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -236,6 +240,11 @@ class UserDatabase extends _$UserDatabase {
         if (!have.contains('material')) {
           await m.addColumn(bookmarkSets, bookmarkSets.material);
         }
+      }
+      if (from < 11) {
+        // «صلواتي»: the prayer log and the qada counts. New tables only.
+        await m.createTable(prayerLogs);
+        await m.createTable(qadaCounts);
       }
     },
   );

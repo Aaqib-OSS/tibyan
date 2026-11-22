@@ -10039,6 +10039,120 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اختر مدينتك أولًا لمعرفة اتجاه القبلة.'**
   String get qiblaNoPlace;
+
+  /// No description provided for @trackerTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'صلواتي'**
+  String get trackerTitle;
+
+  /// No description provided for @trackerOpen.
+  ///
+  /// In ar, this message translates to:
+  /// **'صلواتي: سجل صلواتك'**
+  String get trackerOpen;
+
+  /// No description provided for @prayedAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'صليت'**
+  String get prayedAction;
+
+  /// No description provided for @prayedOnTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'في وقتها'**
+  String get prayedOnTime;
+
+  /// No description provided for @prayedLate.
+  ///
+  /// In ar, this message translates to:
+  /// **'متأخرة'**
+  String get prayedLate;
+
+  /// No description provided for @prayedJamaah.
+  ///
+  /// In ar, this message translates to:
+  /// **'في جماعة'**
+  String get prayedJamaah;
+
+  /// No description provided for @prayedClear.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء التسجيل'**
+  String get prayedClear;
+
+  /// No description provided for @prayedAsk.
+  ///
+  /// In ar, this message translates to:
+  /// **'كيف صليت {prayer}؟'**
+  String prayedAsk(String prayer);
+
+  /// No description provided for @trackerNotMarked.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تُسجَّل'**
+  String get trackerNotMarked;
+
+  /// No description provided for @trackerPrevDay.
+  ///
+  /// In ar, this message translates to:
+  /// **'اليوم السابق'**
+  String get trackerPrevDay;
+
+  /// No description provided for @trackerNextDay.
+  ///
+  /// In ar, this message translates to:
+  /// **'اليوم التالي'**
+  String get trackerNextDay;
+
+  /// No description provided for @qadaTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'القضاء'**
+  String get qadaTitle;
+
+  /// No description provided for @qadaNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدّاد خاص بك: أضف ما فاتك، وسجّل ما قضيته.'**
+  String get qadaNote;
+
+  /// No description provided for @qadaAdd.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف {prayer} فائتة'**
+  String qadaAdd(String prayer);
+
+  /// No description provided for @qadaSettle.
+  ///
+  /// In ar, this message translates to:
+  /// **'قضيت {prayer}'**
+  String qadaSettle(String prayer);
+
+  /// No description provided for @weekTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر سبعة أيام'**
+  String get weekTitle;
+
+  /// No description provided for @weekSummary.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجّلت {n} من {total} صلاة'**
+  String weekSummary(String n, String total);
+
+  /// No description provided for @weekBreakdown.
+  ///
+  /// In ar, this message translates to:
+  /// **'في وقتها {onTime} · متأخرة {late} · في جماعة {jamaah}'**
+  String weekBreakdown(String onTime, String late, String jamaah);
+
+  /// No description provided for @weekGentle.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل صلاة تسجّلها تُحسب، ويمكنك البدء من جديد في أي يوم.'**
+  String get weekGentle;
 }
 
 class _AppLocalizationsDelegate
