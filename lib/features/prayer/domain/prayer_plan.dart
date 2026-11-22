@@ -13,10 +13,16 @@ const prayerIdBase = 9100;
 const _slotsPerDay = 20;
 const prayerIdLimit = prayerIdBase + prayerDaysAhead * _slotsPerDay;
 
+/// «جرّب الأذان»'s notification (outside the range a re-plan cancels).
+const prayerTestId = 9399;
+
 /// iOS keeps at most 64 pending notifications per app, and the khatma
 /// reminders need some: the prayer alerts take the earliest ones up to
 /// this many there.
 const appleMaxPrayerAlerts = 48;
+
+/// How soon an alert whose minute is still running fires.
+const lateFireDelay = Duration(seconds: 1);
 
 /// What an alert announces.
 enum AlertKind {
@@ -91,9 +97,13 @@ List<PlannedAlert> planAlerts({
     final day = computeDay(place, date, settings);
     final ramadan = isRamadan(date, settings.hijriOffset);
     void add(PrayerKind p, AlertKind k, AlertSound sound, {int minutes = 0}) {
-      final prayerAt = day[p].toUtc();
-      final at = prayerAt.subtract(Duration(minutes: minutes));
-      if (!at.isAfter(now)) return;
+      final DateTime prayerAt = day[p].toUtc();
+      DateTime at = prayerAt.subtract(Duration(minutes: minutes));
+      // An alert whose minute has not ended yet still goes (up to 59 s
+      // late: prayer times switched on at 14:35:55 still sound Asr's
+      // 14:35 adhan), at once.
+      if (!at.add(const Duration(minutes: 1)).isAfter(now)) return;
+      if (!at.isAfter(now)) at = now.add(lateFireDelay);
       out.add(
         PlannedAlert(
           id: prayerIdBase + d * _slotsPerDay + _slot(p, k),

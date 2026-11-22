@@ -8,6 +8,17 @@ import 'prayer_settings.dart';
 /// The forenoon prayer's time, after sunrise.
 const duhaAfterSunrise = Duration(minutes: 20);
 
+/// The one rounding rule for every time the app shows or alerts at: to
+/// the nearest minute, seconds dropped (as published timetables do). The
+/// screen's minute and the alert's minute are therefore always the same.
+DateTime roundToMinute(DateTime utc) {
+  final t = utc.toUtc();
+  final floor = DateTime.utc(t.year, t.month, t.day, t.hour, t.minute);
+  return t.difference(floor).inSeconds >= 30
+      ? floor.add(const Duration(minutes: 1))
+      : floor;
+}
+
 /// One day's times at a place, as instants in the place's time zone.
 @immutable
 class PrayerDay {
@@ -69,7 +80,7 @@ PrayerDay computeDay(PrayerPlace place, DateTime date, PrayerSettings s) {
     params,
   );
   final loc = locationOf(place);
-  tz.TZDateTime at(DateTime utc) => tz.TZDateTime.from(utc.toUtc(), loc);
+  tz.TZDateTime at(DateTime utc) => tz.TZDateTime.from(roundToMinute(utc), loc);
   final sunrise = at(t.sunrise);
   return PrayerDay(
     date: DateTime(date.year, date.month, date.day),

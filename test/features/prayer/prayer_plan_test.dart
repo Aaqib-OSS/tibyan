@@ -179,4 +179,51 @@ void main() {
     // Dhuhr stays around noon (12 or 13 on the clock), never 11.
     expect(hours.every((h) => h == 12 || h == 13), isTrue);
   });
+
+  group('one minute for the screen and the alert', () {
+    test('every time is on a whole minute (rounded, not truncated)', () {
+      expect(
+        roundToMinute(DateTime.utc(2026, 1, 1, 14, 35, 29)),
+        DateTime.utc(2026, 1, 1, 14, 35),
+      );
+      expect(
+        roundToMinute(DateTime.utc(2026, 1, 1, 14, 35, 30)),
+        DateTime.utc(2026, 1, 1, 14, 36),
+      );
+      final day = computeDay(cairo, DateTime(2026, 4, 14), on);
+      for (final t in day.times.values) {
+        expect(t.second, 0);
+        expect(t.millisecond, 0);
+      }
+    });
+
+    test('the alert fires at the minute the screen shows', () {
+      final plan = planAlerts(settings: on, now: now, adhanReady: true);
+      final day = computeDay(cairo, DateTime(2026, 4, 14), on);
+      final asr = plan.firstWhere((a) => a.prayer == PrayerKind.asr);
+      expect(asr.at, day[PrayerKind.asr].toUtc());
+    });
+
+    test('switched on 55 s into the prayer\'s minute: it still fires, now', () {
+      final day = computeDay(cairo, DateTime(2026, 4, 14), on);
+      final asr = day[PrayerKind.asr].toUtc();
+      final late = asr.add(const Duration(seconds: 55));
+      final plan = planAlerts(settings: on, now: late, adhanReady: true);
+      final first = plan.first;
+      expect(first.prayer, PrayerKind.asr);
+      expect(first.at, late.add(lateFireDelay));
+      expect(first.prayerAt, asr);
+    });
+
+    test('a minute later it is past and not scheduled', () {
+      final day = computeDay(cairo, DateTime(2026, 4, 14), on);
+      final asr = day[PrayerKind.asr].toUtc();
+      final plan = planAlerts(
+        settings: on,
+        now: asr.add(const Duration(seconds: 60)),
+        adhanReady: true,
+      );
+      expect(plan.first.prayer, PrayerKind.maghrib);
+    });
+  });
 }
