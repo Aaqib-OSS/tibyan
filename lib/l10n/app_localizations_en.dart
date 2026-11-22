@@ -5320,6 +5320,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get storePrivacyExit => 'Exit';
 
   @override
+  String get tafsirCompare => 'Compare';
+
+  @override
+  String get tafsirCompareHint => 'Show all chosen texts together';
+
+  @override
+  String get tafsirChoices => 'Tafsirs and translations';
+
+  @override
+  String get tafsirReadMore => 'Read more';
+
+  @override
+  String get tafsirShowLess => 'Show less';
+
+  @override
+  String get tafsirGoToVerse => 'Go to verse';
+
+  @override
+  String get tafsirChooseTexts => 'Choose tafsirs';
+
+  @override
+  String get tafsirShareText => 'Share text';
+
+  @override
+  String get tafsirPlayVerse => 'Play this verse';
+
+  @override
   String get khatmaActGroup => 'Group';
 
   @override

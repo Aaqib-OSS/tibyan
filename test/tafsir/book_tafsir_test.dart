@@ -64,8 +64,10 @@ void main() {
     List<TafsirTextPackSpec> englishTafsirSpecs = const [],
     String locale = 'ar',
     int ayah = 1,
+    // «قارن»: every shown text at once, as these checks expect.
+    Map<String, Object> initialPrefs = const {'settings.tafsirCompare': true},
   }) async {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues(initialPrefs);
     final prefs = await tester.runAsync(SharedPreferences.getInstance);
     final registry = (await tester.runAsync(
       () => ThemeRegistry.load(rootBundle),

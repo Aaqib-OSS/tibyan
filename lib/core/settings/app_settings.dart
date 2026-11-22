@@ -170,6 +170,8 @@ class AppSettings {
     this.hiddenBookTafsirs = const {},
     this.englishTafsirVisibilityOverride,
     this.tafsirKashida = false,
+    this.tafsirChoice,
+    this.tafsirCompare = false,
     this.reciterId = 1,
     this.riwayaReciters = const {},
     this.followRecitation = true,
@@ -269,6 +271,13 @@ class AppSettings {
 
   /// Trial: justify Arabic tafsir with tatweel instead of wider spaces.
   final bool tafsirKashida;
+
+  /// The tafsir or translation last chosen in the tafsir's chip bar
+  /// (`c:<source id>` or `b:<book key>`); null shows the first one.
+  final String? tafsirChoice;
+
+  /// «قارن»: every shown text at once instead of the chosen one.
+  final bool tafsirCompare;
 
   /// Recitation chosen in the player (content.db `reciter.id`).
   final int reciterId;
@@ -455,6 +464,8 @@ class AppSettings {
     Set<String>? hiddenBookTafsirs,
     bool? englishTafsirVisibilityOverride,
     bool? tafsirKashida,
+    String? tafsirChoice,
+    bool? tafsirCompare,
     int? reciterId,
     Map<Riwaya, int>? riwayaReciters,
     bool? followRecitation,
@@ -519,6 +530,8 @@ class AppSettings {
     englishTafsirVisibilityOverride:
         englishTafsirVisibilityOverride ?? this.englishTafsirVisibilityOverride,
     tafsirKashida: tafsirKashida ?? this.tafsirKashida,
+    tafsirChoice: tafsirChoice ?? this.tafsirChoice,
+    tafsirCompare: tafsirCompare ?? this.tafsirCompare,
     reciterId: reciterId ?? this.reciterId,
     riwayaReciters: riwayaReciters ?? this.riwayaReciters,
     followRecitation: followRecitation ?? this.followRecitation,

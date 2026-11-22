@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/ui/app_toast.dart';
 
 import '../../../core/ui/look_kit.dart';
+import '../../../core/ui/share_text.dart';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -252,6 +253,11 @@ class BookEntryCard extends ConsumerWidget {
                   ScaffoldMessenger.maybeOf(context)
                       ?.showSnackBar(appToast(content: Text(l.copied)));
                 },
+              ),
+              IconButton(
+                tooltip: l.tafsirShareText,
+                icon: Icon(Icons.share_outlined, size: 18, color: t.muted),
+                onPressed: () => ref.read(shareTextProvider)(copy),
               ),
             ],
           ),

@@ -1,3 +1,5 @@
+import '../../tafsir/tafsir_screen.dart';
+
 import 'dart:async';
 import 'dart:ui' as ui;
 
@@ -1215,9 +1217,13 @@ class _MushafScreenState extends ConsumerState<MushafScreen>
         onTafsir: (v) {
           final h = hafsKeyOf(_riwaya, v);
           final riwaya = edition.riwaya;
-          context.push(
-            '/mushaf/tafsir?s=${h.surah}&a=${h.ayah}'
-            '${riwaya == Riwaya.hafs ? '' : '&r=${riwaya.name}&ra=${v.ayah}'}',
+          // A half sheet over the page; the route stays for other entries.
+          showTafsirSheet(
+            context,
+            surah: h.surah,
+            ayah: h.ayah,
+            riwaya: riwaya == Riwaya.hafs ? null : riwaya,
+            riwayaAyah: riwaya == Riwaya.hafs ? null : v.ayah,
           );
         },
         touched: _touchReading ? _touched : null,
@@ -2141,9 +2147,13 @@ class _MushafScreenState extends ConsumerState<MushafScreen>
           final v = range.first;
           final h = hafsKeyOf(_riwaya, v);
           final riwaya = edition.riwaya;
-          context.push(
-            '/mushaf/tafsir?s=${h.surah}&a=${h.ayah}'
-            '${riwaya == Riwaya.hafs ? '' : '&r=${riwaya.name}&ra=${v.ayah}'}',
+          // A half sheet over the page; the route stays for other entries.
+          showTafsirSheet(
+            context,
+            surah: h.surah,
+            ayah: h.ayah,
+            riwaya: riwaya == Riwaya.hafs ? null : riwaya,
+            riwayaAyah: riwaya == Riwaya.hafs ? null : v.ayah,
           );
         }),
         // Word study reads the Hafs text's words: on a riwaya's
