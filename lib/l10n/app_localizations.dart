@@ -9926,6 +9926,42 @@ abstract class AppLocalizations {
   /// **'معاينة المستوى'**
   String get adhanVolumePreview;
 
+  /// No description provided for @adhanPlay.
+  ///
+  /// In ar, this message translates to:
+  /// **'تشغيل الأذان'**
+  String get adhanPlay;
+
+  /// No description provided for @adhanInUseTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'عندما يكون الهاتف قيد الاستخدام'**
+  String get adhanInUseTitle;
+
+  /// No description provided for @adhanInUseNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'أي عندما تكون الشاشة مفتوحة وغير مقفلة، أو يعمل فيديو أو صوت آخر. أثناء المكالمات يصل إشعار صامت فقط مع زر «تشغيل الأذان».'**
+  String get adhanInUseNote;
+
+  /// No description provided for @adhanInUseNotify.
+  ///
+  /// In ar, this message translates to:
+  /// **'إشعار فقط'**
+  String get adhanInUseNotify;
+
+  /// No description provided for @adhanInUseShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'«حي على الصلاة» فقط'**
+  String get adhanInUseShort;
+
+  /// No description provided for @adhanInUseFull.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأذان كاملًا'**
+  String get adhanInUseFull;
+
   /// No description provided for @hijriCalendarTitle.
   ///
   /// In ar, this message translates to:

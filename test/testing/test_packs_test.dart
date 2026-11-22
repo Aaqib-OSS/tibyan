@@ -11,7 +11,7 @@ import 'package:tibyan/features/mushaf/data/background_packs.dart';
 void main() {
   bool underTest(String url) =>
       Uri.parse(url).scheme == 'https' &&
-      Uri.parse(url).host == 'tibyan.ahmedhelal.dev' &&
+      Uri.parse(url).host == 'altibyan.app' &&
       Uri.parse(url).path.startsWith('/mirror/test/');
 
   final hex = RegExp(r'^[0-9a-f]{64}$');

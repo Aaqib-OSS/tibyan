@@ -8,11 +8,12 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 
 import 'timing_updates.dart';
+import '../../core/net/server.dart';
 
 part 'word_timing_specs.dart';
 
 /// Where the word-timing packs are served (tools/build_lean_content.py).
-const wordTimingBaseUrl = 'https://tibyan.ahmedhelal.dev/mirror/packs/timing/';
+const wordTimingBaseUrl = '$serverBase/mirror/packs/timing/';
 
 /// One reciter's word-timing pack: a [TimingPack] file named by its SHA-256.
 @immutable
@@ -102,7 +103,7 @@ class WordTimingPacks {
 
   Future<bool> _fetch(int reciter) async {
     final spec = specs[reciter]!;
-    final c = client ?? http.Client();
+    final c = client ?? FallbackClient();
     try {
       final r = await c
           .get(_base.resolve(spec.file))

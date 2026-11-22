@@ -93,6 +93,10 @@ void main() {
       for (final u in upcoming) {
         final at = r.once[occasionIdBase + u.occasion.index]!;
         expect(at.hour, occasionReminderHour);
+        expect(
+          r.onceChannels[occasionIdBase + u.occasion.index],
+          occasionChannelId,
+        );
         expect(daysUntil(at, u.start), 1);
       }
       await syncOccasionReminders(r, const PrayerSettings(), l, now: today);

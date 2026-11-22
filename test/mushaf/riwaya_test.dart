@@ -179,7 +179,7 @@ void main() {
       for (final e in riwayat) {
         final spec = PagePackSpec.of(e);
         expect(spec.id, 'pages-${e.riwaya.name}-v1');
-        expect(spec.url, startsWith('https://tibyan.ahmedhelal.dev/mirror/'));
+        expect(spec.url, startsWith('https://altibyan.app/mirror/'));
         expect(spec.sha256, hasLength(64));
         expect(spec.format, PackFormat.svgXz);
         expect(e.pageCount, 604);

@@ -13,6 +13,9 @@ import '../domain/prayer_settings.dart';
 /// the prayer alerts (9100–9239) and the adhan test (9399).
 const occasionIdBase = 9400;
 
+/// The occasion reminders' own Android notification channel.
+const occasionChannelId = 'app.tibyan.occasions';
+
 /// The link an occasion reminder opens: the Hijri calendar.
 const occasionPayload = 'tibyan://prayer/hijri';
 
@@ -73,6 +76,7 @@ Future<void> syncOccasionReminders(
       body: occasionDateLabel(l, u.occasion),
       payload: occasionPayload,
       channel: l.occasionChannel,
+      channelId: occasionChannelId,
     );
   }
 }

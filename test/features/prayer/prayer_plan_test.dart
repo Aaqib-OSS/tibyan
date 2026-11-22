@@ -225,5 +225,33 @@ void main() {
       );
       expect(plan.first.prayer, PrayerKind.maghrib);
     });
+
+    test('stopped, then planned again in the same minute: no second '
+        'adhan', () {
+      final day = computeDay(cairo, DateTime(2026, 4, 14), on);
+      final asr = day[PrayerKind.asr].toUtc();
+      final t1 = asr.add(const Duration(seconds: 5));
+      final first = planAlerts(settings: on, now: t1, adhanReady: true);
+      expect(first.first.late, isTrue);
+      final fired = recordLate(const {}, first, t1);
+      expect(fired, contains(first.first.key));
+      // The app comes back (the call ended) 40 s later: re-planned.
+      final t2 = asr.add(const Duration(seconds: 45));
+      final again = planAlerts(
+        settings: on,
+        now: t2,
+        adhanReady: true,
+        lateFired: fired,
+      );
+      expect(again.first.prayer, PrayerKind.maghrib);
+      expect(again.any((a) => a.late), isFalse);
+    });
+
+    test('alerts on time are never late; old records are dropped', () {
+      final plan = planAlerts(settings: on, now: now, adhanReady: true);
+      expect(plan.any((a) => a.late), isFalse);
+      final old = lateKey(0, now.subtract(const Duration(days: 2)));
+      expect(recordLate({old}, plan, now), isEmpty);
+    });
   });
 }
