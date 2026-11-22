@@ -29,6 +29,10 @@ import '../mushaf/presentation/mushaf_screen.dart';
 import '../mushaf/presentation/widgets/illuminated_frame.dart';
 import '../tasmee/presentation/tasmee_setup_screen.dart' show showTasmeeSetup;
 import 'whats_new.dart';
+import '../adhkar/presentation/adhkar_screen.dart' show adhkarLocation;
+import '../prayer/presentation/prayer_tracker_screen.dart'
+    show prayerTrackerLocation;
+import '../prayer/presentation/qibla_screen.dart' show qiblaLocation;
 import '../../core/ui/responsive.dart';
 import '../../core/ui/meta_separator.dart';
 
@@ -131,6 +135,32 @@ class HomeScreen extends ConsumerWidget {
         label: l.tasmeeTileLabel,
         note: l.tasmeeSelectRange,
         onTap: () => showTasmeeSetup(context),
+      ),
+      // The third row: القبلة | الأذكار | صلواتي | البحث (search stays in
+      // the top bar too).
+      (
+        icon: Icons.explore_outlined,
+        label: l.qiblaTitle,
+        note: null,
+        onTap: () => context.push(qiblaLocation),
+      ),
+      (
+        icon: Icons.wb_twilight_outlined,
+        label: l.adhkarTitle,
+        note: null,
+        onTap: () => context.push(adhkarLocation),
+      ),
+      (
+        icon: Icons.fact_check_outlined,
+        label: l.trackerTitle,
+        note: null,
+        onTap: () => context.push(prayerTrackerLocation),
+      ),
+      (
+        icon: Icons.search,
+        label: l.sectionSearch,
+        note: null,
+        onTap: () => context.go('/search'),
       ),
     ];
 
