@@ -2162,6 +2162,59 @@
   "adhanVolumeNote": "The adhan plays at this level even when the ringer or media is muted, then the device volume goes back to what it was. The volume keys lower it during the adhan.",
   "adhanVolumeAppleNote": "On iPhone and Mac the alert follows the device volume; this level is for the adhan inside the app only.",
   "adhanVolumePreview": "Preview the volume",
+  "adhanPlay": "Play the adhan",
+  "adhanInUseTitle": "When the phone is in use",
+  "adhanInUseNote": "The screen is on and unlocked, or a video or other audio is playing. During a call only a silent notification arrives, with «Play the adhan».",
+  "adhanInUseNotify": "Notification only",
+  "adhanInUseShort": "«Hayya ala al-salah» only",
+  "adhanInUseFull": "The full adhan",
+  "hijriCalendarTitle": "Hijri calendar",
+  "hijriOpenCalendar": "Open the Hijri calendar",
+  "hijriPrevMonth": "Previous month",
+  "hijriNextMonth": "Next month",
+  "hijriBackToToday": "Today",
+  "hijriTodayLabel": "Today",
+  "hijriAdjustment": "Date adjustment: {days} days",
+  "@hijriAdjustment": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "occasionsTitle": "Occasions",
+  "occasionNext": "Next occasion",
+  "occasionNewYear": "Islamic New Year",
+  "occasionAshura": "Ashura",
+  "occasionRamadanStart": "First of Ramadan",
+  "occasionLastTen": "The last ten days of Ramadan",
+  "occasionEidFitr": "Eid al-Fitr",
+  "occasionArafah": "Day of Arafah",
+  "occasionEidAdha": "Eid al-Adha",
+  "occasionTashreeq": "Days of Tashreeq",
+  "occasionIn": "{count, plural, =0{Today} =1{Tomorrow} other{In {n} days}}",
+  "@occasionIn": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "occasionOngoing": "Under way",
+  "occasionTomorrow": "Tomorrow: {name}",
+  "@occasionTomorrow": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "occasionChannel": "Occasion reminders",
+  "occasionRemindersTitle": "Remind me the day before each occasion",
+  "occasionRemindersNote": "A notification in the evening before each occasion",
   "searchModeRoot": "By root",
   "searchRootHint": "Type a root, such as رحم or ر ح م",
   "searchRootFound": "Root «{root}»",

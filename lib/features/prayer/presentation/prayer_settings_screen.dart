@@ -235,6 +235,42 @@ class PrayerSettingsScreen extends ConsumerWidget {
                         onChanged: (v) =>
                             ctrl.update((x) => x.copyWith(length: v)),
                       ),
+                    // Android only: Apple plays the notification's own
+                    // sound, and the desktops play it from the tray.
+                    if (Theme.of(context).platform ==
+                        TargetPlatform.android) ...[
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                        child: Text(l.adhanInUseTitle),
+                      ),
+                      for (final u in InUseAdhan.values)
+                        // ignore: deprecated_member_use
+                        RadioListTile<InUseAdhan>(
+                          key: ValueKey('prayer-inuse-${u.name}'),
+                          title: Text(switch (u) {
+                            InUseAdhan.notify => l.adhanInUseNotify,
+                            InUseAdhan.short => l.adhanInUseShort,
+                            InUseAdhan.full => l.adhanInUseFull,
+                          }),
+                          value: u,
+                          // ignore: deprecated_member_use
+                          groupValue: s.inUse,
+                          // ignore: deprecated_member_use
+                          onChanged: (v) =>
+                              ctrl.update((x) => x.copyWith(inUse: v)),
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                        child: Text(
+                          l.adhanInUseNote,
+                          style: TextStyle(
+                            color: t.muted,
+                            fontSize: 12,
+                            height: 1.6,
+                          ),
+                        ),
+                      ),
+                    ],
                     if (isApplePlatform)
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
