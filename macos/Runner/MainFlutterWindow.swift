@@ -274,6 +274,7 @@ final class PrayerChannel: NSObject, CLLocationManagerDelegate {
   /// Opens the app at login (SMAppService, macOS 13+): asked when prayer
   /// times are switched on, so the full adhan can play.
   static func loginItem(_ on: Bool) -> Bool {
+    guard #available(macOS 13.0, *) else { return false }
     do {
       if on {
         try SMAppService.mainApp.register()
