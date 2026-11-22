@@ -21,6 +21,7 @@ import '../sajdah/sajdah_positions.dart';
 import 'keep_alive.dart';
 import 'verse_queue.dart';
 import '../../core/ui/meta_separator.dart';
+import '../../core/net/server.dart';
 
 /// Every recitation in the content database, of every riwaya.
 final allRecitersProvider = FutureProvider<List<ReciterRow>>(
@@ -107,8 +108,7 @@ String surahUrl(ReciterRow reciter, int surah) =>
     : '${reciter.folderUrl}${surahFile(surah)}';
 
 /// Tibyan's mirror of the recitations, laid out like mp3quran's servers.
-const recitationMirror =
-    'https://tibyan.ahmedhelal.dev/mirror/sources/recitations';
+const recitationMirror = '$serverBase/mirror/sources/recitations';
 
 /// Where a surah file can be fetched: Tibyan's mirror, then the source
 /// (mp3quran itself); the source first when [sourceFirst].
@@ -182,7 +182,7 @@ class AudioFiles {
     target.parent.createSync(recursive: true);
     final part = File('${target.path}.part');
     final have = part.existsSync() ? part.lengthSync() : 0;
-    final c = client ?? http.Client();
+    final c = client ?? FallbackClient();
     try {
       // Both hosts serve the same bytes, so a partial file resumes from
       // either.
@@ -278,7 +278,7 @@ Future<AudioHost?> fasterHost(
 
 /// The HTTP client of the recitation (host tests, saving while listening).
 final audioHttpClientProvider = Provider<http.Client>((ref) {
-  final client = http.Client();
+  final client = FallbackClient();
   ref.onDispose(client.close);
   return client;
 });

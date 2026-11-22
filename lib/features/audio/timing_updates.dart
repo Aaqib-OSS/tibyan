@@ -9,11 +9,12 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 
 import '../../core/db/content_database.dart';
+import '../../core/net/server.dart';
 
 /// Where corrected timings are published: our server first, as everything
 /// else the app downloads. Built by `.github/workflows/timing-deploy.yml`
 /// from `data/timing/` once a correction is merged (docs/TIMING.md).
-const timingBaseUrl = 'https://tibyan.ahmedhelal.dev/timing/';
+const timingBaseUrl = '$serverBase/timing/';
 
 /// Packs above this size are refused (al-Sudais, every word: ~1 MB).
 const _maxPackBytes = 20 * 1024 * 1024;
@@ -291,7 +292,7 @@ class TimingUpdates implements TimingOverrides {
   /// Asks the server for newer packs and installs those that verify.
   /// Returns how many were installed. Never throws.
   Future<int> refresh({DateTime? now, bool force = false}) async {
-    final c = client ?? http.Client();
+    final c = client ?? FallbackClient();
     var installed = 0;
     try {
       final state = _state();

@@ -9,6 +9,7 @@ import 'package:path/path.dart' as p;
 import '../../core/flags/feature_flags.dart';
 import '../mushaf/mushaf_providers.dart';
 import '../../core/testing/test_packs.dart';
+import '../../core/net/server.dart';
 
 /// What an index holds; matches `kind` in tools/audio_index.py.
 abstract final class VerseAudioKind {
@@ -249,7 +250,7 @@ final audioIndexSpecsProvider = Provider<List<AudioIndexSpec>>(
 );
 
 final audioIndexStoreProvider = Provider<AudioIndexStore>((ref) {
-  final client = http.Client();
+  final client = FallbackClient();
   ref.onDispose(client.close);
   return AudioIndexStore(ref.watch(packRootProvider), client);
 });

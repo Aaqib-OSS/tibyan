@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 
 import '../../../core/settings/app_settings.dart';
+import '../../../core/net/server.dart';
 
 /// How a pack's zip is laid out.
 enum PackFormat {
@@ -72,7 +73,7 @@ class PagePackSpec {
   static const madina1441 = PagePackSpec(
     assetDir: 'assets/pages/hafs-1441/',
     id: 'pages-hafs-1441-v1',
-    url: 'https://tibyan.ahmedhelal.dev/mirror/packs/pages-hafs-1441-v1.zip',
+    url: '$serverBase/mirror/packs/pages-hafs-1441-v1.zip',
     sha256: '9013b4c47c96eb36b5c9b7ad2b25b43a5d09c939879d85f8976147fce9d4580e',
     bytes: 65649525,
     format: PackFormat.svgXz,
@@ -85,7 +86,7 @@ class PagePackSpec {
   /// from Tibyan's mirror, with quran.com as the fallback.
   static const madina1405 = PagePackSpec(
     id: 'pages-hafs-1405-qurancom-1024',
-    url: 'https://tibyan.ahmedhelal.dev/mirror/packs/pages-hafs-1405-qurancom-1024.zip',
+    url: '$serverBase/mirror/packs/pages-hafs-1405-qurancom-1024.zip',
     sha256: '401b432deb2c7415818116d9b36db34c31e405f652b0206926da851943286b85',
     bytes: 63441877,
     format: PackFormat.pngQuranCom,
@@ -97,7 +98,7 @@ class PagePackSpec {
   /// Tibyan's mirror.
   static const shamarly = PagePackSpec(
     id: 'pages-hafs-shamarly-v1',
-    url: 'https://tibyan.ahmedhelal.dev/mirror/sources/shamarly/shamarly-pages-archive-org.zip',
+    url: '$serverBase/mirror/sources/shamarly/shamarly-pages-archive-org.zip',
     sha256: '03199bf95590458df94670d6d1ba5f17e56ec72413df51dd30087aa5beaa712d',
     bytes: 214988080,
     format: PackFormat.pngShamarly,
@@ -114,7 +115,7 @@ class PagePackSpec {
   static PagePackSpec _riwaya(String riwaya, String sha256, int bytes) =>
       PagePackSpec(
         id: 'pages-$riwaya-v1',
-        url: 'https://tibyan.ahmedhelal.dev/mirror/packs/pages-$riwaya-v1.zip',
+        url: '$serverBase/mirror/packs/pages-$riwaya-v1.zip',
         sha256: sha256,
         bytes: bytes,
         format: PackFormat.svgXz,
@@ -146,7 +147,7 @@ class PagePackSpec {
   /// content.db. Built by tools/build_semantic_pack.py; on Tibyan's mirror.
   static const semantic = PagePackSpec(
     id: 'semantic-e5-small-v1',
-    url: 'https://tibyan.ahmedhelal.dev/mirror/packs/semantic-e5-small-v1.zip',
+    url: '$serverBase/mirror/packs/semantic-e5-small-v1.zip',
     sha256: '841c6f5accea68d111513da400fb83138be06b41275abebe8d4c29baabc19f34',
     bytes: 134489900,
     format: PackFormat.semantic,
@@ -193,7 +194,7 @@ class PagePackInstaller {
     required this.root,
     required this.spec,
     http.Client? client,
-  }) : _client = client ?? http.Client();
+  }) : _client = client ?? FallbackClient();
 
   final Directory root;
   final PagePackSpec spec;
