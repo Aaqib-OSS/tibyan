@@ -4337,5 +4337,33 @@
     }
   },
   "salawatRulesNote": "لا يُشغَّل الصوت أثناء المكالمات، ويتبع إعداد «عندما يكون الهاتف قيد الاستخدام» في إعدادات الأذان.",
-  "salawatUnsupported": "تذكير «الصلاة على النبي» متاح على أندرويد وآيفون وماك."
+  "salawatUnsupported": "تذكير «الصلاة على النبي» متاح على أندرويد وآيفون وماك.",
+  "prayerPerPrayerTitle": "أذان كل صلاة",
+  "prayerPerPrayerNote": "لكل صلاة مؤذنها وطول أذانها إن شئت؛ وإلا فحسب الإعدادات العامة.",
+  "prayerFollowGeneral": "حسب الإعدادات العامة",
+  "prayerGeneralShort": "حسب العام",
+  "prayerCustomSetup": "إعداد خاص",
+  "prayerSameAsGeneral": "نفس العام",
+  "prayerOwnVolume": "مستوى الصوت",
+  "prayerDownloadMuezzin": "تنزيل {name}",
+  "@prayerDownloadMuezzin": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "prayerMuezzinFallback": "حتى يكتمل تنزيله يُرفع الأذان بصوت المؤذن العام، ثم بالنغمة الهادئة.",
+  "prayerTryOwn": "جرّب",
+  "prayerAdhanSummaryLabel": "{prayer}: {summary}",
+  "@prayerAdhanSummaryLabel": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      },
+      "summary": {
+        "type": "String"
+      }
+    }
+  }
 }

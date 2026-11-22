@@ -6248,4 +6248,43 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get salawatUnsupported =>
       'The «Salawat on the Prophet» reminder is available on Android, iPhone and Mac.';
+
+  @override
+  String get prayerPerPrayerTitle => 'Each prayer\'s adhan';
+
+  @override
+  String get prayerPerPrayerNote =>
+      'Give a prayer its own muezzin and length if you like; otherwise it follows the general settings.';
+
+  @override
+  String get prayerFollowGeneral => 'Follow the general settings';
+
+  @override
+  String get prayerGeneralShort => 'General';
+
+  @override
+  String get prayerCustomSetup => 'Custom';
+
+  @override
+  String get prayerSameAsGeneral => 'Same as general';
+
+  @override
+  String get prayerOwnVolume => 'Volume';
+
+  @override
+  String prayerDownloadMuezzin(String name) {
+    return 'Download $name';
+  }
+
+  @override
+  String get prayerMuezzinFallback =>
+      'Until it is downloaded, the general muezzin plays, then the gentle tone.';
+
+  @override
+  String get prayerTryOwn => 'Try';
+
+  @override
+  String prayerAdhanSummaryLabel(String prayer, String summary) {
+    return '$prayer: $summary';
+  }
 }

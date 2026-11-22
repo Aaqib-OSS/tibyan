@@ -68,7 +68,7 @@ void main() {
   test('per-prayer sounds and reminders', () {
     final plan = planAlerts(
       settings: on.copyWith(
-        sounds: {PrayerKind.isha: AlertSound.silent},
+        custom: {PrayerKind.isha: PrayerAdhan(sound: AlertSound.silent)},
         reminders: {PrayerKind.maghrib: 10},
       ),
       now: now,
@@ -253,5 +253,23 @@ void main() {
       final old = lateKey(0, now.subtract(const Duration(days: 2)));
       expect(recordLate({old}, plan, now), isEmpty);
     });
+  });
+
+  test('a prayer with no recording ready sounds the tone', () {
+    final plan = planAlerts(
+      settings: const PrayerSettings(enabled: true, place: cairo),
+      now: DateTime.utc(2026, 3, 1, 0, 0),
+      adhanReady: true,
+      readyFor: (p) => p != PrayerKind.fajr,
+    );
+    final at = plan.where((a) => a.kind == AlertKind.atTime);
+    expect(
+      at.firstWhere((a) => a.prayer == PrayerKind.fajr).sound,
+      AlertSound.tone,
+    );
+    expect(
+      at.firstWhere((a) => a.prayer == PrayerKind.dhuhr).sound,
+      AlertSound.adhan,
+    );
   });
 }

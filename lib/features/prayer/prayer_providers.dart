@@ -21,8 +21,24 @@ class PrayerSettingsController extends Notifier<PrayerSettings> {
         .setString(prayerSettingsKey, state.encode());
   }
 
-  Future<void> setSound(PrayerKind p, AlertSound s) =>
-      update((x) => x.copyWith(sounds: {...x.sounds, p: s}));
+  /// [p]'s own adhan, or null for «حسب الإعدادات العامة».
+  Future<void> setCustom(PrayerKind p, PrayerAdhan? c) => update(
+    (x) => x.copyWith(
+      custom: {...x.custom}
+        ..remove(p)
+        ..addAll({p: ?c}),
+    ),
+  );
+
+  /// [p]'s sound; the rest of its own setup stays.
+  Future<void> setSound(PrayerKind p, AlertSound s) => update(
+    (x) => x.copyWith(
+      custom: {
+        ...x.custom,
+        p: (x.custom[p] ?? const PrayerAdhan()).copyWith(sound: s),
+      },
+    ),
+  );
 
   Future<void> setReminder(PrayerKind p, int minutes) =>
       update((x) => x.copyWith(reminders: {...x.reminders, p: minutes}));
@@ -36,10 +52,10 @@ class PrayerSettingsController extends Notifier<PrayerSettings> {
     ),
   );
 
-  /// «تطبيق على كل الصلوات»: [p]'s sound and reminder for all five.
+  /// «تطبيق على كل الصلوات»: [p]'s adhan setup and reminder for all five.
   Future<void> applyToAll(PrayerKind p) => update(
     (x) => x.copyWith(
-      sounds: {for (final q in obligatoryPrayers) q: x.soundOf(p)},
+      custom: {for (final q in obligatoryPrayers) q: ?x.custom[p]},
       reminders: {for (final q in obligatoryPrayers) q: x.reminderOf(p)},
     ),
   );

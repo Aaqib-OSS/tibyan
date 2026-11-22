@@ -113,11 +113,14 @@ Set<String> recordLate(
 /// Every alert of the next [prayerDaysAhead] days at the place (from its
 /// today), after [now], earliest first. [adhanReady]: the adhan recording
 /// is on the device; until then a prayer set to the adhan sounds the
-/// gentle tone. [limit] keeps only the earliest ones.
+/// gentle tone. [readyFor]: per prayer (its own muezzin, the general one
+/// or the default is on the device); [adhanReady] when absent. [limit]
+/// keeps only the earliest ones.
 List<PlannedAlert> planAlerts({
   required PrayerSettings settings,
   required DateTime now,
   required bool adhanReady,
+  bool Function(PrayerKind)? readyFor,
   int? limit,
   Set<String> lateFired = const {},
 }) {
@@ -160,7 +163,8 @@ List<PlannedAlert> planAlerts({
 
     for (final p in obligatoryPrayers) {
       var sound = settings.soundOf(p);
-      if (sound == AlertSound.adhan && !adhanReady) sound = AlertSound.tone;
+      final ready = readyFor?.call(p) ?? adhanReady;
+      if (sound == AlertSound.adhan && !ready) sound = AlertSound.tone;
       add(p, AlertKind.atTime, sound);
       final before = settings.reminderOf(p);
       if (before > 0) {

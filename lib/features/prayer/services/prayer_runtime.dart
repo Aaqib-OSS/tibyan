@@ -197,10 +197,19 @@ class PrayerRuntime {
   void markPlayed(DateTime prayerAt) =>
       _played.add(prayerAt.millisecondsSinceEpoch);
 
-  Future<void> playAdhan(PrayerKind prayer, {bool? full}) async {
-    final s = _c.read(prayerSettingsProvider);
-    final files = await _c.read(prayerAlarmsProvider).adhanFiles(s, full: full);
+  /// [general]: the general settings, not [prayer]'s own (the general
+  /// previews).
+  Future<void> playAdhan(
+    PrayerKind prayer, {
+    bool? full,
+    bool general = false,
+  }) async {
+    final all = _c.read(prayerSettingsProvider);
+    final s = general ? all.copyWith(custom: const {}) : all;
+    final alarms = _c.read(prayerAlarmsProvider);
+    final files = await alarms.adhanFiles(s, full: full, prayer: prayer);
     if (files.isEmpty) return;
+    final slug = alarms.slugFor(s, prayer) ?? s.muezzin;
     final l = _l;
     _c.read(prayerNativeProvider).stopLabel = l.adhanStop;
     await _c
@@ -208,10 +217,8 @@ class PrayerRuntime {
         .play(
           files,
           title: l.prayerAdhanNow(prayerName(l, prayer)),
-          body: l.adhanByMuezzin(
-            muezzinOf(s.muezzin).name(l.localeName == 'ar'),
-          ),
-          volume: s.adhanVolume,
+          body: l.adhanByMuezzin(muezzinOf(slug).name(l.localeName == 'ar')),
+          volume: s.forPrayer(prayer).adhanVolume,
         );
   }
 

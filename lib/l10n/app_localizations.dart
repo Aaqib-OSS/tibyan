@@ -10566,6 +10566,72 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تذكير «الصلاة على النبي» متاح على أندرويد وآيفون وماك.'**
   String get salawatUnsupported;
+
+  /// No description provided for @prayerPerPrayerTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أذان كل صلاة'**
+  String get prayerPerPrayerTitle;
+
+  /// No description provided for @prayerPerPrayerNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'لكل صلاة مؤذنها وطول أذانها إن شئت؛ وإلا فحسب الإعدادات العامة.'**
+  String get prayerPerPrayerNote;
+
+  /// No description provided for @prayerFollowGeneral.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسب الإعدادات العامة'**
+  String get prayerFollowGeneral;
+
+  /// No description provided for @prayerGeneralShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسب العام'**
+  String get prayerGeneralShort;
+
+  /// No description provided for @prayerCustomSetup.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعداد خاص'**
+  String get prayerCustomSetup;
+
+  /// No description provided for @prayerSameAsGeneral.
+  ///
+  /// In ar, this message translates to:
+  /// **'نفس العام'**
+  String get prayerSameAsGeneral;
+
+  /// No description provided for @prayerOwnVolume.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستوى الصوت'**
+  String get prayerOwnVolume;
+
+  /// No description provided for @prayerDownloadMuezzin.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنزيل {name}'**
+  String prayerDownloadMuezzin(String name);
+
+  /// No description provided for @prayerMuezzinFallback.
+  ///
+  /// In ar, this message translates to:
+  /// **'حتى يكتمل تنزيله يُرفع الأذان بصوت المؤذن العام، ثم بالنغمة الهادئة.'**
+  String get prayerMuezzinFallback;
+
+  /// No description provided for @prayerTryOwn.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرّب'**
+  String get prayerTryOwn;
+
+  /// No description provided for @prayerAdhanSummaryLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'{prayer}: {summary}'**
+  String prayerAdhanSummaryLabel(String prayer, String summary);
 }
 
 class _AppLocalizationsDelegate
