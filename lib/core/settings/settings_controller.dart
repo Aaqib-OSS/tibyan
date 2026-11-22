@@ -59,6 +59,7 @@ class SettingsController extends Notifier<AppSettings> {
   static const _kTapJumpWord = 'settings.tapJumpFromWord';
   static const _kRepeat = 'settings.repeat';
   static const _kRepeatSilence = 'settings.repeatSilence';
+  static const _kVerseRepeat = 'settings.verseRepeat';
   static const _kPlaybackSpeed = 'settings.playbackSpeed';
   static const _kUnderVerse = 'settings.underVerse';
   static const _kSplitTranslation = 'settings.splitTranslation';
@@ -177,6 +178,7 @@ class SettingsController extends Notifier<AppSettings> {
       tapJumpFromWord: _prefs.getBool(_kTapJumpWord) ?? false,
       repeat: _prefs.getInt(_kRepeat) ?? 1,
       repeatSilence: _prefs.getInt(_kRepeatSilence) ?? 0,
+      verseRepeat: _prefs.getInt(_kVerseRepeat) ?? 1,
       playbackSpeed: _prefs.getDouble(_kPlaybackSpeed) ?? 1.0,
       underVerse: [
         for (final id in _prefs.getStringList(_kUnderVerse) ?? const <String>[])
@@ -459,6 +461,11 @@ class SettingsController extends Notifier<AppSettings> {
   Future<void> setTapJumpFromWord(bool value) async {
     state = state.copyWith(tapJumpFromWord: value);
     await _prefs.setBool(_kTapJumpWord, value);
+  }
+
+  Future<void> setVerseRepeat(int times) async {
+    state = state.copyWith(verseRepeat: times);
+    await _prefs.setInt(_kVerseRepeat, times);
   }
 
   Future<void> setRepeat(int times) async {
