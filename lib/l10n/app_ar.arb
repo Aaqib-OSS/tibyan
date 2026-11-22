@@ -3711,5 +3711,19 @@
   "storePrivacyExit": "خروج",
   "khatmaActGroup": "جماعية",
   "khatmaActReports": "التقارير",
-  "khatmaActJournal": "التدبر"
+  "khatmaActJournal": "التدبر",
+  "cellularDownloadsToggle": "التحميل عبر بيانات الجوال",
+  "cellularDownloadsHint": "عند الإيقاف تنتظر التحميلات شبكة Wi‑Fi، ويسألك التطبيق قبل استخدام بيانات الجوال",
+  "cellularPausedTitle": "التحميلات متوقفة: أنت على بيانات الجوال",
+  "cellularPausedBody": "تبقّى نحو {size} ميجا، وتكمل تلقائيًا عند الاتصال بشبكة Wi‑Fi.",
+  "cellularPausedBodyNoSize": "تكمل تلقائيًا عند الاتصال بشبكة Wi‑Fi.",
+  "cellularContinue": "متابعة عبر البيانات",
+  "cellularWait": "انتظار Wi‑Fi",
+  "@cellularPausedBody": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  }
 }
