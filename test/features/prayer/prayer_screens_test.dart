@@ -214,7 +214,10 @@ void main() {
     expect(fake.enqueued.map((t) => t.group).toSet(), {
       AdhanDownloads.kQuietGroup,
     });
-    expect(fake.enqueued.every((t) => t.transferHints?.isEmpty ?? true), isTrue);
+    expect(
+      fake.enqueued.every((t) => t.transferHints?.isEmpty ?? true),
+      isTrue,
+    );
     expect(
       fake.groupNotificationIds.containsKey(AdhanDownloads.kQuietGroup),
       isFalse,
