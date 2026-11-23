@@ -4640,5 +4640,8 @@
       }
     }
   },
-  "tafsirCoverageFull": "القرآن كاملًا"
+  "tafsirCoverageFull": "القرآن كاملًا",
+  "tafsirOpenIndex": "فتح الفهرس للانتقال إلى سورة أو آية",
+  "trackerMarkAll": "صلّيت الكل",
+  "trackerMarkAllHint": "يتاح بعد دخول وقت العشاء"
 }

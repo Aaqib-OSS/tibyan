@@ -103,7 +103,11 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
     }
 
-    Future<void> pump(WidgetTester tester, {double textScale = 1}) async {
+    Future<void> pump(
+      WidgetTester tester, {
+      double textScale = 1,
+      DateTime? now,
+    }) async {
       tester.view
         ..physicalSize = const Size(390, 1800)
         ..devicePixelRatio = 1;
@@ -120,7 +124,9 @@ void main() {
         tasmeeApp(
           container,
           LookTheme(
-            child: PrayerTrackerScreen(now: DateTime.utc(2026, 11, 22, 18)),
+            child: PrayerTrackerScreen(
+              now: now ?? DateTime.utc(2026, 11, 22, 18),
+            ),
           ),
           theme: tasmeeTheme(container),
         ),
@@ -155,9 +161,52 @@ void main() {
       await done(tester);
     });
 
+    FilledButton markAll(WidgetTester tester) => tester.widget<FilledButton>(
+      find.byKey(const ValueKey('tracker-mark-all')),
+    );
+
+    testWidgets('«صلّيت الكل» waits for isha, then keeps marks', (
+      tester,
+    ) async {
+      // Cairo, 22 Nov: isha is about 18:30 local (16:30 UTC).
+      await pump(tester, now: DateTime.utc(2026, 11, 22, 12));
+      expect(markAll(tester).onPressed, isNull);
+      expect(find.text('يتاح بعد دخول وقت العشاء'), findsOneWidget);
+      // An earlier day is open to it.
+      await tester.tap(find.byKey(const ValueKey('tracker-prev')));
+      await settle(tester);
+      expect(markAll(tester).onPressed, isNotNull);
+      await done(tester);
+
+      await pump(tester, now: DateTime.utc(2026, 11, 22, 18));
+      expect(markAll(tester).onPressed, isNotNull);
+      await tester.tap(find.byKey(const ValueKey('tracker-row-asr')));
+      await settle(tester);
+      await tester.tap(find.byKey(const ValueKey('prayed-jamaah')));
+      await settle(tester);
+      await tester.tap(find.byKey(const ValueKey('tracker-mark-all')));
+      await settle(tester);
+      expect(find.text('في جماعة'), findsOneWidget);
+      expect(find.text('في وقتها'), findsNWidgets(4));
+      expect(find.byKey(const ValueKey('tracker-mark-all')), findsNothing);
+      await done(tester);
+    });
+
     testWidgets('fits at 200% text with 48dp buttons', (tester) async {
       await pump(tester, textScale: 2);
       expect(tester.takeException(), isNull);
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('tracker-mark-all')),
+        200,
+      );
+      expect(
+        tester.getSize(find.byKey(const ValueKey('tracker-mark-all'))).height,
+        greaterThanOrEqualTo(48),
+      );
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('qada-add-fajr')),
+        200,
+      );
       final b = tester.getSize(find.byKey(const ValueKey('qada-add-fajr')));
       expect(b.width, greaterThanOrEqualTo(48));
       await done(tester);

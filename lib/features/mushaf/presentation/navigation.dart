@@ -7,6 +7,22 @@ import '../mushaf_providers.dart';
 
 var _visit = 0;
 
+/// Placed over the index when another screen (the tafsir) opens it to
+/// choose a verse: a chosen surah, verse or page goes to [onPick] instead
+/// of opening the mushaf.
+class IndexPickScope extends InheritedWidget {
+  const IndexPickScope({super.key, required this.onPick, required super.child});
+
+  /// Receives the chosen verse (Hafs numbers).
+  final void Function(int surah, int ayah) onPick;
+
+  static IndexPickScope? maybeOf(BuildContext context) =>
+      context.getInheritedWidgetOfExactType<IndexPickScope>();
+
+  @override
+  bool updateShouldNotify(IndexPickScope old) => false;
+}
+
 /// The page view's location for [page] (and a verse to select). Each call
 /// gives a new location: going to the one already open would otherwise
 /// do nothing, though the reader may have turned the page since.
@@ -33,6 +49,11 @@ Future<void> openVerse(
   required int ayah,
   EntryPoint entry = EntryPoint.other,
 }) async {
+  final pick = IndexPickScope.maybeOf(context);
+  if (pick != null) {
+    pick.onPick(surah, ayah);
+    return;
+  }
   // [surah]:[ayah] is in Hafs numbers; a riwaya edition opens the page of
   // the riwaya verse that holds it.
   final page = await ref.read(versePageProvider((surah, ayah)).future);
@@ -60,6 +81,13 @@ Future<String> verseLinkLocation(
 
 /// Opens a page of the edition being read.
 Future<void> openPage(BuildContext context, WidgetRef ref, int page) async {
+  final pick = IndexPickScope.maybeOf(context);
+  if (pick != null) {
+    final ayahs = await ref.read(pageAyahsProvider(page).future);
+    if (ayahs.isEmpty || !context.mounted) return;
+    pick.onPick(ayahs.first.surah, ayahs.first.number);
+    return;
+  }
   context.go(mushafLocation(page));
 }
 

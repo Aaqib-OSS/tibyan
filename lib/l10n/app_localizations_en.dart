@@ -6564,4 +6564,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tafsirCoverageFull => 'The whole Quran';
+
+  @override
+  String get tafsirOpenIndex => 'Open the index to go to a surah or verse';
+
+  @override
+  String get trackerMarkAll => 'I prayed them all';
+
+  @override
+  String get trackerMarkAllHint => 'Available after isha time begins';
 }

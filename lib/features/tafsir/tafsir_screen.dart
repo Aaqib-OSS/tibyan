@@ -30,7 +30,9 @@ import '../content_extras/verse_audio_index.dart';
 import '../books/presentation/book_section.dart';
 import '../mushaf/data/mushaf_repository.dart';
 import '../mushaf/mushaf_providers.dart';
+import '../mushaf/presentation/index_screen.dart';
 import '../mushaf/presentation/mushaf_screen.dart';
+import '../mushaf/presentation/navigation.dart';
 import '../mushaf/presentation/widgets/illuminated_frame.dart';
 import '../mushaf/presentation/widgets/mushaf_page.dart';
 import 'kashida_text.dart';
@@ -126,6 +128,19 @@ class _TafsirScreenState extends ConsumerState<TafsirScreen> {
   /// A page before the first verse (from the second surah on) and one
   /// after the last (up to the 113th): landing there moves to the
   /// neighbouring surah.
+  /// Opens the index to choose a verse; the choice stays in the tafsir.
+  Future<void> _openIndex() async {
+    final picked = await Navigator.of(context).push<(int, int)>(
+      MaterialPageRoute(
+        builder: (context) => IndexPickScope(
+          onPick: (s, a) => Navigator.of(context).pop((s, a)),
+          child: LookTheme(child: IndexScreen(surah: _surah)),
+        ),
+      ),
+    );
+    if (picked != null && mounted) _show(picked.$1, picked.$2);
+  }
+
   int get _lead => _surah > 1 ? 1 : 0;
   late final _dragger = _PageDragger(() => _pages);
   int _pageOf(int ayah) => ayah - 1 + _lead;
@@ -297,8 +312,33 @@ class _TafsirScreenState extends ConsumerState<TafsirScreen> {
       back: sheet == null,
       titleWidget: surah == null
           ? Text(l.tafsirTitle)
-          : MushafDigitsText(
-              '${l.surahWord(surahName(context, surah))} | ${digits(_ayah)}',
+          : Semantics(
+              button: true,
+              label: l.tafsirOpenIndex,
+              excludeSemantics: true,
+              child: InkWell(
+                key: const ValueKey('tafsir-title-index'),
+                borderRadius: BorderRadius.circular(8),
+                onTap: _openIndex,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 48),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(railIcon(RailItem.mushaf), size: 20),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: MushafDigitsText(
+                            '${l.surahWord(surahName(context, surah))} | ${digits(_ayah)}',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
       actions: [
         IconButton(

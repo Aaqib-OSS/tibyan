@@ -11040,6 +11040,24 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'القرآن كاملًا'**
   String get tafsirCoverageFull;
+
+  /// No description provided for @tafsirOpenIndex.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح الفهرس للانتقال إلى سورة أو آية'**
+  String get tafsirOpenIndex;
+
+  /// No description provided for @trackerMarkAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'صلّيت الكل'**
+  String get trackerMarkAll;
+
+  /// No description provided for @trackerMarkAllHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'يتاح بعد دخول وقت العشاء'**
+  String get trackerMarkAllHint;
 }
 
 class _AppLocalizationsDelegate
