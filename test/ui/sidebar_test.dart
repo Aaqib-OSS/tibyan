@@ -20,9 +20,11 @@ void main() {
   Future<SharedPreferences> pump(
     WidgetTester tester, {
     double width = 1400,
+    double height = 1000,
+    double textScale = 1,
     Map<String, Object> prefs = const {},
   }) async {
-    tester.view.physicalSize = Size(width, 1000);
+    tester.view.physicalSize = Size(width, height);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     SharedPreferences.setMockInitialValues(prefs);
@@ -32,6 +34,15 @@ void main() {
         GoRoute(path: '/', builder: (_, _) => screen('home')),
         GoRoute(path: '/search', builder: (_, _) => screen('search')),
         GoRoute(path: '/settings', builder: (_, _) => screen('settings')),
+        GoRoute(
+          path: '/prayer',
+          builder: (_, _) => screen('prayer'),
+          routes: [
+            GoRoute(path: 'qibla', builder: (_, _) => screen('qibla')),
+            GoRoute(path: 'tracker', builder: (_, _) => screen('tracker')),
+          ],
+        ),
+        GoRoute(path: '/adhkar', builder: (_, _) => screen('adhkar')),
         // The mushaf draws its own full-width frame, without the sidebar.
         GoRoute(
           path: '/mushaf',
@@ -46,6 +57,11 @@ void main() {
         overrides: [sharedPreferencesProvider.overrideWithValue(sp)],
         child: MaterialApp.router(
           routerConfig: router,
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: TextScaler.linear(textScale)),
+            child: child!,
+          ),
           locale: const Locale('ar'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
@@ -61,9 +77,9 @@ void main() {
     return sp;
   }
 
-  testWidgets('headings and all 11 destinations render', (tester) async {
+  testWidgets('headings and all 15 destinations render', (tester) async {
     await pump(tester);
-    for (final heading in ['القراءة', 'الاستماع', 'الورد والحفظ']) {
+    for (final heading in ['القراءة', 'الاستماع', 'الورد والحفظ', 'الصلاة']) {
       expect(find.text(heading), findsWidgets);
     }
     for (final item in RailItem.values) {
@@ -74,6 +90,9 @@ void main() {
       'الفهرس',
       'التسميع',
       'المسبحة',
+      'مواقيت الصلاة',
+      'القبلة',
+      'الأذكار',
       'الإعدادات',
     ]) {
       expect(find.text(label), findsOneWidget);
@@ -122,10 +141,64 @@ void main() {
     expect(find.byKey(const ValueKey('rail-home')), findsNothing);
   });
 
+  testWidgets('the prayer group opens its screens and shows selected', (
+    tester,
+  ) async {
+    await pump(tester);
+    for (final (key, page, label) in const [
+      ('rail-prayerTimes', 'prayer', 'مواقيت الصلاة'),
+      ('rail-qibla', 'qibla', 'القبلة'),
+      ('rail-tracker', 'tracker', null),
+      ('rail-adhkar', 'adhkar', 'الأذكار'),
+    ]) {
+      await tester.ensureVisible(find.byKey(ValueKey(key)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(ValueKey(key)));
+      await tester.pumpAndSettle();
+      expect(find.text(page), findsOneWidget, reason: key);
+      expect(
+        find.descendant(
+          of: find.byKey(ValueKey(key)),
+          matching: find.byWidgetPredicate(
+            (w) => w is Semantics && w.properties.selected == true,
+          ),
+        ),
+        findsOneWidget,
+        reason: '$key selected on its route',
+      );
+      if (label != null) expect(find.text(label), findsOneWidget);
+    }
+  });
+
+  testWidgets('folded, the prayer group keeps its tooltips', (tester) async {
+    await pump(tester, prefs: {'ui.sidebarCollapsed': true});
+    for (final label in ['مواقيت الصلاة', 'القبلة', 'الأذكار']) {
+      expect(find.byTooltip(label), findsOneWidget, reason: label);
+    }
+    expect(find.byKey(const ValueKey('rail-tracker')), findsOneWidget);
+  });
+
+  for (final (w, h) in const [
+    (820.0, 1180.0),
+    (1180.0, 820.0),
+    (1600.0, 900.0),
+  ]) {
+    testWidgets('fits at ${w}x$h and 200% text', (tester) async {
+      await pump(tester, width: w, height: h, textScale: 2);
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(const ValueKey('rail-adhkar')), findsOneWidget);
+    });
+  }
+
   test('routes map to their destination', () {
     expect(railItemFor('/'), RailItem.home);
     expect(railItemFor('/mushaf/tafsir'), RailItem.tafsir);
     expect(railItemFor('/khatma/new'), RailItem.khatma);
     expect(railItemFor('/mushaf'), isNull);
+    expect(railItemFor('/prayer'), RailItem.prayerTimes);
+    expect(railItemFor('/prayer/settings'), RailItem.prayerTimes);
+    expect(railItemFor('/prayer/qibla'), RailItem.qibla);
+    expect(railItemFor('/prayer/tracker'), RailItem.tracker);
+    expect(railItemFor('/adhkar'), RailItem.adhkar);
   });
 }

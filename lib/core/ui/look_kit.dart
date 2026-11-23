@@ -17,6 +17,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/mushaf/mushaf_providers.dart'
     show readingPositionProvider;
+import '../../features/adhkar/presentation/adhkar_screen.dart'
+    show adhkarLocation;
+import '../../features/prayer/presentation/prayer_times_screen.dart'
+    show prayerTimesLocation;
+import '../../features/prayer/presentation/prayer_tracker_screen.dart'
+    show prayerTrackerLocation;
+import '../../features/prayer/presentation/qibla_screen.dart'
+    show qiblaLocation;
 import '../../features/tasbih/presentation/tasbih_screen.dart'
     show tasbihIcon, tasbihLocation;
 import '../../features/tasmee/presentation/tasmee_setup_screen.dart'
@@ -335,6 +343,10 @@ enum RailItem {
   khatma,
   hifz,
   tasbih,
+  prayerTimes,
+  qibla,
+  tracker,
+  adhkar,
   settings,
 }
 
@@ -350,6 +362,10 @@ IconData railIcon(RailItem item) => switch (item) {
   RailItem.khatma => Icons.flag_outlined,
   RailItem.hifz => Icons.task_alt_outlined,
   RailItem.tasbih => tasbihIcon,
+  RailItem.prayerTimes => Icons.mosque_outlined,
+  RailItem.qibla => Icons.explore_outlined,
+  RailItem.tracker => Icons.fact_check_outlined,
+  RailItem.adhkar => Icons.wb_twilight_outlined,
   RailItem.settings => Icons.tune,
 };
 
@@ -364,6 +380,10 @@ String railLabel(AppLocalizations s, RailItem item) => switch (item) {
   RailItem.khatma => s.sectionKhatma,
   RailItem.hifz => s.sectionHifz,
   RailItem.tasbih => s.sectionTasbih,
+  RailItem.prayerTimes => s.prayerTimesTitle,
+  RailItem.qibla => s.qiblaTitle,
+  RailItem.tracker => s.trackerTitle,
+  RailItem.adhkar => s.adhkarTitle,
   RailItem.settings => s.settingsTitle,
 };
 
@@ -395,6 +415,14 @@ void openRailItem(BuildContext context, RailItem item) {
       context.push('/hifz');
     case RailItem.tasbih:
       context.push(tasbihLocation);
+    case RailItem.prayerTimes:
+      context.push(prayerTimesLocation);
+    case RailItem.qibla:
+      context.push(qiblaLocation);
+    case RailItem.tracker:
+      context.push(prayerTrackerLocation);
+    case RailItem.adhkar:
+      context.push(adhkarLocation);
     case RailItem.settings:
       context.go('/settings');
   }
@@ -412,6 +440,10 @@ RailItem? railItemFor(String path) {
     ('/khatma', RailItem.khatma),
     ('/hifz', RailItem.hifz),
     ('/tasbih', RailItem.tasbih),
+    (qiblaLocation, RailItem.qibla),
+    (prayerTrackerLocation, RailItem.tracker),
+    (prayerTimesLocation, RailItem.prayerTimes),
+    (adhkarLocation, RailItem.adhkar),
     ('/settings', RailItem.settings),
   ];
   for (final (prefix, item) in prefixes) {
@@ -670,6 +702,15 @@ class _Rail extends StatelessWidget {
       ),
       (s.navGroupListening, [RailItem.listen, RailItem.tasmee]),
       (s.navGroupWird, [RailItem.khatma, RailItem.hifz, RailItem.tasbih]),
+      (
+        s.navGroupPrayer,
+        [
+          RailItem.prayerTimes,
+          RailItem.qibla,
+          RailItem.tracker,
+          RailItem.adhkar,
+        ],
+      ),
     ];
 
     final toggle = onToggle == null

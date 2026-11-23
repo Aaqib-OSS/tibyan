@@ -3418,6 +3418,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navGroupWird => 'الورد والحفظ';
 
   @override
+  String get navGroupPrayer => 'الصلاة';
+
+  @override
   String get navCollapse => 'طيّ الشريط الجانبي';
 
   @override

@@ -3378,6 +3378,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navGroupWird => 'Wird & memorization';
 
   @override
+  String get navGroupPrayer => 'Prayer';
+
+  @override
   String get navCollapse => 'Collapse sidebar';
 
   @override
