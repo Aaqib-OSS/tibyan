@@ -125,30 +125,29 @@ class HomeScreen extends ConsumerWidget {
         onTap: () => context.push(tasbihLocation),
       ),
       (
+        icon: railIcon(RailItem.tasmee),
+        label: l.tasmeeTileLabel,
+        note: l.tasmeeSelectRange,
+        onTap: () => showTasmeeSetup(context),
+      ),
+      (
+        icon: Icons.search,
+        label: l.sectionSearch,
+        note: null,
+        onTap: () => context.go('/search'),
+      ),
+      // The third row: المواقيت | القبلة | صلواتي | الأذكار.
+      (
         icon: Icons.mosque_outlined,
         label: l.prayerTimesTitle,
         note: l.prayerTileNote,
         onTap: () => context.push(prayerTimesLocation),
       ),
       (
-        icon: railIcon(RailItem.tasmee),
-        label: l.tasmeeTileLabel,
-        note: l.tasmeeSelectRange,
-        onTap: () => showTasmeeSetup(context),
-      ),
-      // The third row: القبلة | الأذكار | صلواتي | البحث (search stays in
-      // the top bar too).
-      (
         icon: Icons.explore_outlined,
         label: l.qiblaTitle,
         note: null,
         onTap: () => context.push(qiblaLocation),
-      ),
-      (
-        icon: Icons.wb_twilight_outlined,
-        label: l.adhkarTitle,
-        note: null,
-        onTap: () => context.push(adhkarLocation),
       ),
       (
         icon: Icons.fact_check_outlined,
@@ -157,10 +156,10 @@ class HomeScreen extends ConsumerWidget {
         onTap: () => context.push(prayerTrackerLocation),
       ),
       (
-        icon: Icons.search,
-        label: l.sectionSearch,
+        icon: Icons.wb_twilight_outlined,
+        label: l.adhkarTitle,
         note: null,
-        onTap: () => context.go('/search'),
+        onTap: () => context.push(adhkarLocation),
       ),
     ];
 
