@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+
+import '../../core/ui/confirm_delete_download.dart';
 
 import '../../core/ui/look_kit.dart';
 
@@ -290,7 +294,14 @@ class _AudioDownloadsScreenState extends ConsumerState<AudioDownloadsScreen> {
         tooltip: l.deleteSurahDownload(name),
         icon: Icon(Icons.check_circle, color: t.control),
         onPressed: () async {
-          if (!await confirmDeleteSurahDownload(context, name)) return;
+          final File f = files.file(reciter.id, n);
+          if (!await confirmDeleteDownload(
+            context,
+            name: name,
+            bytes: f.existsSync() ? f.lengthSync() : null,
+          )) {
+            return;
+          }
           if (mounted) setState(() => files.delete(reciter.id, n));
         },
       );
@@ -439,52 +450,4 @@ class _ReciterPicker extends ConsumerWidget {
       ),
     );
   }
-}
-
-/// Asks before a downloaded surah's recitation is deleted (one tap on the
-/// check icon used to delete it at once). Cancel is the default; true only
-/// when the reader chose Delete.
-Future<bool> confirmDeleteSurahDownload(BuildContext context, String surah) {
-  final l = AppLocalizations.of(context);
-  return confirmDeleteDownload(
-    context,
-    title: l.deleteSurahDownloadTitle(surah),
-    body: l.deleteSurahDownloadBody,
-  );
-}
-
-/// The app's one «delete this download?» dialog (recitations, the adhan
-/// library): Cancel is the default; true only when the reader chose Delete.
-Future<bool> confirmDeleteDownload(
-  BuildContext context, {
-  required String title,
-  required String body,
-}) async {
-  final l = AppLocalizations.of(context);
-  final ok = await showDialog<bool>(
-    context: context,
-    builder: (context) {
-      final scheme = Theme.of(context).colorScheme;
-      return AlertDialog(
-        title: Text(title),
-        content: Text(body),
-        actions: [
-          TextButton(
-            autofocus: true,
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l.cancel),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: scheme.error,
-              foregroundColor: scheme.onError,
-            ),
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l.delete),
-          ),
-        ],
-      );
-    },
-  );
-  return ok ?? false;
 }

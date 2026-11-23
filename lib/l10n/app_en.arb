@@ -2537,5 +2537,55 @@
   "tafsirPackDelete": "Delete",
   "tafsirPackDeleteLabel": "Delete {title}",
   "tafsirPackDownloadLabel": "Download {title}",
-  "tafsirPackInstalled": "Downloaded"
+  "tafsirPackInstalled": "Downloaded",
+  "deleteDownloadTitle": "Delete “{name}”?",
+  "deleteDownloadBody": "It will be removed from your device. You can download it again at any time.",
+  "deleteDownloadSize": "Size: {size}",
+  "downloadDoneOne": "“{name}” finished downloading",
+  "downloadDoneTwo": "“{a}” and “{b}” finished downloading",
+  "downloadDoneMany": "{count, plural, one{{n} item finished downloading} other{{n} items finished downloading}}",
+  "downloadFailedOne": "Couldn’t download “{name}”",
+  "downloadFailedTwo": "Couldn’t download “{a}” and “{b}”",
+  "downloadFailedMany": "{count, plural, one{Couldn’t download {n} item} other{Couldn’t download {n} items}}",
+  "tasmeeModelName": "Recitation check model",
+  "tafsirVerseHeader": "{surah} · Verse {ayah}",
+  "tafsirPauseVerse": "Pause",
+  "tafsirRepeatVerse": "Repeat verse",
+  "downloadsSectionTafsir": "Tafsir and meanings of the Quran",
+  "downloadsGroupTafsir": "Tafsir",
+  "downloadsGroupSciences": "Quranic sciences",
+  "downloadsGroupTranslations": "Translations",
+  "downloadsSectionTools": "Tools",
+  "downloadsCentury": "Century {n} AH",
+  "downloadAllGroup": "Download all",
+  "downloadAllConfirmTitle": "Download {count} books?",
+  "downloadAllConfirmBody": "Total size: {size}. It downloads in the background, and you can stop it at any time.",
+  "downloadAllConfirmOk": "Download",
+  "librarySearchHint": "Search by title or author",
+  "libraryFilterAll": "All",
+  "libraryFilterOnDevice": "On device",
+  "libraryFilterAvailable": "Available",
+  "libraryShowInTafsir": "Show “{title}” in the tafsir",
+  "downloadCancelItem": "Cancel downloading {title}",
+  "downloadItem": "Download {title}",
+  "libraryNoMatch": "No results",
+  "tafsirCoverage": "Coverage {percent}%",
+  "@tafsirCoverage": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "tafsirPackNotCovered": "“{title}” says nothing on this verse",
+  "tafsirPackPreviousCovered": "Previous verse it covers",
+  "tafsirPackNextCovered": "Next verse it covers",
+  "@tafsirPackNotCovered": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "tafsirCoverageFull": "The whole Quran"
 }

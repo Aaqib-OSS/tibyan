@@ -37,6 +37,7 @@ class TafsirTextPackSpec {
     this.fallbacks = const [],
     this.author,
     this.diedAh,
+    this.verses,
   });
 
   final String id;
@@ -53,6 +54,10 @@ class TafsirTextPackSpec {
   /// The author's short name and death year (AH), for the library list.
   final String? author;
   final int? diedAh;
+
+  /// How many verses it has a passage for (the library lists only books
+  /// covering at least 85% of the Quran).
+  final int? verses;
 
   PagePackSpec get pack => PagePackSpec(
     id: id,
@@ -132,6 +137,34 @@ class TafsirTextPack {
       rows.first['text'] as String,
       notes is String && notes.trim().isNotEmpty ? notes : null,
     );
+  }
+
+  /// How many verses the pack has a passage for.
+  late final int verseCount =
+      _db.select('SELECT COUNT(*) AS n FROM verse').first['n'] as int;
+
+  /// The nearest verse before (surah, ayah) that has a passage, or null.
+  ({int surah, int ayah})? previousCovered(int surah, int ayah) {
+    final r = _db.select(
+      'SELECT surah, ayah FROM verse WHERE surah < ? OR (surah = ? AND ayah < ?) '
+      'ORDER BY surah DESC, ayah DESC LIMIT 1',
+      [surah, surah, ayah],
+    );
+    return r.isEmpty
+        ? null
+        : (surah: r.first['surah'] as int, ayah: r.first['ayah'] as int);
+  }
+
+  /// The nearest verse after (surah, ayah) that has a passage, or null.
+  ({int surah, int ayah})? nextCovered(int surah, int ayah) {
+    final r = _db.select(
+      'SELECT surah, ayah FROM verse WHERE surah > ? OR (surah = ? AND ayah > ?) '
+      'ORDER BY surah, ayah LIMIT 1',
+      [surah, surah, ayah],
+    );
+    return r.isEmpty
+        ? null
+        : (surah: r.first['surah'] as int, ayah: r.first['ayah'] as int);
   }
 
   void close() => _db.close();

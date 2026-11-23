@@ -8,7 +8,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/look_kit.dart';
 import '../../../core/ui/responsive.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../audio/audio_downloads_screen.dart' show confirmDeleteDownload;
+import '../../../core/ui/confirm_delete_download.dart';
 import '../../khatma/khatma_providers.dart' show reminderSchedulerProvider;
 import '../../mushaf/presentation/widgets/illuminated_frame.dart'
     show NumberFormatter;
@@ -156,10 +156,8 @@ class AdhkarSettingsScreen extends ConsumerWidget {
                                 onDelete: () async {
                                   final ok = await confirmDeleteDownload(
                                     context,
-                                    title: l.adhanDeleteTitle(
-                                      l.salawatAudioName,
-                                    ),
-                                    body: l.adhanDeleteBody,
+                                    name: l.salawatAudioName,
+                                    bytes: st.bytes,
                                   );
                                   if (ok) await adhan.delete(salawatSlug);
                                 },

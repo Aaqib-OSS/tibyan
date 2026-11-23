@@ -14,10 +14,9 @@ import '../../core/ui/meta_separator.dart';
 import '../../l10n/app_localizations.dart';
 import '../mushaf/data/page_pack.dart';
 import '../mushaf/mushaf_providers.dart';
-import '../mushaf/presentation/widgets/illuminated_frame.dart'
-    show NumberFormatter;
 import 'credits.dart';
 import 'english_tafsir.dart';
+import 'tafsir_downloads_section.dart';
 import 'tafsir_library_specs.dart';
 
 /// The Quranpedia dump version the packs were built from
@@ -32,7 +31,13 @@ const jamiWajizPack = TafsirTextPackSpec(
   bytes: 18075648,
   title: 'الجامع الوجيز في تفسير آي الكتاب العزيز',
   author: 'د. أيمن فاتح آل عامر',
+  verses: 6236,
 );
+
+/// Library books kept although they cover less than 85% of the Quran
+/// (Ahmed's choice, docs/DATA_SOURCES.md): al-Tustari and al-Durr
+/// al-Manthur.
+const lowCoverageAllowed = {'tafsir-qp-329', 'tafsir-qp-273'};
 
 /// The Arabic tafsir packs the reader can download (the tafsir library):
 /// al-Jami' al-Wajiz, then the classical books from Quranpedia by the
@@ -89,6 +94,29 @@ final installedTafsirPacksProvider = Provider<List<InstalledTafsirPack>>((ref) {
   }
   return out;
 });
+
+/// Removes library packs no longer offered (a book dropped from the
+/// library, e.g. one covering less than 85% of the Quran): their folders
+/// under [root] go, so they are never shown nor take space.
+Future<void> removeStaleTafsirPacks(
+  Directory root,
+  List<TafsirTextPackSpec> specs,
+) async {
+  if (!await root.exists()) return;
+  final keep = {for (final s in specs) s.id};
+  await for (final e in root.list()) {
+    final name = p.basename(e.path);
+    if (e is Directory &&
+        name.startsWith('tafsir-qp-') &&
+        !keep.contains(name)) {
+      try {
+        await e.delete(recursive: true);
+      } on FileSystemException {
+        // Tried again on the next start.
+      }
+    }
+  }
+}
 
 /// Downloads of the library packs, by pack id.
 class TafsirLibraryDownloads extends Notifier<Map<String, PackProgress>> {
@@ -267,14 +295,6 @@ class TafsirLibrarySheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final t = context.tokens.colors;
-    final locale = Localizations.localeOf(context);
-    final digits = NumberFormatter(locale);
-    final specs = ref.watch(tafsirLibrarySpecsProvider);
-    final installed = {
-      for (final i in ref.watch(installedTafsirPacksProvider)) i.spec.id,
-    };
-    final progress = ref.watch(tafsirLibraryDownloadsProvider);
-    final downloads = ref.read(tafsirLibraryDownloadsProvider.notifier);
     return SafeArea(
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -300,75 +320,12 @@ class TafsirLibrarySheet extends ConsumerWidget {
                 ],
               ),
             ),
-            Flexible(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: specs.length,
-                itemBuilder: (context, i) {
-                  final s = specs[i];
-                  final have = installed.contains(s.id);
-                  final phase = progress[s.id]?.phase ?? PackPhase.idle;
-                  final busy =
-                      !have &&
-                      (phase == PackPhase.downloading ||
-                          phase == PackPhase.verifying ||
-                          phase == PackPhase.installing);
-                  final size = l.storageSize(
-                    digits.decimal(
-                      (s.bytes / 1e6).toStringAsFixed(s.bytes < 1e7 ? 1 : 0),
-                    ),
-                  );
-                  final status = have
-                      ? l.tafsirPackInstalled
-                      : switch (phase) {
-                          PackPhase.downloading => l.semanticPackDownloading(
-                            digits(
-                              ((progress[s.id]?.fraction ?? 0) * 100).round(),
-                            ),
-                          ),
-                          PackPhase.verifying ||
-                          PackPhase.installing => l.semanticPackVerifying,
-                          PackPhase.failed => l.semanticPackFailed,
-                          _ => size,
-                        };
-                  final author = s.author == null
-                      ? null
-                      : s.diedAh == null
-                      ? s.author!
-                      : l.tafsirLibraryAuthor(s.author!, digits(s.diedAh!));
-                  return ListTile(
-                    key: ValueKey('tafsir-library-${s.id}'),
-                    title: Text(s.title),
-                    subtitle: Semantics(
-                      liveRegion: busy,
-                      child: Text(
-                        [?author, status].join('\n'),
-                        style: TextStyle(color: t.muted),
-                      ),
-                    ),
-                    isThreeLine: author != null,
-                    trailing: busy
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2.5),
-                          )
-                        : have
-                        ? IconButton(
-                            tooltip: l.tafsirPackDeleteLabel(s.title),
-                            icon: const Icon(Icons.delete_outline),
-                            onPressed: () => downloads.remove(s),
-                          )
-                        : IconButton(
-                            tooltip: l.tafsirPackDownloadLabel(s.title),
-                            icon: const Icon(Icons.download_outlined),
-                            onPressed: () => downloads.start(
-                              s,
-                              l.tafsirPackDownloadLabel(s.title),
-                            ),
-                          ),
-                  );
-                },
+            // The same list as «التفاسير ومعاني القرآن» in the downloads
+            // center, with search, filter and the show/hide switches.
+            const Flexible(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: TafsirDownloadsSection(library: true),
               ),
             ),
           ],

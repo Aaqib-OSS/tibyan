@@ -18,8 +18,16 @@ import '../../features/content_extras/english_tafsir.dart';
 import '../../features/content_extras/verse_audio_index.dart';
 import '../net/server.dart';
 
+/// Whether the test packs are listed: never in a release build (1.0.0
+/// ships without any «مسودة للاختبار»), unless it is built with
+/// `--dart-define=TEST_PACKS=true`; debug and test builds keep them.
+bool testPacksEnabled({required bool release, required bool forced}) =>
+    forced || !release;
+
 /// The one switch for every test pack below.
-const includeTestPacks = true;
+const includeTestPacks =
+    bool.fromEnvironment('TEST_PACKS') ||
+    !bool.fromEnvironment('dart.vm.product');
 
 /// Where every test pack lives.
 const testPacksBaseUrl = '$serverBase/mirror/test/';

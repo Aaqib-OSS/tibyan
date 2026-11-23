@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/ui/confirm_delete_download.dart';
+
 import '../../core/ui/app_toast.dart';
 
 import '../../core/ui/look_kit.dart';
@@ -96,25 +98,10 @@ class StorageScreen extends ConsumerWidget {
 
     Future<void> remove(StorageEntry e) async {
       final messenger = ScaffoldMessenger.of(context);
-      final ok = await showDialog<bool>(
-        context: context,
-        builder: (_) => LookTheme(
-          child: Builder(
-            builder: (context) => AlertDialog(
-              content: Text(l.storageDeleteAsk(name(e), size(e.bytes))),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: Text(l.cancel),
-                ),
-                FilledButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: Text(l.delete),
-                ),
-              ],
-            ),
-          ),
-        ),
+      final ok = await confirmDeleteDownload(
+        context,
+        name: name(e),
+        bytes: e.bytes,
       );
       if (ok != true) return;
       final freed = deleteEntry(e);

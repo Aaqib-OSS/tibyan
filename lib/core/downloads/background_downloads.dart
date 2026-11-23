@@ -4,6 +4,8 @@ import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'download_notices.dart';
+
 /// What one kind of download does with its tasks: the edition packs, the
 /// recognition model, the recitations. Each kind has its own task group.
 abstract interface class DownloadHandler {
@@ -36,10 +38,14 @@ abstract interface class DownloadHandler {
 /// task group and gets that group's updates. [tasks] lists every task the
 /// system knows of, for the Downloads screen.
 class BackgroundDownloads {
-  BackgroundDownloads({FileDownloader? downloader})
-    : dl = downloader ?? FileDownloader();
+  BackgroundDownloads({FileDownloader? downloader, DownloadNotices? notices})
+    : dl = downloader ?? FileDownloader(),
+      notices = notices ?? DownloadNotices();
 
   final FileDownloader dl;
+
+  /// The «download finished / failed» toasts.
+  final DownloadNotices notices;
   final _handlers = <String, DownloadHandler>{};
   StreamSubscription<TaskUpdate>? _sub;
   Future<void>? _started;
@@ -94,14 +100,18 @@ class BackgroundDownloads {
       for (final r in records)
         if (_handlers.containsKey(r.group)) r.taskId: r,
     };
+    final away = <String>[];
     for (final r in records) {
       final h = _handlers[r.group];
       if (h != null &&
           r.status == TaskStatus.complete &&
           r.task is DownloadTask) {
         await h.onFinishedWhileAway(r.task as DownloadTask);
+        away.add(r.task.displayName);
       }
     }
+    // One summary toast for all of them.
+    notices.completedWhileAway(away);
   }
 
   /// Queues [task] (its handler takes over when it ends) and asks for
@@ -215,6 +225,18 @@ class BackgroundDownloads {
         }
     }
     await h.onUpdate(update);
+    if (update is TaskStatusUpdate && task is DownloadTask) {
+      final status = update.status;
+      if (status == TaskStatus.complete) {
+        notices.completed(task.displayName);
+      } else if ((status == TaskStatus.failed ||
+              status == TaskStatus.notFound) &&
+          // Not queued again from another host by its handler.
+          (tasks.value[task.taskId]?.status == TaskStatus.failed ||
+              tasks.value[task.taskId]?.status == TaskStatus.notFound)) {
+        notices.failed(task.displayName, retry: () => unawaited(enqueue(task)));
+      }
+    }
   }
 }
 

@@ -2,6 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:app_links/app_links.dart';
+
+import 'features/content_extras/tafsir_library.dart'
+    show removeStaleTafsirPacks, tafsirLibrarySpecsProvider;
+
 import 'package:audio_session/audio_session.dart';
 
 import 'package:flutter/foundation.dart'
@@ -168,6 +172,13 @@ Future<void> main([List<String> args = const []]) async {
         .read(backgroundPacksProvider)
         .start()
         .then((_) => container.read(packInstallsProvider.notifier).changed()),
+  );
+  // Library packs dropped from the library leave no folder behind.
+  unawaited(
+    removeStaleTafsirPacks(
+      container.read(packsDirProvider),
+      container.read(tafsirLibrarySpecsProvider),
+    ).catchError((_) {}),
   );
 
   // Reports queued while offline go out on the next start.

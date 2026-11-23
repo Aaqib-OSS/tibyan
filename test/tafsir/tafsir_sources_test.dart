@@ -237,7 +237,7 @@ void main() {
 
   test('the library lists al-Jami\' al-Wajiz and the Quranpedia books', () {
     expect(tafsirLibraryPacks.first.id, 'tafsir-jami-wajiz-v1');
-    expect(tafsirLibraryPacks.length, greaterThan(50));
+    expect(tafsirLibraryPacks.length, greaterThan(30));
     final ids = <String>{};
     for (final s in tafsirLibraryPacks) {
       expect(ids.add(s.id), isTrue, reason: s.id);

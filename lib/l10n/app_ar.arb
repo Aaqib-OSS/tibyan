@@ -4470,5 +4470,175 @@
       }
     }
   },
-  "tafsirPackInstalled": "منزّل"
+  "tafsirPackInstalled": "منزّل",
+  "deleteDownloadTitle": "حذف «{name}»؟",
+  "@deleteDownloadTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteDownloadBody": "سيُحذف من جهازك ويمكنك تنزيله مرة أخرى في أي وقت.",
+  "deleteDownloadSize": "الحجم: {size}",
+  "@deleteDownloadSize": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadDoneOne": "اكتمل تنزيل «{name}»",
+  "@downloadDoneOne": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadDoneTwo": "اكتمل تنزيل «{a}» و«{b}»",
+  "@downloadDoneTwo": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "b": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadDoneMany": "{count, plural, two{اكتمل تنزيل عنصرين} few{اكتمل تنزيل {n} عناصر} other{اكتمل تنزيل {n} عنصرًا}}",
+  "@downloadDoneMany": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadFailedOne": "تعذّر تنزيل «{name}»",
+  "@downloadFailedOne": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadFailedTwo": "تعذّر تنزيل «{a}» و«{b}»",
+  "@downloadFailedTwo": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "b": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadFailedMany": "{count, plural, two{تعذّر تنزيل عنصرين} few{تعذّر تنزيل {n} عناصر} other{تعذّر تنزيل {n} عنصرًا}}",
+  "@downloadFailedMany": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "tasmeeModelName": "نموذج التسميع",
+  "tafsirVerseHeader": "{surah} · الآية {ayah}",
+  "tafsirPauseVerse": "إيقاف مؤقت",
+  "tafsirRepeatVerse": "كرّر الآية",
+  "@tafsirVerseHeader": {
+    "placeholders": {
+      "surah": {
+        "type": "String"
+      },
+      "ayah": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadsSectionTafsir": "التفاسير ومعاني القرآن",
+  "downloadsGroupTafsir": "التفاسير",
+  "downloadsGroupSciences": "علوم القرآن",
+  "downloadsGroupTranslations": "الترجمات",
+  "downloadsSectionTools": "أدوات",
+  "downloadsCentury": "القرن {n} الهجري",
+  "downloadAllGroup": "تنزيل الكل",
+  "downloadAllConfirmTitle": "تنزيل {count} من الكتب؟",
+  "downloadAllConfirmBody": "الحجم الإجمالي: {size}. يُنزَّل في الخلفية، ويمكنك إيقافه في أي وقت.",
+  "downloadAllConfirmOk": "تنزيل",
+  "librarySearchHint": "ابحث بالاسم أو المؤلف",
+  "libraryFilterAll": "الكل",
+  "libraryFilterOnDevice": "على الجهاز",
+  "libraryFilterAvailable": "متاح",
+  "libraryShowInTafsir": "إظهار «{title}» في التفسير",
+  "downloadCancelItem": "إلغاء تنزيل {title}",
+  "downloadItem": "تنزيل {title}",
+  "libraryNoMatch": "لا نتائج",
+  "@downloadsCentury": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "@downloadAllConfirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@downloadAllConfirmBody": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "@libraryShowInTafsir": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@downloadCancelItem": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@downloadItem": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "tafsirCoverage": "التغطية {percent}٪",
+  "@tafsirCoverage": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "tafsirPackNotCovered": "لا يذكر «{title}» شيئًا في هذه الآية",
+  "tafsirPackPreviousCovered": "الآية السابقة التي يفسّرها",
+  "tafsirPackNextCovered": "الآية التالية التي يفسّرها",
+  "@tafsirPackNotCovered": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "tafsirCoverageFull": "القرآن كاملًا"
 }

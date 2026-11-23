@@ -10824,6 +10824,222 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'منزّل'**
   String get tafsirPackInstalled;
+
+  /// No description provided for @deleteDownloadTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف «{name}»؟'**
+  String deleteDownloadTitle(String name);
+
+  /// No description provided for @deleteDownloadBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيُحذف من جهازك ويمكنك تنزيله مرة أخرى في أي وقت.'**
+  String get deleteDownloadBody;
+
+  /// No description provided for @deleteDownloadSize.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحجم: {size}'**
+  String deleteDownloadSize(String size);
+
+  /// No description provided for @downloadDoneOne.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتمل تنزيل «{name}»'**
+  String downloadDoneOne(String name);
+
+  /// No description provided for @downloadDoneTwo.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتمل تنزيل «{a}» و«{b}»'**
+  String downloadDoneTwo(String a, String b);
+
+  /// No description provided for @downloadDoneMany.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, two{اكتمل تنزيل عنصرين} few{اكتمل تنزيل {n} عناصر} other{اكتمل تنزيل {n} عنصرًا}}'**
+  String downloadDoneMany(int count, String n);
+
+  /// No description provided for @downloadFailedOne.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تنزيل «{name}»'**
+  String downloadFailedOne(String name);
+
+  /// No description provided for @downloadFailedTwo.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تنزيل «{a}» و«{b}»'**
+  String downloadFailedTwo(String a, String b);
+
+  /// No description provided for @downloadFailedMany.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, two{تعذّر تنزيل عنصرين} few{تعذّر تنزيل {n} عناصر} other{تعذّر تنزيل {n} عنصرًا}}'**
+  String downloadFailedMany(int count, String n);
+
+  /// No description provided for @tasmeeModelName.
+  ///
+  /// In ar, this message translates to:
+  /// **'نموذج التسميع'**
+  String get tasmeeModelName;
+
+  /// No description provided for @tafsirVerseHeader.
+  ///
+  /// In ar, this message translates to:
+  /// **'{surah} · الآية {ayah}'**
+  String tafsirVerseHeader(String surah, String ayah);
+
+  /// No description provided for @tafsirPauseVerse.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيقاف مؤقت'**
+  String get tafsirPauseVerse;
+
+  /// No description provided for @tafsirRepeatVerse.
+  ///
+  /// In ar, this message translates to:
+  /// **'كرّر الآية'**
+  String get tafsirRepeatVerse;
+
+  /// No description provided for @downloadsSectionTafsir.
+  ///
+  /// In ar, this message translates to:
+  /// **'التفاسير ومعاني القرآن'**
+  String get downloadsSectionTafsir;
+
+  /// No description provided for @downloadsGroupTafsir.
+  ///
+  /// In ar, this message translates to:
+  /// **'التفاسير'**
+  String get downloadsGroupTafsir;
+
+  /// No description provided for @downloadsGroupSciences.
+  ///
+  /// In ar, this message translates to:
+  /// **'علوم القرآن'**
+  String get downloadsGroupSciences;
+
+  /// No description provided for @downloadsGroupTranslations.
+  ///
+  /// In ar, this message translates to:
+  /// **'الترجمات'**
+  String get downloadsGroupTranslations;
+
+  /// No description provided for @downloadsSectionTools.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدوات'**
+  String get downloadsSectionTools;
+
+  /// No description provided for @downloadsCentury.
+  ///
+  /// In ar, this message translates to:
+  /// **'القرن {n} الهجري'**
+  String downloadsCentury(String n);
+
+  /// No description provided for @downloadAllGroup.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنزيل الكل'**
+  String get downloadAllGroup;
+
+  /// No description provided for @downloadAllConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنزيل {count} من الكتب؟'**
+  String downloadAllConfirmTitle(String count);
+
+  /// No description provided for @downloadAllConfirmBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحجم الإجمالي: {size}. يُنزَّل في الخلفية، ويمكنك إيقافه في أي وقت.'**
+  String downloadAllConfirmBody(String size);
+
+  /// No description provided for @downloadAllConfirmOk.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنزيل'**
+  String get downloadAllConfirmOk;
+
+  /// No description provided for @librarySearchHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث بالاسم أو المؤلف'**
+  String get librarySearchHint;
+
+  /// No description provided for @libraryFilterAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكل'**
+  String get libraryFilterAll;
+
+  /// No description provided for @libraryFilterOnDevice.
+  ///
+  /// In ar, this message translates to:
+  /// **'على الجهاز'**
+  String get libraryFilterOnDevice;
+
+  /// No description provided for @libraryFilterAvailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'متاح'**
+  String get libraryFilterAvailable;
+
+  /// No description provided for @libraryShowInTafsir.
+  ///
+  /// In ar, this message translates to:
+  /// **'إظهار «{title}» في التفسير'**
+  String libraryShowInTafsir(String title);
+
+  /// No description provided for @downloadCancelItem.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء تنزيل {title}'**
+  String downloadCancelItem(String title);
+
+  /// No description provided for @downloadItem.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنزيل {title}'**
+  String downloadItem(String title);
+
+  /// No description provided for @libraryNoMatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا نتائج'**
+  String get libraryNoMatch;
+
+  /// No description provided for @tafsirCoverage.
+  ///
+  /// In ar, this message translates to:
+  /// **'التغطية {percent}٪'**
+  String tafsirCoverage(String percent);
+
+  /// No description provided for @tafsirPackNotCovered.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يذكر «{title}» شيئًا في هذه الآية'**
+  String tafsirPackNotCovered(String title);
+
+  /// No description provided for @tafsirPackPreviousCovered.
+  ///
+  /// In ar, this message translates to:
+  /// **'الآية السابقة التي يفسّرها'**
+  String get tafsirPackPreviousCovered;
+
+  /// No description provided for @tafsirPackNextCovered.
+  ///
+  /// In ar, this message translates to:
+  /// **'الآية التالية التي يفسّرها'**
+  String get tafsirPackNextCovered;
+
+  /// No description provided for @tafsirCoverageFull.
+  ///
+  /// In ar, this message translates to:
+  /// **'القرآن كاملًا'**
+  String get tafsirCoverageFull;
 }
 
 class _AppLocalizationsDelegate

@@ -223,6 +223,16 @@ def dart_string(s):
     return "'" + s.replace('\\', '\\\\').replace("'", "\\'").replace('$', '\\$') + "'"
 
 
+# Ahmed's rule (2026-11-23): the library lists only books that cover at
+# least 90% of the Quran (5613 of 6236 verses); the others stay on the
+# mirror but are not offered (docs/DATA_SOURCES.md).
+MIN_VERSES = 5301
+
+# Kept below the rule, by Ahmed's choice: al-Tustari (4492) and al-Durr
+# al-Manthur (4427).
+LOW_COVERAGE_ALLOWED = {'tafsir-qp-329', 'tafsir-qp-273'}
+
+
 def dart(index_path):
     index = json.loads(Path(index_path).read_text(encoding='utf-8'))
     lines = [
@@ -237,6 +247,8 @@ def dart(index_path):
         'const quranpediaTafsirPacks = <TafsirTextPackSpec>[',
     ]
     for p in index['packs']:
+        if int(p['verses']) < MIN_VERSES and p['id'] not in LOW_COVERAGE_ALLOWED:
+            continue
         lines += [
             '  TafsirTextPackSpec(',
             '    id: %s,' % dart_string(p['id']),
@@ -246,6 +258,7 @@ def dart(index_path):
             '    title: %s,' % dart_string(p['title']),
             '    author: %s,' % dart_string(p['author_short']),
             '    diedAh: %s,' % p['died_ah'],
+            '    verses: %s,' % p['verses'],
             '  ),',
         ]
     lines += ['];', '']
