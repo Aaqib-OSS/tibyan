@@ -8,7 +8,7 @@ const kaabaLon = 39.826206;
 const earthRadiusKm = 6371.0088;
 
 /// How close to the Qibla counts as facing it, degrees either way.
-const qiblaTolerance = 3.0;
+const qiblaTolerance = 5.0;
 
 double _rad(double d) => d * math.pi / 180;
 double _deg(double r) => r * 180 / math.pi;
@@ -46,3 +46,30 @@ double turnTo(double heading, double target) {
 /// Whether facing [heading] is within [qiblaTolerance] of [target].
 bool facesQibla(double heading, double target) =>
     turnTo(heading, target).abs() <= qiblaTolerance;
+
+/// [n] + 1 points on the great circle from a place to the Kaaba, as
+/// (lat, lon) degrees, for drawing the shortest route on a map.
+List<({double lat, double lon})> kaabaGreatCircle(
+  double lat,
+  double lon, {
+  int n = 64,
+}) {
+  final p1 = _rad(lat), l1 = _rad(lon);
+  final p2 = _rad(kaabaLat), l2 = _rad(kaabaLon);
+  final d = kaabaDistanceKm(lat, lon) / earthRadiusKm;
+  if (d < 1e-9) return [(lat: lat, lon: lon), (lat: kaabaLat, lon: kaabaLon)];
+  final out = <({double lat, double lon})>[];
+  for (var i = 0; i <= n; i++) {
+    final f = i / n;
+    final a = math.sin((1 - f) * d) / math.sin(d);
+    final b = math.sin(f * d) / math.sin(d);
+    final x = a * math.cos(p1) * math.cos(l1) + b * math.cos(p2) * math.cos(l2);
+    final y = a * math.cos(p1) * math.sin(l1) + b * math.cos(p2) * math.sin(l2);
+    final z = a * math.sin(p1) + b * math.sin(p2);
+    out.add((
+      lat: _deg(math.atan2(z, math.sqrt(x * x + y * y))),
+      lon: _deg(math.atan2(y, x)),
+    ));
+  }
+  return out;
+}

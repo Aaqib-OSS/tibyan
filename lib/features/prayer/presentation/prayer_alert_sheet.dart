@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -318,12 +320,14 @@ class PrayerAlertSheet extends ConsumerWidget {
                   label: Text(l.prayerTryOwn),
                   onPressed: () async {
                     final messenger = ScaffoldMessenger.maybeOf(context);
+                    final router = GoRouter.of(context);
                     await ref
                         .read(prayerAlarmsProvider)
                         .testAdhan(
                           s,
                           l,
                           prayer: prayer,
+                          showScene: (loc) => unawaited(router.push(loc)),
                           playInApp: () async =>
                               PrayerRuntime.instance?.playAdhan(prayer),
                         );

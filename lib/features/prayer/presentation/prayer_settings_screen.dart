@@ -352,11 +352,13 @@ class PrayerSettingsScreen extends ConsumerWidget {
                         label: Text(l.adhanTest),
                         onPressed: () async {
                           final messenger = ScaffoldMessenger.maybeOf(context);
+                          final router = GoRouter.of(context);
                           await ref
                               .read(prayerAlarmsProvider)
                               .testAdhan(
                                 s.copyWith(custom: const {}),
                                 l,
+                                showScene: (loc) => unawaited(router.push(loc)),
                                 playInApp: () async =>
                                     PrayerRuntime.instance?.playAdhan(
                                       PrayerKind.maghrib,

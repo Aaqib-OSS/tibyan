@@ -10198,7 +10198,7 @@ abstract class AppLocalizations {
   /// No description provided for @qiblaAligned.
   ///
   /// In ar, this message translates to:
-  /// **'أنت متجه إلى القبلة'**
+  /// **'أنت في اتجاه القبلة'**
   String get qiblaAligned;
 
   /// No description provided for @qiblaTurnRight.
@@ -10216,7 +10216,7 @@ abstract class AppLocalizations {
   /// No description provided for @qiblaCalibrate.
   ///
   /// In ar, this message translates to:
-  /// **'حرّك الهاتف في الهواء على شكل الرقم 8 عدة مرات لمعايرة البوصلة.'**
+  /// **'حرّك الموبايل على شكل ∞ عشان البوصلة تبقى دقيقة'**
   String get qiblaCalibrate;
 
   /// No description provided for @qiblaInterference.
@@ -10284,6 +10284,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'صليت'**
   String get prayedAction;
+
+  /// No description provided for @prayedQuestion.
+  ///
+  /// In ar, this message translates to:
+  /// **'صليت؟'**
+  String get prayedQuestion;
 
   /// No description provided for @prayedOnTime.
   ///
@@ -10632,6 +10638,126 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'{prayer}: {summary}'**
   String prayerAdhanSummaryLabel(String prayer, String summary);
+
+  /// No description provided for @qiblaOpenCamera.
+  ///
+  /// In ar, this message translates to:
+  /// **'افتح الكاميرا'**
+  String get qiblaOpenCamera;
+
+  /// No description provided for @qiblaCloseCamera.
+  ///
+  /// In ar, this message translates to:
+  /// **'أغلق الكاميرا'**
+  String get qiblaCloseCamera;
+
+  /// No description provided for @qiblaCameraHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'أمسك الهاتف قائمًا واستدر حتى تصير الكعبة في الوسط.'**
+  String get qiblaCameraHint;
+
+  /// No description provided for @qiblaCameraDenied.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يُسمح باستخدام الكاميرا. يمكنك السماح بها من إعدادات الجهاز، أو متابعة البوصلة.'**
+  String get qiblaCameraDenied;
+
+  /// No description provided for @qiblaCameraUnavailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تشغيل الكاميرا على هذا الجهاز.'**
+  String get qiblaCameraUnavailable;
+
+  /// No description provided for @qiblaCameraLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض الكاميرا مع سهم اتجاه القبلة'**
+  String get qiblaCameraLabel;
+
+  /// No description provided for @qiblaKaaba.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكعبة'**
+  String get qiblaKaaba;
+
+  /// No description provided for @qiblaYou.
+  ///
+  /// In ar, this message translates to:
+  /// **'موقعك'**
+  String get qiblaYou;
+
+  /// No description provided for @qiblaDesktopNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد بوصلة في الحاسوب: اتبع الخط على الخريطة وزاوية الاتجاه من الشمال.'**
+  String get qiblaDesktopNote;
+
+  /// No description provided for @qiblaMapOffline.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تحميل الخريطة، فرُسم الخط بدونها.'**
+  String get qiblaMapOffline;
+
+  /// No description provided for @qiblaMapAttribution.
+  ///
+  /// In ar, this message translates to:
+  /// **'© مساهمو OpenStreetMap'**
+  String get qiblaMapAttribution;
+
+  /// No description provided for @qiblaMapLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'خريطة: خط من {place} إلى الكعبة'**
+  String qiblaMapLabel(String place);
+
+  /// No description provided for @qiblaGuideRightSlight.
+  ///
+  /// In ar, this message translates to:
+  /// **'لفّ يميناً قليلاً {deg}°'**
+  String qiblaGuideRightSlight(String deg);
+
+  /// No description provided for @qiblaGuideRight.
+  ///
+  /// In ar, this message translates to:
+  /// **'لفّ يميناً {deg}°'**
+  String qiblaGuideRight(String deg);
+
+  /// No description provided for @qiblaGuideLeftSlight.
+  ///
+  /// In ar, this message translates to:
+  /// **'لفّ شمالاً قليلاً {deg}°'**
+  String qiblaGuideLeftSlight(String deg);
+
+  /// No description provided for @qiblaGuideLeft.
+  ///
+  /// In ar, this message translates to:
+  /// **'لفّ شمالاً {deg}°'**
+  String qiblaGuideLeft(String deg);
+
+  /// No description provided for @qiblaToastTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنت الآن في اتجاه القبلة'**
+  String get qiblaToastTitle;
+
+  /// No description provided for @qiblaToastSub.
+  ///
+  /// In ar, this message translates to:
+  /// **'ثبّت الموبايل'**
+  String get qiblaToastSub;
+
+  /// No description provided for @qiblaBearingRow.
+  ///
+  /// In ar, this message translates to:
+  /// **'الزاوية من الشمال: {deg}°'**
+  String qiblaBearingRow(String deg);
+
+  /// No description provided for @qiblaDistanceRow.
+  ///
+  /// In ar, this message translates to:
+  /// **'المسافة: {km} كم'**
+  String qiblaDistanceRow(String km);
 }
 
 class _AppLocalizationsDelegate

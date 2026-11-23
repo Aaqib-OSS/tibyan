@@ -12,6 +12,8 @@
 	<string>تبيان يحفظ صور الآيات التي تشاركها في الصور. Tibyan saves the verse pictures you share to Photos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>تبيان يجمع صور الآيات التي تحفظها في ألبوم «Tibyan». Tibyan keeps the verse pictures you save together in a «Tibyan» album.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>يستخدم تبيان الكاميرا لعرض اتجاه القبلة فوق ما تراه أمامك، ولا يلتقط صورًا ولا يحفظ شيئًا. Tibyan uses the camera to show the Qibla direction over the view in front of you; no photos are taken or saved.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>يستخدم تبيان الميكروفون للتسميع على هذا الجهاز فقط، ولا يحفظ التسجيل ولا يرسله. Tibyan uses the microphone for recitation practice on this device only; audio is not saved or sent.</string>
 	<key>INAlternativeAppNames</key>
