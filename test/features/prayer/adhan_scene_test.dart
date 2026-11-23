@@ -110,6 +110,54 @@ void main() {
     expect(lit(24, 6), isFalse);
   });
 
+  test('the full moon is an exact circle on days 14 and 15', () {
+    const r = 24.0;
+    for (final day in [14, 15]) {
+      final b = moonPhasePath(moonAge(day), r).getBounds();
+      expect(b.left, closeTo(-r, 1e-6), reason: 'day $day');
+      expect(b.right, closeTo(r, 1e-6), reason: 'day $day');
+      expect(b.top, closeTo(-r, 1e-6), reason: 'day $day');
+      expect(b.bottom, closeTo(r, 1e-6), reason: 'day $day');
+      // Lit on both sides, not only at the edges.
+      final path = moonPhasePath(moonAge(day), r);
+      for (final x in [-20.0, -10.0, 0.0, 10.0, 20.0]) {
+        expect(path.contains(Offset(x, 0)), isTrue, reason: 'day $day x $x');
+      }
+    }
+  });
+
+  test('the phase is right for days 1, 7, 14 and 22', () {
+    const r = 10.0;
+    bool lit(int day, double x) =>
+        moonPhasePath(moonAge(day), r).contains(Offset(x, 0));
+    // Day 1: a thin crescent on the right.
+    expect(lit(1, 9.8), isTrue);
+    expect(lit(1, 5), isFalse);
+    expect(lit(1, -9), isFalse);
+    // Day 7: the first quarter, the right half.
+    expect(lit(7, 5), isTrue);
+    expect(lit(7, -5), isFalse);
+    final q = moonPhasePath(moonAge(7), r).getBounds();
+    expect(q.left, closeTo(0, 1.5));
+    expect(q.right, closeTo(r, 1e-6));
+    // Day 14: full.
+    expect(lit(14, -9), isTrue);
+    expect(lit(14, 9), isTrue);
+    // Day 22: waning, lit on the left.
+    expect(lit(22, -6), isTrue);
+    expect(lit(22, 6), isFalse);
+    expect(moonPhasePath(moonAge(22), r).getBounds().left, closeTo(-r, 1e-6));
+  });
+
+  test('nothing is painted over the moon disc', () {
+    final canvas = _RecordingCanvas();
+    final lit = moonPhasePath(moonAge(7), 20);
+    paintMoon(canvas, lit, Paint(), Paint(), 20);
+    // The halo goes underneath, then the lit part, and nothing after it.
+    expect(canvas.calls, ['drawCircle', 'drawPath']);
+    expect(canvas.paths.single, same(lit));
+  });
+
   test('the night runs from maghrib (0) to fajr (1)', () {
     const s = PrayerSettings(enabled: true, place: cairo);
     final day = computeDay(cairo, DateTime(2026, 3, 10), s);
@@ -136,4 +184,23 @@ void main() {
       expect(g.bottom, greaterThan(708));
     }
   });
+}
+
+class _RecordingCanvas implements Canvas {
+  final calls = <String>[];
+  final paths = <Path>[];
+
+  @override
+  void drawCircle(Offset c, double radius, Paint paint) =>
+      calls.add('drawCircle');
+
+  @override
+  void drawPath(Path path, Paint paint) {
+    calls.add('drawPath');
+    paths.add(path);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) =>
+      calls.add(invocation.memberName.toString());
 }
