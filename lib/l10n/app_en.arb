@@ -2268,7 +2268,7 @@
       }
     }
   },
-  "qiblaCalibrate": "Move the phone through the air in a figure 8 a few times to calibrate the compass.",
+  "qiblaCalibrate": "Move the phone in a ∞ figure so the compass stays accurate.",
   "qiblaInterference": "Compass accuracy is low: move away from metal, electrical devices and magnetic phone cases.",
   "qiblaNoSensor": "This device has no compass.",
   "qiblaStaticSteps": "Find north (with a map or a compass), then turn {deg}° clockwise.",
@@ -2287,7 +2287,6 @@
   "trackerTitle": "My prayers",
   "trackerOpen": "My prayers: your prayer log",
   "prayedAction": "I prayed",
-  "prayedQuestion": "Prayed?",
   "prayedOnTime": "On time",
   "prayedLate": "Late",
   "prayedJamaah": "In congregation",
@@ -2455,6 +2454,76 @@
       }
     }
   },
+  "qiblaOpenCamera": "Open camera",
+  "qiblaCloseCamera": "Close camera",
+  "qiblaCameraHint": "Hold the phone upright and turn until the Kaaba is in the middle.",
+  "qiblaCameraDenied": "Camera access was not allowed. You can allow it in the device settings, or keep using the compass.",
+  "qiblaCameraUnavailable": "The camera could not be started on this device.",
+  "qiblaCameraLabel": "Camera view with the Qibla direction arrow",
+  "qiblaKaaba": "The Kaaba",
+  "qiblaYou": "Your location",
+  "qiblaDesktopNote": "Computers have no compass: follow the line on the map and the bearing from north.",
+  "qiblaMapOffline": "The map could not be loaded, so the line is drawn without it.",
+  "qiblaMapAttribution": "© OpenStreetMap contributors",
+  "qiblaMapLabel": "Map: a line from {place} to the Kaaba",
+  "@qiblaMapLabel": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaGuideRightSlight": "Turn right a little {deg}°",
+  "@qiblaGuideRightSlight": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaGuideRight": "Turn right {deg}°",
+  "@qiblaGuideRight": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaGuideLeftSlight": "Turn left a little {deg}°",
+  "@qiblaGuideLeftSlight": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaGuideLeft": "Turn left {deg}°",
+  "@qiblaGuideLeft": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaToastTitle": "You are now facing the Qibla",
+  "qiblaToastSub": "Hold the phone steady",
+  "qiblaBearingRow": "Bearing from north: {deg}°",
+  "@qiblaBearingRow": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaDistanceRow": "Distance: {km} km",
+  "@qiblaDistanceRow": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "prayedQuestion": "Prayed?",
   "@prayedQuestion": {
     "description": "The prayer-times row's small button to mark a prayer as prayed, before it is marked."
   }

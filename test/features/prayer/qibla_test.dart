@@ -7,8 +7,12 @@ import 'package:tibyan/core/ui/look_kit.dart';
 import 'package:tibyan/features/prayer/domain/magnetic_declination.dart';
 import 'package:tibyan/features/prayer/domain/prayer_settings.dart';
 import 'package:tibyan/features/prayer/domain/qibla.dart';
+import 'package:tibyan/features/prayer/presentation/qibla_camera.dart';
 import 'package:tibyan/features/prayer/presentation/qibla_screen.dart';
+import 'package:tibyan/features/mushaf/presentation/widgets/illuminated_frame.dart'
+    show NumberFormatter;
 import 'package:tibyan/features/prayer/prayer_providers.dart';
+import 'package:tibyan/l10n/app_localizations.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 
 import '../../tasmee/tasmee_test_env.dart';
@@ -44,12 +48,55 @@ void main() {
     expect(kaabaDistanceKm(kaabaLat, kaabaLon), closeTo(0, 1e-6));
   });
 
-  test('turning and the ±3° window', () {
+  test('turning and the ±5° window', () {
     expect(turnTo(350, 10), closeTo(20, 1e-9));
     expect(turnTo(10, 350), closeTo(-20, 1e-9));
-    expect(facesQibla(133.5, 136), isTrue);
-    expect(facesQibla(132.5, 136), isFalse);
-    expect(facesQibla(359, 1.5), isTrue);
+    expect(facesQibla(131.5, 136), isTrue);
+    expect(facesQibla(140.9, 136), isTrue);
+    expect(facesQibla(130.5, 136), isFalse);
+    expect(facesQibla(141.5, 136), isFalse);
+    expect(facesQibla(357, 1.5), isTrue);
+  });
+
+  test('great circle to the Kaaba: ends, length and bearing', () {
+    final path = kaabaGreatCircle(51.5074, -0.1278, n: 32);
+    expect(path, hasLength(33));
+    expect(path.first.lat, closeTo(51.5074, 1e-6));
+    expect(path.first.lon, closeTo(-0.1278, 1e-6));
+    expect(path.last.lat, closeTo(kaabaLat, 1e-6));
+    expect(path.last.lon, closeTo(kaabaLon, 1e-6));
+    // Every point lies on the route: its distance to the Kaaba shrinks
+    // evenly, and the first step heads along the Qibla bearing.
+    final total = kaabaDistanceKm(51.5074, -0.1278);
+    final mid = path[16];
+    expect(kaabaDistanceKm(mid.lat, mid.lon), closeTo(total / 2, 1));
+    expect(qiblaBearing(mid.lat, mid.lon), greaterThan(118.99));
+    expect(kaabaGreatCircle(kaabaLat, kaabaLon), hasLength(2));
+  });
+
+  test('camera overlay: the Kaaba is in view within the field of view', () {
+    expect(kaabaInView(0), 0);
+    expect(kaabaInView(15), closeTo(.5, 1e-9));
+    expect(kaabaInView(-30), -1);
+    expect(kaabaInView(31), isNull);
+    expect(kaabaInView(-120), isNull);
+  });
+
+  test('guidance text: direction from the signed turn, «قليلاً» up to 40°', () {
+    final ar = lookupAppLocalizations(const Locale('ar'));
+    final en = lookupAppLocalizations(const Locale('en'));
+    final d = NumberFormatter(const Locale('ar'));
+    final e = NumberFormatter(const Locale('en'));
+    // qibla − heading, shortest way: 136 from 100 is +36 (right).
+    expect(qiblaGuideText(ar, turnTo(100, 136), d), 'لفّ يميناً قليلاً ٣٦°');
+    expect(qiblaGuideText(ar, turnTo(170, 136), d), 'لفّ شمالاً قليلاً ٣٤°');
+    expect(qiblaGuideText(ar, turnTo(80, 136), d), 'لفّ يميناً ٥٦°');
+    expect(qiblaGuideText(ar, turnTo(300, 136), d), 'لفّ شمالاً ١٦٤°');
+    // Across north: from 350 to 10 is right 20.
+    expect(qiblaGuideText(ar, turnTo(350, 10), d), 'لفّ يميناً قليلاً ٢٠°');
+    expect(qiblaGuideText(ar, turnTo(132, 136), d), 'أنت في اتجاه القبلة');
+    expect(qiblaGuideText(en, 41, e), 'Turn right 41°');
+    expect(qiblaGuideText(en, -40, e), 'Turn left a little 40°');
   });
 
   test('magnetic declination (WMM 2025) matches the NOAA model', () {
@@ -72,9 +119,11 @@ void main() {
       WidgetTester tester, {
       Stream<CompassReading>? readings,
       double textScale = 1,
+      bool desktop = false,
+      Size size = const Size(390, 1400),
     }) async {
       tester.view
-        ..physicalSize = const Size(390, 1400)
+        ..physicalSize = size
         ..devicePixelRatio = 1;
       tester.platformDispatcher.textScaleFactorTestValue = textScale;
       addTearDown(tester.view.reset);
@@ -88,7 +137,14 @@ void main() {
       await tester.pumpWidget(
         tasmeeApp(
           container,
-          LookTheme(child: QiblaScreen(readings: readings, trueNorth: true)),
+          LookTheme(
+            child: QiblaScreen(
+              readings: readings,
+              trueNorth: true,
+              desktop: desktop,
+              mapTiles: false,
+            ),
+          ),
           theme: tasmeeTheme(container),
         ),
       );
@@ -118,12 +174,18 @@ void main() {
       expect(km.data, contains('١٢٨٧'));
       c.add((heading: 90.0, accuracy: 10));
       await tester.pump();
-      expect(find.textContaining('استدر يمينًا'), findsOneWidget);
+      expect(find.text('لفّ يميناً ٤٦°'), findsOneWidget);
+      // The Kaaba mark sits on the compass ring; the camera is offered.
+      expect(find.byType(KaabaBadge), findsOneWidget);
+      expect(find.byKey(const ValueKey('qibla-open-camera')), findsOneWidget);
       for (var i = 0; i < 30; i++) {
         c.add((heading: 136.0, accuracy: 10));
         await tester.pump();
       }
-      expect(find.text('أنت متجه إلى القبلة'), findsWidgets);
+      expect(find.text('أنت في اتجاه القبلة'), findsWidgets);
+      expect(find.byKey(const ValueKey('qibla-toast')), findsOneWidget);
+      await tester.pump(const Duration(seconds: 2));
+      expect(find.byKey(const ValueKey('qibla-toast')), findsNothing);
       expect(haptics, hasLength(1));
       expect(find.byKey(const ValueKey('qibla-calibrate')), findsNothing);
     });
@@ -146,6 +208,103 @@ void main() {
       await tester.pump(const Duration(seconds: 4));
       expect(find.byKey(const ValueKey('qibla-no-sensor')), findsOneWidget);
       expect(find.byKey(const ValueKey('qibla-turn')), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('the toast fires once per entry into the Qibla', (
+      tester,
+    ) async {
+      final haptics = <String>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          if (call.method == 'HapticFeedback.vibrate') {
+            haptics.add('${call.arguments}');
+          }
+          return null;
+        },
+      );
+      final c = StreamController<CompassReading>();
+      addTearDown(c.close);
+      await pump(tester, readings: c.stream);
+      Future<void> feed(double h) async {
+        for (var i = 0; i < 30; i++) {
+          c.add((heading: h, accuracy: 10));
+          await tester.pump(const Duration(milliseconds: 10));
+        }
+      }
+
+      final toast = find.byKey(const ValueKey('qibla-toast'));
+      await feed(60);
+      expect(toast, findsNothing);
+      await feed(136);
+      expect(toast, findsOneWidget);
+      expect(find.text('ثبّت الموبايل'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 2));
+      expect(toast, findsNothing);
+      // Staying aligned: no second toast, no second haptic.
+      await feed(137);
+      await tester.pump(const Duration(seconds: 2));
+      expect(toast, findsNothing);
+      expect(haptics, hasLength(1));
+      // Leave and come back: once more.
+      await feed(60);
+      await feed(136);
+      expect(toast, findsOneWidget);
+      expect(haptics, hasLength(2));
+      await tester.pump(const Duration(seconds: 2));
+    });
+
+    testWidgets('reduce motion: the toast still shows', (tester) async {
+      tester.platformDispatcher.accessibilityFeaturesTestValue =
+          const FakeAccessibilityFeatures(disableAnimations: true);
+      addTearDown(
+        tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+      );
+      final c = StreamController<CompassReading>();
+      addTearDown(c.close);
+      await pump(tester, readings: c.stream);
+      for (var i = 0; i < 30; i++) {
+        c.add((heading: 136.0, accuracy: 10));
+        await tester.pump(const Duration(milliseconds: 10));
+      }
+      expect(find.byKey(const ValueKey('qibla-toast')), findsOneWidget);
+      await tester.pump(const Duration(seconds: 2));
+      expect(find.byKey(const ValueKey('qibla-toast')), findsNothing);
+    });
+
+    testWidgets('no compass: no camera button', (tester) async {
+      await pump(tester, readings: const Stream.empty());
+      await tester.pump(const Duration(seconds: 4));
+      expect(find.byKey(const ValueKey('qibla-open-camera')), findsNothing);
+      expect(find.byKey(const ValueKey('qibla-dial')), findsOneWidget);
+    });
+
+    testWidgets('desktop: the map with the line, bearing, distance, offline', (
+      tester,
+    ) async {
+      await pump(tester, desktop: true, size: const Size(1200, 900));
+      await tester.pump();
+      expect(find.byKey(const ValueKey('qibla-map')), findsOneWidget);
+      expect(find.byKey(const ValueKey('qibla-degrees')), findsOneWidget);
+      expect(find.byKey(const ValueKey('qibla-distance')), findsOneWidget);
+      expect(find.byKey(const ValueKey('qibla-map-offline')), findsOneWidget);
+      expect(find.byKey(const ValueKey('qibla-desktop-note')), findsOneWidget);
+      expect(find.byType(KaabaBadge), findsOneWidget);
+      expect(find.byKey(const ValueKey('qibla-dial')), findsNothing);
+      expect(find.byKey(const ValueKey('qibla-open-camera')), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('desktop at 200% text: no overflow', (tester) async {
+      await pump(
+        tester,
+        desktop: true,
+        size: const Size(800, 900),
+        textScale: 2,
+      );
+      await tester.pump();
+      expect(find.byKey(const ValueKey('qibla-map')), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   });
