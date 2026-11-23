@@ -6,6 +6,14 @@ All notable changes to Tibyan are recorded here. The format follows
 
 ## [Unreleased]
 
+### Added
+- Misbaha: a true 3D rendering. A misbaha of 33 beads lies on a surface, lit per pixel with soft and contact shadows; the imam and its tassel travel round with the beads and cross the gap by themselves at each lap's end.
+- Misbaha: three new bead materials (rosewood, turquoise, yusr) beside amber, wood and pearl, each with its own surface, thread and metal.
+- Misbaha: bead sounds per material (four variants of a count, two of the lap's end), synthesized in the project.
+
+### Changed
+- Misbaha: the true 3D rendering is the default where fragment shaders work; a reader's own choice is kept, and the suggested look is used automatically elsewhere. Nothing is repainted while nothing moves.
+
 ## [1.0.0] (build 57) - 2026-11-23
 
 ### Added
