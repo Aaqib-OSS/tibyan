@@ -6,6 +6,31 @@ All notable changes to Tibyan are recorded here. The format follows
 
 ## [Unreleased]
 
+## [0.9.0] (build 57) - 2026-11-23
+
+### Added
+- Prayer times computed on the device, with per-prayer alerts, an adhan library (13 muezzins), per-prayer adhan sound, muezzin, length and volume, and a summary under each prayer row.
+- A full-screen adhan scene with gentle motion for each prayer and the moon of the Hijri day.
+- Qibla: a big compass with the Kaaba on its ring, an optional camera view (only on tap) and a map on desktop.
+- «صلواتي»: a prayer log with a qada counter and a calm weekly summary; «صليت؟» in the prayer-times rows.
+- Hijri calendar with occasions and day-before reminders.
+- Morning and evening adhkar with reminders, and the salawat reminder.
+- Repeat a verse or a range for memorization.
+- Root search, with the verse number first.
+- Tafsir: chip bar, compare, read more, go-to-verse, cross-surah navigation and a half sheet in the mushaf.
+- Wide screens: a «الصلاة» group in the sidebar (prayer times, qibla, my prayers, adhkar).
+- Windows (Store build): opens at login, hidden in the tray, for prayer alerts.
+
+### Changed
+- Home: search in row 2; prayer times, qibla, my prayers and adhkar in row 3; no tile subtitles.
+- Adhan notifications follow the app language; the adhan test opens the full-screen scene and stays silent during a call.
+- Android: the launcher finds the app by both «تبيان» and Tibyan.
+- Downloads and updates use altibyan.app, with the old host as a fallback.
+
+### Fixed
+- Browsing a reciter no longer switches the playing recitation.
+- Volume keys adjust the adhan on Android; a stopped adhan stays stopped.
+
 ## [0.8.7] (build 56) - 2026-11-16
 
 Android only (Google Play and Huawei AppGallery); the other platforms stay where they are.
@@ -496,7 +521,8 @@ Phase 0: foundation. No Quran or religious text appears in this release.
 4. Switch the language to English and back to Arabic; the layout should flip direction.
 5. Close and reopen the app: every choice should be kept.
 
-[Unreleased]: https://github.com/helalrules7/tibyan/compare/v0.8.7...HEAD
+[Unreleased]: https://github.com/helalrules7/tibyan/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/helalrules7/tibyan/compare/v0.8.7...v0.9.0
 [0.8.7]: https://github.com/helalrules7/tibyan/compare/v0.8.6...v0.8.7
 [0.8.6]: https://github.com/helalrules7/tibyan/compare/v0.8.2...v0.8.6
 [0.8.2]: https://github.com/helalrules7/tibyan/compare/v0.8.1...v0.8.2
