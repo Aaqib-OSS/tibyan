@@ -6,7 +6,7 @@ All notable changes to Tibyan are recorded here. The format follows
 
 ## [Unreleased]
 
-## [0.9.0] (build 57) - 2026-11-23
+## [1.0.0] (build 57) - 2026-11-23
 
 ### Added
 - Prayer times computed on the device, with per-prayer alerts, an adhan library (13 muezzins), per-prayer adhan sound, muezzin, length and volume, and a summary under each prayer row.
@@ -20,11 +20,13 @@ All notable changes to Tibyan are recorded here. The format follows
 - Tafsir: chip bar, compare, read more, go-to-verse, cross-surah navigation and a half sheet in the mushaf.
 - Wide screens: a «الصلاة» group in the sidebar (prayer times, qibla, my prayers, adhkar).
 - Windows (Store build): opens at login, hidden in the tray, for prayer alerts.
+- Tafsir: new tafsirs — al-Mukhtasar, al-Jalalayn and al-Jami' al-Wajiz — plus 59 Quranpedia books as optional downloads; show or hide each tafsir.
 
 ### Changed
 - Home: search in row 2; prayer times, qibla, my prayers and adhkar in row 3; no tile subtitles.
 - Adhan notifications follow the app language; the adhan test opens the full-screen scene and stays silent during a call.
 - Android: the launcher finds the app by both «تبيان» and Tibyan.
+- Huawei AppGallery build: keeps the localized name approved by AppGallery (تبيان in Arabic, Tibyan otherwise).
 - Downloads and updates use altibyan.app, with the old host as a fallback.
 
 ### Fixed
