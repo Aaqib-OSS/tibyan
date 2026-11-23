@@ -75,11 +75,6 @@ class HomeScreen extends ConsumerWidget {
     final ayah = position?.ayah ?? 1;
     final khatma = ref.watch(khatmaStatusProvider).value;
     final portion = khatma?.todayPortion;
-    final due = dueToday(
-      ref.watch(srsItemsProvider).value ?? const [],
-      DateTime.now(),
-    ).length;
-    final tasbihToday = ref.watch(tasbihTodayProvider);
 
     final sections = <_Section>[
       (
@@ -103,31 +98,25 @@ class HomeScreen extends ConsumerWidget {
       (
         icon: railIcon(RailItem.khatma),
         label: l.sectionKhatma,
-        note: portion != null
-            ? l.khatmaTilePages(digits(portion.pages))
-            : khatma != null
-            ? l.khatmaTodayDone
-            : l.khatmaTileStart,
+        note: null,
         onTap: () => context.push('/khatma'),
       ),
       (
         icon: railIcon(RailItem.hifz),
         label: l.sectionHifz,
-        note: due > 0 ? '${l.hifzToday} ${digits(due)}' : l.hifzTileNote,
+        note: null,
         onTap: () => context.push('/hifz'),
       ),
       (
         icon: railIcon(RailItem.tasbih),
         label: l.sectionTasbih,
-        note: tasbihToday > 0
-            ? l.tasbihTileToday(digits(tasbihToday))
-            : l.tasbihTileStart,
+        note: null,
         onTap: () => context.push(tasbihLocation),
       ),
       (
         icon: railIcon(RailItem.tasmee),
         label: l.tasmeeTileLabel,
-        note: l.tasmeeSelectRange,
+        note: null,
         onTap: () => showTasmeeSetup(context),
       ),
       (
@@ -140,7 +129,7 @@ class HomeScreen extends ConsumerWidget {
       (
         icon: Icons.mosque_outlined,
         label: l.prayerTimesTitle,
-        note: l.prayerTileNote,
+        note: null,
         onTap: () => context.push(prayerTimesLocation),
       ),
       (

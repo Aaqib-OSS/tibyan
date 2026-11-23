@@ -6143,6 +6143,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get prayedAction => 'صليت';
 
   @override
+  String get prayedQuestion => 'صليت؟';
+
+  @override
   String get prayedOnTime => 'في وقتها';
 
   @override

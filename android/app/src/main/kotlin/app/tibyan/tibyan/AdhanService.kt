@@ -123,9 +123,10 @@ class AdhanService : Service() {
             finish()
             return START_NOT_STICKY
         }
-        if (!preview && AdhanGate.inCall(this)) {
+        // «جرّب الأذان» behaves like the real one over a call: silent.
+        if (AdhanGate.inCall(this)) {
             finish()
-            alert?.let { AdhanGate.postNotice(this, it, silent = true) }
+            if (!preview) alert?.let { AdhanGate.postNotice(this, it, silent = true) }
             return START_NOT_STICKY
         }
         if (!requestFocus()) {

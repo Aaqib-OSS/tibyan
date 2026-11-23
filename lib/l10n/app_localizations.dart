@@ -10285,6 +10285,12 @@ abstract class AppLocalizations {
   /// **'صليت'**
   String get prayedAction;
 
+  /// No description provided for @prayedQuestion.
+  ///
+  /// In ar, this message translates to:
+  /// **'صليت؟'**
+  String get prayedQuestion;
+
   /// No description provided for @prayedOnTime.
   ///
   /// In ar, this message translates to:
