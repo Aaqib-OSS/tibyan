@@ -108,8 +108,8 @@ class AdhanScene {
       sky3: Color(0xFFF4DCAE),
       stars: 0,
       sun: 1,
-      sunX: 306,
-      sunY: 330,
+      sunX: 96,
+      sunY: 380,
       sunR: 28,
       glowR: 120,
       sunColor: Color(0xFFFFF0C2),
@@ -199,30 +199,64 @@ double nightFraction(PrayerPlace place, DateTime now, PrayerSettings s) {
 }
 
 /// The moon's age in days for the Hijri [day] (1…30): day 1 is the thin
-/// first crescent, about the 15th full.
-double moonAge(int day) => (day.clamp(1, 30) - .5).toDouble();
+/// first crescent, day 7 the first quarter, days 14 and 15 exactly full,
+/// then it wanes to the end of the month.
+double moonAge(int day) {
+  const synodic = 29.53;
+  final d = day.clamp(1, 30);
+  final double f;
+  if (d <= 14) {
+    f = .5 * d / 14;
+  } else if (d == 15) {
+    f = .5;
+  } else {
+    f = .5 + .5 * (d - 15) / 15.5;
+  }
+  return f * synodic;
+}
 
-/// The lit part of a moon of radius [r] at [age] days, centred on zero:
-/// crescent → quarter → gibbous → full → back. Waxing is lit on the right.
+/// The lit part of a moon of radius [r] at [age] days, centred on zero, as
+/// one path: an exact circular limb plus an elliptical terminator. Nothing
+/// is ever painted over it, so the unlit side never shows as a disc.
+/// Waxing is lit on the right; the full moon is a perfect circle.
 Path moonPhasePath(double age, double r) {
   const synodic = 29.53;
   final a = (age % synodic) / synodic; // 0 new, .5 full
+  final disc = Rect.fromCircle(center: Offset.zero, radius: r);
+  if ((a - .5).abs() < 1e-6) return Path()..addOval(disc);
   final waxing = a < .5;
-  final k = math.cos(2 * math.pi * a); // 1 new, -1 full
+  final k = math.cos(2 * math.pi * a); // 1 new, 0 quarter, -1 full
   final side = waxing ? 1.0 : -1.0;
-  final p = Path()..moveTo(0, -r);
-  const n = 24;
-  // The limb: a half circle on the lit side, top to bottom.
-  for (var i = 1; i <= n; i++) {
-    final t = -math.pi / 2 + math.pi * i / n;
-    p.lineTo(side * r * math.cos(t), r * math.sin(t));
-  }
-  // The terminator: a half ellipse back to the top.
-  for (var i = 1; i <= n; i++) {
-    final t = math.pi / 2 - math.pi * i / n;
-    p.lineTo(side * k * r * math.cos(t), r * math.sin(t));
+  final p = Path()
+    ..moveTo(0, -r)
+    // The limb: top to bottom round the lit side.
+    ..arcTo(disc, -math.pi / 2, side * math.pi, false);
+  if (k.abs() < 1e-6) {
+    p.lineTo(0, -r);
+  } else {
+    // The terminator: half an ellipse from the bottom back to the top,
+    // bulging toward the lit side for a crescent, away for a gibbous moon.
+    final sweep = (k > 0 ? -1.0 : 1.0) * side * math.pi;
+    p.arcTo(
+      Rect.fromCenter(
+        center: Offset.zero,
+        width: 2 * k.abs() * r,
+        height: 2 * r,
+      ),
+      math.pi / 2,
+      sweep,
+      false,
+    );
   }
   return p..close();
+}
+
+/// Paints the moon at zero: its halo underneath, then the lit part on top.
+/// Nothing else, and nothing over the disc.
+void paintMoon(Canvas canvas, Path lit, Paint litPaint, Paint halo, double r) {
+  canvas
+    ..drawCircle(Offset.zero, r * 3, halo)
+    ..drawPath(lit, litPaint);
 }
 
 /// Where the design (390 × 844 units, the mosque's base at y 708) lands on
@@ -271,7 +305,7 @@ class AdhanSceneGeometry {
 /// One [Ticker] drives it, at most 30 frames a second (15 once the
 /// three-minute change is over): stars twinkle and, rarely, one shoots;
 /// the moon of the Hijri day glows; light rises at fajr, the sun sinks at
-/// maghrib, rays turn at dhuhr and asr; the windows glow, fajr's mist
+/// maghrib, soft rays breathe and clouds and birds drift by day; lanterns swing at night; the windows glow, fajr's mist
 /// drifts. It stops when the screen is hidden ([TickerMode]) and stays a
 /// still frame when less motion is asked for ([reduceMotion], which the
 /// app's own «تقليل الحركة» sets too).
@@ -418,22 +452,32 @@ class _SceneArt {
   bool get night0 => scene.stars > 0;
   bool get hasMoon => prayer == PrayerKind.fajr || prayer == PrayerKind.isha;
   bool get rays => scene.sun > 0 && prayer != PrayerKind.maghrib;
+  bool get daytime => scene.sun > 0 && prayer != PrayerKind.maghrib;
 
-  late final Paint sky, overlay, star, trail, halo, moonLit, moonDark;
-  late final Paint glow, rayPaint, sunDisc, lit, mist;
+  /// Two hanging lanterns at night only: maghrib, isha and fajr.
+  bool get lanterns =>
+      prayer == PrayerKind.maghrib ||
+      prayer == PrayerKind.isha ||
+      prayer == PrayerKind.fajr;
+
+  late final Paint sky, overlay, star, trail, halo, moonLit;
+  late final Paint glow, rayPaint, sunDisc, lit, mist, dawn, cloud, bird;
+  late final Paint cord, lanternMetal, lanternGlass, lanternGlow;
   late final List<Color> white, overlayLv, haloLv, glowLv, rayLv, litLv;
-  late final List<Color> mistLv;
+  late final List<Color> mistLv, dayLitLv, lanternGlowLv;
   late final List<(double, double, double, double, double)> stars;
   late final List<double> shots;
   late final Offset moonAt, sunAt;
   late final double moonR, sunR, glowR, mistY;
-  late final Path moonPath, rayPath;
+  late final Path moonPath, rayPath, cloudPath, lanternCap, lanternBody;
+  late final Path lanternTip;
   late final Path far, hills, ground, ridge;
   late final Paint groundPaint;
 
   void _build() {
     final s = scene;
     final size = geo.size;
+    final k = geo.k;
     final skyRect = Rect.fromLTRB(0, 0, size.width, geo.horizon * 1.15);
     sky = Paint()
       ..shader = LinearGradient(
@@ -442,18 +486,14 @@ class _SceneArt {
         colors: [s.sky1, s.sky2, s.sky3],
         stops: const [0, .62, 1],
       ).createShader(skyRect);
-    // Maghrib: the sky deepens; fajr: light rises at the horizon.
+    // Maghrib: the sky turns from orange to violet; fajr: light rises.
     overlay = Paint()
       ..shader = prayer == PrayerKind.maghrib
-          ? LinearGradient(
+          ? const LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                Color.lerp(s.sky1, const Color(0xFF000000), .35)!,
-                s.sky1,
-                Color.lerp(s.sky2, s.sky3, .4)!,
-              ],
-              stops: const [0, .6, 1],
+              colors: [Color(0xFF140C30), Color(0xFF3A2462), Color(0xFF8A3E78)],
+              stops: [0, .6, 1],
             ).createShader(skyRect)
           : LinearGradient(
               begin: Alignment.topCenter,
@@ -469,7 +509,7 @@ class _SceneArt {
     white = _levels(const Color(0xFFFFFFFF));
     star = Paint();
     trail = Paint()
-      ..strokeWidth = 1.4
+      ..strokeWidth = 1.6
       ..strokeCap = StrokeCap.round;
 
     // The star field: denser on bigger skies, never on the land.
@@ -482,39 +522,44 @@ class _SceneArt {
           rnd.nextDouble() * geo.horizon * .8,
           .7 + rnd.nextDouble() * .9,
           rnd.nextDouble() * math.pi * 2,
-          2 * math.pi / (4 + rnd.nextDouble() * 6),
+          2 * math.pi / (2 + rnd.nextDouble() * 4),
         ),
     ];
-    // A shooting star now and then: every 20–40 s.
-    var at = 6 + rnd.nextDouble() * 10;
+    // Shooting stars: every ~6 s at isha, now and then on other nights.
     shots = [];
-    while (at < 3600) {
-      shots.add(at);
-      at += 20 + rnd.nextDouble() * 20;
+    if (prayer == PrayerKind.isha) {
+      for (var at = 3.0; at < 3600; at += 6) {
+        shots.add(at);
+      }
+    } else {
+      var at = 6 + rnd.nextDouble() * 10;
+      while (at < 3600) {
+        shots.add(at);
+        at += 20 + rnd.nextDouble() * 20;
+      }
     }
 
     // The moon of the Hijri day, along the night's arc.
     final f = night.clamp(0.0, 1.0);
-    moonR = (prayer == PrayerKind.isha ? 26 : 20) * geo.k;
+    moonR = (prayer == PrayerKind.isha ? 26 : 20) * k;
     moonAt = geo.sky(
       300 - 210 * f,
       150 + 90 * (1 - math.sin(math.pi * (.1 + .8 * f))),
     );
     moonPath = moonPhasePath(moonAge(hijriDay), moonR);
     moonLit = Paint()..color = s.moonColor;
-    moonDark = Paint()..color = s.moonColor.withValues(alpha: .07);
     halo = Paint()
       ..shader = RadialGradient(
         colors: [
-          s.moonColor.withValues(alpha: .35),
+          s.moonColor.withValues(alpha: .45),
           s.moonColor.withValues(alpha: 0),
         ],
       ).createShader(Rect.fromCircle(center: Offset.zero, radius: moonR * 3));
     haloLv = _levels(const Color(0xFFFFFFFF));
 
     // The sun and its glow, drawn around zero.
-    sunR = s.sunR * geo.k;
-    glowR = s.glowR * geo.k;
+    sunR = s.sunR * k;
+    glowR = s.glowR * k;
     sunAt = geo.sky(s.sunX, s.sunY);
     glow = Paint()
       ..shader = RadialGradient(
@@ -525,25 +570,95 @@ class _SceneArt {
       ).createShader(Rect.fromCircle(center: Offset.zero, radius: glowR));
     glowLv = _levels(const Color(0xFFFFFFFF));
     sunDisc = Paint()..color = s.sunColor;
-    final rayLen = glowR * 2.6;
+    // Eight soft, wide rays: they breathe and sway, never spin.
+    final rayLen = geo.horizon * .55;
     rayPath = Path();
-    for (var i = 0; i < 9; i++) {
-      final a = i * 2 * math.pi / 9;
-      const w = .07;
+    for (var i = 0; i < 8; i++) {
+      final a = i * math.pi / 4;
+      Offset at(double x, double y) => Offset(
+        x * math.cos(a) - y * math.sin(a),
+        x * math.sin(a) + y * math.cos(a),
+      );
+      final p0 = at(-26 * k, 0), p1 = at(-8 * k, -rayLen);
+      final p2 = at(8 * k, -rayLen), p3 = at(26 * k, 0);
       rayPath
-        ..moveTo(0, 0)
-        ..lineTo(math.cos(a - w) * rayLen, math.sin(a - w) * rayLen)
-        ..lineTo(math.cos(a + w) * rayLen, math.sin(a + w) * rayLen)
+        ..moveTo(p0.dx, p0.dy)
+        ..lineTo(p1.dx, p1.dy)
+        ..lineTo(p2.dx, p2.dy)
+        ..lineTo(p3.dx, p3.dy)
         ..close();
     }
     rayPaint = Paint()
       ..shader = RadialGradient(
         colors: [
-          s.sunColor.withValues(alpha: .15),
-          s.sunColor.withValues(alpha: 0),
+          const Color(0xFFFFF7D7).withValues(alpha: .12),
+          const Color(0xFFFFF7D7).withValues(alpha: 0),
         ],
       ).createShader(Rect.fromCircle(center: Offset.zero, radius: rayLen));
     rayLv = _levels(const Color(0xFFFFFFFF));
+
+    // Fajr's thread of light, in a unit square stretched each frame.
+    dawn = Paint()
+      ..shader = const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Color(0x00FFBE8C), Color(0xFFFFC896)],
+      ).createShader(const Rect.fromLTWH(0, 0, 1, 1));
+
+    // A cloud, centred on zero; golden at asr.
+    cloudPath = Path();
+    for (final (dx, dy, r) in const [
+      (-23.0, 0.0, 22.0),
+      (-1.0, -8.0, 26.0),
+      (23.0, 0.0, 20.0),
+      (1.0, 6.0, 22.0),
+    ]) {
+      cloudPath.addOval(
+        Rect.fromCircle(center: Offset(dx * k, dy * k), radius: r * k),
+      );
+    }
+    cloud = Paint()
+      ..color = prayer == PrayerKind.asr
+          ? const Color(0xBFFFE6BE)
+          : const Color(0xCCFFFFFF);
+    bird = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.8 * k
+      ..strokeCap = StrokeCap.round
+      ..color = prayer == PrayerKind.fajr
+          ? const Color(0xCCFFFFFF)
+          : const Color(0xB3142832);
+
+    // The lanterns, in screen units around their hook.
+    cord = Paint()
+      ..color = const Color(0xCCE6C88C)
+      ..strokeWidth = 1;
+    lanternMetal = Paint()..color = const Color(0xFFC9A24A);
+    lanternGlass = Paint();
+    lanternCap = Path()
+      ..moveTo(-6 * k, 0)
+      ..lineTo(6 * k, 0)
+      ..lineTo(10 * k, 8 * k)
+      ..lineTo(-10 * k, 8 * k)
+      ..close();
+    lanternBody = Path()
+      ..moveTo(-10 * k, 8 * k)
+      ..lineTo(10 * k, 8 * k)
+      ..lineTo(7 * k, 26 * k)
+      ..lineTo(-7 * k, 26 * k)
+      ..close();
+    lanternTip = Path()
+      ..moveTo(-7 * k, 26 * k)
+      ..lineTo(7 * k, 26 * k)
+      ..lineTo(0, 34 * k)
+      ..close();
+    lanternGlow = Paint()
+      ..shader =
+          const RadialGradient(colors: [Color(0x8CFFC864), Color(0x00FFC864)])
+              .createShader(
+                Rect.fromCircle(center: Offset(0, 14 * k), radius: 40 * k),
+              );
+    lanternGlowLv = _levels(const Color(0xFFFFFFFF));
 
     // The land, in design units, out to every edge.
     final l = geo.left - 2, r = geo.right + 2, b = geo.bottom + 2;
@@ -578,15 +693,16 @@ class _SceneArt {
 
     lit = Paint();
     litLv = _levels(s.lit);
+    dayLitLv = _levels(const Color(0xFFFFC86E));
     mistY = 690;
     mist = Paint()
       ..shader = RadialGradient(
         colors: [
           Color.lerp(
             s.sky3,
-            const Color(0xFFFFFFFF),
-            .5,
-          )!.withValues(alpha: .5),
+            const Color(0xFFE6DCFF),
+            .6,
+          )!.withValues(alpha: .7),
           const Color(0x00FFFFFF),
         ],
       ).createShader(Rect.fromCircle(center: Offset.zero, radius: 1));
@@ -633,7 +749,8 @@ class _SceneArt {
   }
 }
 
-/// The sky: its colours, stars, the moon and the sun (behind the land).
+/// The sky: its colours, stars, the moon, the sun, clouds and birds
+/// (behind the land).
 class _SkyPainter extends CustomPainter {
   _SkyPainter(this.art, this.time) : super(repaint: time);
 
@@ -645,53 +762,61 @@ class _SkyPainter extends CustomPainter {
     final a = art;
     final s = a.scene;
     final t = time.value;
+    final still = t == 0;
     final p = _ease(t / AdhanBackdrop.span);
+    // Maghrib's change runs over about 40 s.
+    final p40 = _ease(t / 40);
     canvas.drawRect(Offset.zero & size, a.sky);
-    if (a.prayer == PrayerKind.maghrib || a.prayer == PrayerKind.fajr) {
-      final o = a.prayer == PrayerKind.maghrib ? p * .55 : p * .7;
-      if (o > 0) {
-        a.overlay.color = _at(a.overlayLv, o);
+    if (a.prayer == PrayerKind.maghrib) {
+      if (p40 > 0) {
+        a.overlay.color = _at(a.overlayLv, p40 * .7);
         canvas.drawRect(Offset.zero & size, a.overlay);
       }
+    } else if (a.prayer == PrayerKind.fajr && p > 0) {
+      a.overlay.color = _at(a.overlayLv, p * .7);
+      canvas.drawRect(Offset.zero & size, a.overlay);
     }
-    if (a.night0) {
-      // Maghrib's first stars come out as it darkens.
-      final base = a.prayer == PrayerKind.maghrib ? s.stars + .35 * p : s.stars;
-      for (final (x, y, r, ph, w) in a.stars) {
-        final tw = t == 0 ? .75 : .5 + .5 * math.sin(ph + w * t);
-        a.star.color = _at(a.white, base * (.35 + .65 * tw));
-        canvas.drawCircle(Offset(x, y), r, a.star);
-      }
-      _shootingStar(canvas, size, t);
+    if (a.prayer == PrayerKind.fajr) {
+      // A thread of light rising behind the hills over about 25 s.
+      final k = still ? .3 : math.min(1.0, t / 25);
+      final h = a.geo.horizon;
+      final top = h - h * (.06 + .3 * k);
+      canvas.save();
+      canvas.translate(0, top);
+      canvas.scale(size.width, h + 30 * a.geo.k - top);
+      a.dawn.color = _at(a.white, .25 + .6 * k);
+      canvas.drawRect(const Rect.fromLTWH(0, 0, 1, 1), a.dawn);
+      canvas.restore();
     }
+    if (a.night0) _stars(canvas, size, t, p40);
     if (a.hasMoon) {
-      final pulse = .8 + .2 * math.sin(t * 2 * math.pi / 8);
+      final pulse = a.prayer == PrayerKind.isha
+          ? .55 + .45 * math.sin(t * 1.4)
+          : .8 + .2 * math.sin(t * 2 * math.pi / 8);
       canvas.save();
       canvas.translate(a.moonAt.dx, a.moonAt.dy);
-      a.halo.color = _at(a.haloLv, t == 0 ? .9 : pulse);
-      canvas.drawCircle(Offset.zero, a.moonR * 3, a.halo);
-      canvas.drawCircle(Offset.zero, a.moonR, a.moonDark);
-      canvas.drawPath(a.moonPath, a.moonLit);
+      a.halo.color = _at(a.haloLv, still ? .9 : pulse);
+      paintMoon(canvas, a.moonPath, a.moonLit, a.halo, a.moonR);
       canvas.restore();
     }
     if (s.sun > 0) {
       var y = a.sunAt.dy;
       var g = 1.0;
       if (a.prayer == PrayerKind.maghrib) {
-        // Down behind the hills over the adhan.
-        y += 70 * a.geo.k * p;
-        g = 1 - .45 * p;
-      } else if (t > 0) {
+        // It sinks fully behind the hills during the adhan.
+        y += (a.sunR + 110 * a.geo.k) * p40;
+        g = 1 - .6 * p40;
+      } else if (!still) {
         g = .9 + .1 * math.sin(t * 2 * math.pi / 9);
       }
       canvas.save();
       canvas.translate(a.sunAt.dx, y);
       if (a.rays) {
         canvas.save();
-        canvas.rotate(t * .012);
+        canvas.rotate(still ? 0 : math.sin(t * .25) * .05);
         a.rayPaint.color = _at(
           a.rayLv,
-          t == 0 ? .8 : .7 + .3 * math.sin(t * 2 * math.pi / 12),
+          still ? .75 : .6 + .3 * math.sin(t * .8),
         );
         canvas.drawPath(a.rayPath, a.rayPaint);
         canvas.restore();
@@ -701,10 +826,78 @@ class _SkyPainter extends CustomPainter {
       canvas.drawCircle(Offset.zero, a.sunR, a.sunDisc);
       canvas.restore();
     }
+    if (a.daytime) _clouds(canvas, size, t);
+    if (a.daytime) {
+      _birds(canvas, size, t, t % 14 / 14);
+    } else if (a.prayer == PrayerKind.fajr && t > 8 && t < 26) {
+      // One flock crossing the dawn.
+      _birds(canvas, size, t, (t - 8) / 18);
+    }
+  }
+
+  void _stars(Canvas canvas, Size size, double t, double p40) {
+    final a = art;
+    final still = t == 0;
+    final isha = a.prayer == PrayerKind.isha;
+    final maghrib = a.prayer == PrayerKind.maghrib;
+    final base = maghrib ? a.scene.stars + .5 * p40 : a.scene.stars;
+    for (final (x, y, r, ph, w) in a.stars) {
+      final tw = still ? .75 : .5 + .5 * math.sin(ph + w * t);
+      var o = base * (isha ? .2 + .8 * tw : .35 + .65 * tw);
+      final order = ph / (2 * math.pi); // 0…1, each star its own turn
+      if (!still && a.prayer == PrayerKind.fajr) {
+        // They go out one by one.
+        o *= ((8 + order * 40 - t) / 2).clamp(0.0, 1.0);
+      } else if (!still && maghrib) {
+        // The first ones come out one by one.
+        o *= ((t - 6 - order * 30) / 2).clamp(0.0, 1.0);
+      }
+      if (o <= 0) continue;
+      a.star.color = _at(a.white, o);
+      canvas.drawCircle(Offset(x, y), isha ? r * 1.25 : r, a.star);
+    }
+    _shootingStar(canvas, size, t);
+  }
+
+  void _clouds(Canvas canvas, Size size, double t) {
+    final k = art.geo.k;
+    final span = size.width + 160 * k;
+    for (final (y, speed, o) in const [
+      (.22, 14.0, 0.0),
+      (.36, 9.0, .5),
+      (.12, 6.0, .25),
+    ]) {
+      final x = size.width + 80 * k - ((o * span + t * speed * k) % span);
+      canvas.save();
+      canvas.translate(x, art.geo.horizon * y);
+      canvas.drawPath(art.cloudPath, art.cloud);
+      canvas.restore();
+    }
+  }
+
+  /// A flock of seven, [u] 0…1 across the sky from right to left.
+  void _birds(Canvas canvas, Size size, double t, double u) {
+    final k = art.geo.k;
+    final w = size.width;
+    final h = art.geo.horizon;
+    for (var i = 0; i < 7; i++) {
+      final o = i * .07;
+      final x = w * (1.1 - (u + o) * 1.3);
+      if (x < -20 * k || x > w + 20 * k) continue;
+      final y = h * (.38 + (i % 3) * .015 + .03 * math.sin((u + o) * 12));
+      final f = math.sin(t * 9 + o * 20) * 5 * k;
+      canvas.drawPath(
+        Path()
+          ..moveTo(x - 8 * k, y - f)
+          ..quadraticBezierTo(x - 3 * k, y - 2 * k, x, y)
+          ..quadraticBezierTo(x + 3 * k, y - 2 * k, x + 8 * k, y - f),
+        art.bird,
+      );
+    }
   }
 
   void _shootingStar(Canvas canvas, Size size, double t) {
-    const dur = 1.2;
+    const dur = 1.1;
     double? start;
     for (final s in art.shots) {
       if (s > t) break;
@@ -721,7 +914,7 @@ class _SkyPainter extends CustomPainter {
     for (var j = 0; j < 4; j++) {
       final a = (j * .18);
       final b = ((j + 1) * .18);
-      art.trail.color = _at(art.white, fade * (1 - j / 4) * .8);
+      art.trail.color = _at(art.white, fade * (1 - j / 4) * .95);
       canvas.drawLine(
         Offset(hx - len * a, hy - len * a * .34),
         Offset(hx - len * b, hy - len * b * .34),
@@ -827,7 +1020,8 @@ class _LandPainter extends CustomPainter {
   bool shouldRepaint(_LandPainter old) => old.art != art;
 }
 
-/// The windows' glow and fajr's mist, over the mosque.
+/// The windows' glow, fajr's mist and the night's lanterns, over the
+/// mosque.
 class _FrontPainter extends CustomPainter {
   _FrontPainter(this.art, this.time) : super(repaint: time);
 
@@ -838,26 +1032,71 @@ class _FrontPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final s = art.scene;
     final t = time.value;
+    final still = t == 0;
     canvas.save();
     art.geo.enter(canvas);
+    // The windows' glow pulses in every prayer.
     if (s.litOn > 0) {
-      final pulse = t == 0 ? 1.0 : .84 + .16 * math.sin(t * 2 * math.pi / 7);
+      final pulse = still ? 1.0 : .65 + .35 * math.sin(t * 2.2);
       art.lit.color = _at(art.litLv, s.litOn * pulse);
-      canvas.drawPath(_windows, art.lit);
+    } else {
+      art.lit.color = _at(
+        art.dayLitLv,
+        still ? .2 : .18 + .1 * math.sin(t * 2),
+      );
     }
+    canvas.drawPath(_windows, art.lit);
     if (art.prayer == PrayerKind.fajr) {
-      // Two soft banks of mist, drifting slowly across.
-      final span = art.geo.right - art.geo.left + 300;
-      for (var i = 0; i < 2; i++) {
-        final x = art.geo.left - 150 + ((t * (3 + i) + i * span / 2) % span);
+      // Three banks of mist, drifting across.
+      final span = art.geo.right - art.geo.left + 400;
+      for (var i = 0; i < 3; i++) {
+        final x =
+            art.geo.left - 200 + ((t * (12 + 4 * i) + i * span / 3) % span);
         canvas.save();
-        canvas.translate(x, art.mistY + i * 14);
-        canvas.scale(170, 22);
-        art.mist.color = _at(art.mistLv, .55 + .1 * i);
+        canvas.translate(x, art.mistY + (i - 1) * 16);
+        canvas.scale(190, 28);
+        art.mist.color = _at(art.mistLv, .8 + .1 * (i % 2));
         canvas.drawCircle(Offset.zero, 1, art.mist);
         canvas.restore();
       }
     }
+    canvas.restore();
+    if (art.lanterns) {
+      // At maghrib they light as the adhan begins.
+      final on = art.prayer == PrayerKind.maghrib && !still
+          ? (t / 8).clamp(0.0, 1.0)
+          : 1.0;
+      final k = art.geo.k;
+      _lantern(canvas, size.width * .14, 60 * k, math.sin(t * 1.3) * .12, on);
+      _lantern(
+        canvas,
+        size.width * .86,
+        90 * k,
+        still ? 0 : math.sin(t * 1.3 + 1.7) * .1,
+        on,
+      );
+    }
+  }
+
+  void _lantern(Canvas canvas, double x, double len, double angle, double on) {
+    final a = art;
+    canvas.save();
+    canvas.translate(x, 0);
+    canvas.rotate(angle);
+    canvas.drawLine(Offset.zero, Offset(0, len), a.cord);
+    canvas.translate(0, len);
+    if (on > 0) {
+      a.lanternGlow.color = _at(a.lanternGlowLv, on);
+      canvas.drawCircle(Offset(0, 14 * a.geo.k), 40 * a.geo.k, a.lanternGlow);
+    }
+    canvas.drawPath(a.lanternCap, a.lanternMetal);
+    a.lanternGlass.color = Color.lerp(
+      const Color(0xFF7A6A40),
+      const Color(0xFFFFD27A),
+      on,
+    )!;
+    canvas.drawPath(a.lanternBody, a.lanternGlass);
+    canvas.drawPath(a.lanternTip, a.lanternMetal);
     canvas.restore();
   }
 

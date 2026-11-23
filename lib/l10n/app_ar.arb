@@ -4157,7 +4157,7 @@
       }
     }
   },
-  "qiblaAligned": "أنت متجه إلى القبلة",
+  "qiblaAligned": "أنت في اتجاه القبلة",
   "qiblaTurnRight": "استدر يمينًا {deg}°",
   "@qiblaTurnRight": {
     "placeholders": {
@@ -4174,7 +4174,7 @@
       }
     }
   },
-  "qiblaCalibrate": "حرّك الهاتف في الهواء على شكل الرقم 8 عدة مرات لمعايرة البوصلة.",
+  "qiblaCalibrate": "حرّك الموبايل على شكل ∞ عشان البوصلة تبقى دقيقة",
   "qiblaInterference": "دقة البوصلة منخفضة: ابتعد عن المعادن والأجهزة الكهربائية وأغطية الهاتف المغناطيسية.",
   "qiblaNoSensor": "لا توجد بوصلة في هذا الجهاز.",
   "qiblaStaticSteps": "حدّد اتجاه الشمال (بخريطة أو بوصلة)، ثم استدر {deg}° باتجاه عقارب الساعة.",
@@ -4364,6 +4364,75 @@
         "type": "String"
       },
       "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaOpenCamera": "افتح الكاميرا",
+  "qiblaCloseCamera": "أغلق الكاميرا",
+  "qiblaCameraHint": "أمسك الهاتف قائمًا واستدر حتى تصير الكعبة في الوسط.",
+  "qiblaCameraDenied": "لم يُسمح باستخدام الكاميرا. يمكنك السماح بها من إعدادات الجهاز، أو متابعة البوصلة.",
+  "qiblaCameraUnavailable": "تعذّر تشغيل الكاميرا على هذا الجهاز.",
+  "qiblaCameraLabel": "عرض الكاميرا مع سهم اتجاه القبلة",
+  "qiblaKaaba": "الكعبة",
+  "qiblaYou": "موقعك",
+  "qiblaDesktopNote": "لا توجد بوصلة في الحاسوب: اتبع الخط على الخريطة وزاوية الاتجاه من الشمال.",
+  "qiblaMapOffline": "تعذّر تحميل الخريطة، فرُسم الخط بدونها.",
+  "qiblaMapAttribution": "© مساهمو OpenStreetMap",
+  "qiblaMapLabel": "خريطة: خط من {place} إلى الكعبة",
+  "@qiblaMapLabel": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaGuideRightSlight": "لفّ يميناً قليلاً {deg}°",
+  "@qiblaGuideRightSlight": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaGuideRight": "لفّ يميناً {deg}°",
+  "@qiblaGuideRight": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaGuideLeftSlight": "لفّ شمالاً قليلاً {deg}°",
+  "@qiblaGuideLeftSlight": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaGuideLeft": "لفّ شمالاً {deg}°",
+  "@qiblaGuideLeft": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaToastTitle": "أنت الآن في اتجاه القبلة",
+  "qiblaToastSub": "ثبّت الموبايل",
+  "qiblaBearingRow": "الزاوية من الشمال: {deg}°",
+  "@qiblaBearingRow": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaDistanceRow": "المسافة: {km} كم",
+  "@qiblaDistanceRow": {
+    "placeholders": {
+      "km": {
         "type": "String"
       }
     }

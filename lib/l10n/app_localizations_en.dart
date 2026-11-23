@@ -6042,7 +6042,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get qiblaCalibrate =>
-      'Move the phone through the air in a figure 8 a few times to calibrate the compass.';
+      'Move the phone in a ∞ figure so the compass stays accurate.';
 
   @override
   String get qiblaInterference =>
@@ -6292,5 +6292,84 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String prayerAdhanSummaryLabel(String prayer, String summary) {
     return '$prayer: $summary';
+  }
+
+  @override
+  String get qiblaOpenCamera => 'Open camera';
+
+  @override
+  String get qiblaCloseCamera => 'Close camera';
+
+  @override
+  String get qiblaCameraHint =>
+      'Hold the phone upright and turn until the Kaaba is in the middle.';
+
+  @override
+  String get qiblaCameraDenied =>
+      'Camera access was not allowed. You can allow it in the device settings, or keep using the compass.';
+
+  @override
+  String get qiblaCameraUnavailable =>
+      'The camera could not be started on this device.';
+
+  @override
+  String get qiblaCameraLabel => 'Camera view with the Qibla direction arrow';
+
+  @override
+  String get qiblaKaaba => 'The Kaaba';
+
+  @override
+  String get qiblaYou => 'Your location';
+
+  @override
+  String get qiblaDesktopNote =>
+      'Computers have no compass: follow the line on the map and the bearing from north.';
+
+  @override
+  String get qiblaMapOffline =>
+      'The map could not be loaded, so the line is drawn without it.';
+
+  @override
+  String get qiblaMapAttribution => '© OpenStreetMap contributors';
+
+  @override
+  String qiblaMapLabel(String place) {
+    return 'Map: a line from $place to the Kaaba';
+  }
+
+  @override
+  String qiblaGuideRightSlight(String deg) {
+    return 'Turn right a little $deg°';
+  }
+
+  @override
+  String qiblaGuideRight(String deg) {
+    return 'Turn right $deg°';
+  }
+
+  @override
+  String qiblaGuideLeftSlight(String deg) {
+    return 'Turn left a little $deg°';
+  }
+
+  @override
+  String qiblaGuideLeft(String deg) {
+    return 'Turn left $deg°';
+  }
+
+  @override
+  String get qiblaToastTitle => 'You are now facing the Qibla';
+
+  @override
+  String get qiblaToastSub => 'Hold the phone steady';
+
+  @override
+  String qiblaBearingRow(String deg) {
+    return 'Bearing from north: $deg°';
+  }
+
+  @override
+  String qiblaDistanceRow(String km) {
+    return 'Distance: $km km';
   }
 }
