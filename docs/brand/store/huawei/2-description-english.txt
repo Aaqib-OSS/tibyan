@@ -1,7 +1,7 @@
 Name: Tibyan: Quran
 
 Short:
-Ad-free Quran app: recitation, tafsir, smart oral testing, and offline reading.
+Ad-free Quran: recitation, tafsir, tasmee, prayer times, adhan and qibla.
 
 Full:
 Tibyan is a comprehensive, non-profit, and ad-free Quran app designed to be your serene daily companion for reciting, understanding, and memorizing the Holy Quran.
@@ -19,22 +19,40 @@ An advanced on-device speech engine that listens to your live recitation, gently
 3. Multiple Authentic Mushafs & Qira'at:
 Read from the Madina Mushaf (1441H & 1405H editions) or the Shamarly Mushaf, with full support for verified riwayat (Hafs, Warsh, Qalun, and Al-Duri).
 
-4. Simplified Tafsir & Word Meanings:
-Access reliable verse-by-verse explanations (Al-Tafsir Al-Muyassar), instant vocabulary definitions with a single tap, reasons of revelation (Asbab Al-Nuzul), and grammatical analysis (I'rab).
+4. Tafsir & Word Meanings:
+Read Al-Tafsir Al-Muyassar, Al-Mukhtasar fi Al-Tafsir, Tafsir Al-Jalalayn and Al-Jami' Al-Wajiz under every verse, classical tafsirs via Quranpedia, and compare two tafsirs side by side, with word meanings, reasons of revelation (Asbab Al-Nuzul) and grammatical analysis (I'rab).
 
-5. Comprehensive Memorization (Hifz) Journey:
+5. Prayer Times & Adhan:
+Prayer times for your location, computed on your device, with the adhan in thirteen muezzins' voices that you choose prayer by prayer, and a full-screen adhan scene animated for each prayer.
+
+6. Qibla Direction:
+A clear compass that guides you turn by turn until you face the qibla, an optional camera view, and a map on desktop.
+
+7. Adhkar & My Prayers:
+Morning and evening adhkar with reminders at the time you choose, and the «My Prayers» log to follow your prayers, with a qada (missed prayers) counter.
+
+8. Hijri Calendar:
+The Hijri date and Islamic occasions, with a reminder the day before each occasion.
+
+9. Verse Repeat & Smart Search:
+Repeat one verse or a range as many times as you choose to strengthen memorization, and search the Quran by word, by root, or straight by verse number.
+
+10. Comprehensive Memorization (Hifz) Journey:
 A visualized mastery map tracking your memorized pages and review schedules, featuring an interactive word-hiding mode to test your retention.
 
-6. Personal & Group Khatmahs:
+11. Personal & Group Khatmahs:
 Create flexible reading plans tailored to your pace, or collaborate with family and friends in shared group khatmahs with clear part assignments.
 
-7. Islamic Aesthetics & Dark Modes:
+12. Islamic Aesthetics & Dark Modes:
 Choose from three tailored themes (Girih Geometric, Classical Manuscript, and Night Gold), alongside an accessible Elderly Mode featuring enlarged typography and simplified controls.
 
-8. Digital 3D Misbaha:
+13. A Redesigned Home:
+Clearer sections on the home screen, and a sidebar that gathers every section on tablets and desktop.
+
+14. Digital 3D Misbaha:
 An interactive 3D misbaha featuring authentic daily adhkar, realistic tactile haptics.
 
-9. Safe backup: save your bookmarks, khatmas and memorization progress in one file and restore it on any device.
+15. Safe backup: save your bookmarks, khatmas and memorization progress in one file and restore it on any device.
 
-10. 100% Non-Profit & Private:
+16. 100% Non-Profit & Private:
 Tibyan is dedicated purely for the sake of Allah. It collects no personal data, contains zero advertising, and requires no subscriptions or in-app purchases.
