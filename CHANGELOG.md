@@ -14,7 +14,7 @@ All notable changes to Tibyan are recorded here. The format follows
 ### Changed
 - Misbaha: the true 3D rendering is the default where fragment shaders work; a reader's own choice is kept, and the suggested look is used automatically elsewhere. Nothing is repainted while nothing moves.
 
-## [1.0.0] (build 57) - 2026-11-23
+## [1.0.0] (build 58) - 2026-11-23
 
 ### Added
 - Prayer times computed on the device, with per-prayer alerts, an adhan library (13 muezzins), per-prayer adhan sound, muezzin, length and volume, and a summary under each prayer row.
@@ -32,6 +32,9 @@ All notable changes to Tibyan are recorded here. The format follows
 - Tafsir library: more tafsirs, including al-Tustari and al-Durr al-Manthur; library packs install reliably.
 - Nuqayah per-verse tafsir audio.
 - Downloads: toasts when a download starts and ends, a shared delete confirmation, a reorganized downloads center with a tafsir section, and verse-only playback.
+- Misbaha: a new 3D misbaha with six materials and new bead sounds.
+- Tafsir: the tafsir title opens the index.
+- Prayer times: «صلّيت الكل» marks every prayer that has come.
 
 ### Changed
 - Home: search in row 2; prayer times, qibla, my prayers and adhkar in row 3; no tile subtitles.
