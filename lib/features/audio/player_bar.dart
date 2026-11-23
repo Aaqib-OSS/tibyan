@@ -400,6 +400,71 @@ class PlayerOptions extends ConsumerWidget {
       SleepAfter(:final duration) => duration.inMinutes,
     };
 
+    // A tafsir heard on its own: no reciters, repeats or verse settings,
+    // only how it plays (speed, the sleep timer) and the player's look.
+    final tafsirOnly = inSheet && s.clip?.standalone == true;
+    final speed = [
+      Semantics(header: true, child: Text(l.playbackSpeedLabel, style: title)),
+      const SizedBox(height: 6),
+      chips<double>(
+        [
+          for (final v in [0.75, 1.0, 1.25, 1.5, 2.0])
+            (
+              v,
+              l.playbackSpeedValue(
+                v == v.roundToDouble() ? digits(v.toInt()) : v.toString(),
+              ),
+            ),
+        ],
+        settings.playbackSpeed,
+        c.setSpeed,
+      ),
+      const SizedBox(height: 12),
+    ];
+    final sleepTimer = [
+      Semantics(header: true, child: Text(l.sleepLabel, style: title)),
+      const SizedBox(height: 6),
+      chips<int>(
+        [
+          (0, l.sleepOff),
+          for (final n in [15, 30, 60]) (n, l.minutes(digits(n))),
+          if (!tafsirOnly) (-1, l.sleepSurahEnd),
+        ],
+        sleepKey,
+        (n) => c.setSleep(
+          n == 0
+              ? null
+              : n < 0
+              ? const SleepAtSurahEnd()
+              : SleepAfter(Duration(minutes: n)),
+        ),
+      ),
+      const SizedBox(height: 12),
+    ];
+    final style = [
+      Semantics(header: true, child: Text(l.playerStyleLabel, style: title)),
+      const SizedBox(height: 6),
+      chips<PlayerStyle>(
+        [
+          (PlayerStyle.auto, l.playerStyleAuto),
+          (PlayerStyle.normal, l.playerStyleNormal),
+          (PlayerStyle.pill, l.playerStylePill),
+          (PlayerStyle.button, l.playerStyleButton),
+        ],
+        settings.playerStyle,
+        ref.read(settingsProvider.notifier).setPlayerStyle,
+      ),
+      const SizedBox(height: 12),
+    ];
+    if (tafsirOnly) {
+      return ListView(
+        key: const ValueKey('player-options-tafsir'),
+        shrinkWrap: true,
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        children: [...speed, ...sleepTimer, ...style],
+      );
+    }
+
     return ListView(
       shrinkWrap: true,
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -548,46 +613,9 @@ class PlayerOptions extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
         ],
-        Semantics(
-          header: true,
-          child: Text(l.playbackSpeedLabel, style: title),
-        ),
-        const SizedBox(height: 6),
-        chips<double>(
-          [
-            for (final v in [0.75, 1.0, 1.25, 1.5, 2.0])
-              (
-                v,
-                l.playbackSpeedValue(
-                  v == v.roundToDouble() ? digits(v.toInt()) : v.toString(),
-                ),
-              ),
-          ],
-          settings.playbackSpeed,
-          c.setSpeed,
-        ),
-        const SizedBox(height: 12),
+        ...speed,
         // A sleep timer belongs to one listening, so it is set only then.
-        if (playing) ...[
-          Semantics(header: true, child: Text(l.sleepLabel, style: title)),
-          const SizedBox(height: 6),
-          chips<int>(
-            [
-              (0, l.sleepOff),
-              for (final n in [15, 30, 60]) (n, l.minutes(digits(n))),
-              (-1, l.sleepSurahEnd),
-            ],
-            sleepKey,
-            (n) => c.setSleep(
-              n == 0
-                  ? null
-                  : n < 0
-                  ? const SleepAtSurahEnd()
-                  : SleepAfter(Duration(minutes: n)),
-            ),
-          ),
-          const SizedBox(height: 12),
-        ],
+        if (playing) ...sleepTimer,
         Semantics(header: true, child: Text(l.versePauseLabel, style: title)),
         Text(l.versePauseHint, style: hint),
         const SizedBox(height: 6),
@@ -652,19 +680,7 @@ class PlayerOptions extends ConsumerWidget {
         ],
         // «شكل المشغل», as on the settings screen: every listening setting
         // is here too, so the reader need not leave the page.
-        Semantics(header: true, child: Text(l.playerStyleLabel, style: title)),
-        const SizedBox(height: 6),
-        chips<PlayerStyle>(
-          [
-            (PlayerStyle.auto, l.playerStyleAuto),
-            (PlayerStyle.normal, l.playerStyleNormal),
-            (PlayerStyle.pill, l.playerStylePill),
-            (PlayerStyle.button, l.playerStyleButton),
-          ],
-          settings.playerStyle,
-          ref.read(settingsProvider.notifier).setPlayerStyle,
-        ),
-        const SizedBox(height: 12),
+        ...style,
         OutlinedButton.icon(
           onPressed: () {
             if (inSheet) Navigator.pop(context);

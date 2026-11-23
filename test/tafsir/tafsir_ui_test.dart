@@ -317,7 +317,7 @@ void main() {
       tester,
     ) async {
       await pump(tester, packs: []);
-      await tester.tap(find.byIcon(Icons.text_fields));
+      await tester.tap(find.byIcon(Icons.tune));
       await tester.pumpAndSettle();
       final sw = find.widgetWithText(SwitchListTile, 'التفسير الميسر');
       await tester.ensureVisible(sw);

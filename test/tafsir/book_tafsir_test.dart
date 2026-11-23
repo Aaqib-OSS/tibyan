@@ -112,7 +112,7 @@ void main() {
     expect(find.text('الآيات ١–٥'), findsOneWidget);
 
     // The settings sheet lists them; turning one off hides it.
-    await tester.tap(find.byIcon(Icons.text_fields));
+    await tester.tap(find.byIcon(Icons.tune));
     await tester.pumpAndSettle();
     final sw = find.widgetWithText(SwitchListTile, 'تفسير تجريبي ثان');
     expect(sw, findsOneWidget);
@@ -153,7 +153,7 @@ void main() {
       englishTafsirSpecs: [_englishTafsirSpec],
     );
 
-    await tester.tap(find.byIcon(Icons.text_fields));
+    await tester.tap(find.byIcon(Icons.tune));
     await tester.pumpAndSettle();
     final switchTile = find.widgetWithText(SwitchListTile, 'التفسير الإنجليزي');
     expect(switchTile, findsOneWidget);
