@@ -28,6 +28,7 @@ All notable changes to Tibyan are recorded here. The format follows
 - Downloads and updates use altibyan.app, with the old host as a fallback.
 
 ### Fixed
+- Tafsir: a clear settings icon; during a standalone tafsir the player sheet keeps only speed, sleep and the player's look.
 - Browsing a reciter no longer switches the playing recitation.
 - Volume keys adjust the adhan on Android; a stopped adhan stays stopped.
 
