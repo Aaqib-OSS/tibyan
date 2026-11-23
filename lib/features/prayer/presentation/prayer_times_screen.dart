@@ -376,19 +376,44 @@ class _TimesList extends ConsumerWidget {
                             ],
                           ),
                         ),
-                        Text(time, style: style),
+                        // Shrinks, never overflows, beside «صليت؟» at
+                        // large text sizes.
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(time, style: style),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
               ),
               // «صليت»: once the prayer's time has come.
-              if (obligatory && !day[p].isAfter(now))
+              if (obligatory && !day[p].isAfter(now) && marks[p] == null)
+                TextButton(
+                  key: ValueKey('prayer-prayed-${p.name}'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: t.goldText,
+                    minimumSize: const Size(48, 48),
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                  ),
+                  onPressed: () =>
+                      showPrayedSheet(context, ref, p, today, current: null),
+                  child: Semantics(
+                    label: '${l.prayedAction} · $name',
+                    excludeSemantics: true,
+                    // Stays a short tag beside the time at any text size.
+                    child: MediaQuery.withClampedTextScaling(
+                      maxScaleFactor: 1.0,
+                      child: Text(l.prayedQuestion),
+                    ),
+                  ),
+                )
+              else if (obligatory && !day[p].isAfter(now))
                 IconButton(
                   key: ValueKey('prayer-prayed-${p.name}'),
-                  tooltip: marks[p] == null
-                      ? '${l.prayedAction} · $name'
-                      : '${prayedName(l, marks[p]!)} · $name',
+                  tooltip: '${prayedName(l, marks[p]!)} · $name',
                   onPressed: () => showPrayedSheet(
                     context,
                     ref,
@@ -396,12 +421,7 @@ class _TimesList extends ConsumerWidget {
                     today,
                     current: marks[p],
                   ),
-                  icon: Icon(
-                    marks[p] == null
-                        ? Icons.radio_button_unchecked
-                        : prayedIcon(marks[p]!),
-                    color: marks[p] == null ? t.muted : t.goldText,
-                  ),
+                  icon: Icon(prayedIcon(marks[p]!), color: t.goldText),
                 ),
               IconButton(
                 key: ValueKey('prayer-sound-${p.name}'),

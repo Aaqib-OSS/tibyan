@@ -2287,6 +2287,7 @@
   "trackerTitle": "My prayers",
   "trackerOpen": "My prayers: your prayer log",
   "prayedAction": "I prayed",
+  "prayedQuestion": "Prayed?",
   "prayedOnTime": "On time",
   "prayedLate": "Late",
   "prayedJamaah": "In congregation",
@@ -2453,5 +2454,8 @@
         "type": "String"
       }
     }
+  },
+  "@prayedQuestion": {
+    "description": "The prayer-times row's small button to mark a prayer as prayed, before it is marked."
   }
 }
