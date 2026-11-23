@@ -5848,7 +5848,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adhanTestScheduled =>
-      'The adhan starts in 10 seconds, as a real alert would.';
+      'The adhan starts in 10 seconds. Lock the screen to see the adhan screen as it will appear at prayer time.';
 
   @override
   String get adhanVolume => 'Adhan volume';

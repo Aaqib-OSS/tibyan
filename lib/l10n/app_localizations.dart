@@ -9899,7 +9899,7 @@ abstract class AppLocalizations {
   /// No description provided for @adhanTestScheduled.
   ///
   /// In ar, this message translates to:
-  /// **'يبدأ الأذان بعد ١٠ ثوانٍ، كما في التنبيه الحقيقي.'**
+  /// **'يبدأ الأذان بعد ١٠ ثوانٍ. اقفل الشاشة لترى شاشة الأذان كما ستظهر وقت الصلاة.'**
   String get adhanTestScheduled;
 
   /// No description provided for @adhanVolume.
