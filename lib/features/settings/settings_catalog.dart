@@ -510,7 +510,9 @@ final Map<SettingsSection, List<SettingsGroup>> settingsCatalog = {
         'tasbihMaterial',
         (l) => l.tasbihMaterial,
         (c, r) => const BeadMaterialPicker(),
-        keywords: 'خامة كهرمان خشب لؤلؤ material amber wood pearl beads',
+        keywords:
+            'خامة كهرمان خشب لؤلؤ خشب الورد فيروز يسر material amber wood pearl '
+            'rosewood turquoise yusr beads',
       ),
     ]),
     SettingsGroup(Icons.vibration, (l) => l.settingsSectionTasbih, [

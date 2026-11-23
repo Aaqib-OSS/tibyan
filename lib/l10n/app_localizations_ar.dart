@@ -4297,6 +4297,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tasbihDragHint => 'اسحب الحبة لأسفل، أو اضغط';
 
   @override
+  String get tasbihDragHintReal => 'اضغط أو اسحب للعدّ';
+
+  @override
   String get tasbihScreenHint => 'اضغط في أي مكان للعدّ، واسحب لأسفل للخروج';
 
   @override
@@ -4352,6 +4355,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tasbihMaterialPearl => 'لؤلؤ';
+
+  @override
+  String get tasbihMaterialRosewood => 'خشب الورد';
+
+  @override
+  String get tasbihMaterialTurquoise => 'فيروز';
+
+  @override
+  String get tasbihMaterialYusr => 'يُسر';
 
   @override
   String get tasbihHaptics => 'اهتزاز خفيف مع كل عدّة';

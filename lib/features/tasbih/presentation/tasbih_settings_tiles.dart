@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/interface_style.dart';
 import '../../../l10n/app_localizations.dart';
 import '../tasbih_settings.dart';
+import 'styles/bead_look.dart' show BeadShader;
 
 String tasbihStyleName(AppLocalizations l, TasbihStyle s) => switch (s) {
   TasbihStyle.misbaha => l.tasbihStyleMisbaha,
@@ -16,6 +17,9 @@ String beadMaterialName(AppLocalizations l, BeadMaterial m) => switch (m) {
   BeadMaterial.amber => l.tasbihMaterialAmber,
   BeadMaterial.wood => l.tasbihMaterialWood,
   BeadMaterial.pearl => l.tasbihMaterialPearl,
+  BeadMaterial.rosewood => l.tasbihMaterialRosewood,
+  BeadMaterial.turquoise => l.tasbihMaterialTurquoise,
+  BeadMaterial.yusr => l.tasbihMaterialYusr,
 };
 
 /// «شكل المسبحة»: the four styles; in elderly mode the big button is
@@ -49,14 +53,26 @@ class TasbihStylePicker extends ConsumerWidget {
   }
 }
 
-/// «طريقة رسم الحبات»: suggested or true 3D.
+/// «طريقة رسم الحبات»: suggested or true 3D. A reader who never chose
+/// sees the one drawn for them marked (true 3D where shaders work).
 class TasbihRenderPicker extends ConsumerWidget {
   const TasbihRenderPicker({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
-    final render = ref.watch(tasbihSettingsProvider.select((s) => s.render));
+    final chosen = ref.watch(tasbihSettingsProvider.select((s) => s.render));
+    return ValueListenableBuilder<bool?>(
+      valueListenable: BeadShader.available,
+      builder: (context, works, _) => _group(
+        ref,
+        l,
+        effectiveMisbahaRender(chosen: chosen, shaders: works ?? true),
+      ),
+    );
+  }
+
+  Widget _group(WidgetRef ref, AppLocalizations l, MisbahaRender render) {
     return RadioGroup<MisbahaRender>(
       groupValue: render,
       onChanged: (v) {
@@ -100,6 +116,7 @@ class BeadMaterialPicker extends ConsumerWidget {
         padding: const EdgeInsets.only(top: 8),
         child: Wrap(
           spacing: 8,
+          runSpacing: 4,
           children: [
             for (final v in BeadMaterial.values)
               ChoiceChip(

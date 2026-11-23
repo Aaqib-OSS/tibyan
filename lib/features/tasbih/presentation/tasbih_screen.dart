@@ -62,6 +62,7 @@ class _TasbihScreenState extends ConsumerState<TasbihScreen>
       if (!mounted) return;
       unawaited(_absorb());
       _applyPlatform(ref.read(tasbihSettingsProvider));
+      ref.read(tasbihCounterProvider.notifier).preloadSounds();
       unawaited(ref.read(tasbihRepositoryProvider).prune());
     });
   }
@@ -137,6 +138,11 @@ class _TasbihScreenState extends ConsumerState<TasbihScreen>
           prev?.keepScreenOn != next.keepScreenOn) {
         _applyPlatform(next);
       }
+      if (prev?.material != next.material ||
+          prev?.sound != next.sound ||
+          prev?.style != next.style) {
+        ref.read(tasbihCounterProvider.notifier).preloadSounds();
+      }
     });
     final s = ref.watch(tasbihSettingsProvider);
     final l = AppLocalizations.of(context);
@@ -210,6 +216,7 @@ class _Layout extends ConsumerWidget {
         material: s.material,
         render: s.render,
         onCount: onCount,
+        onLap: ref.read(tasbihCounterProvider.notifier).lapFeedback,
         count: c.count,
         roundSize: c.target,
         animate: !reduce,
@@ -275,9 +282,18 @@ class _Layout extends ConsumerWidget {
       if (s.style == TasbihStyle.misbaha)
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
-          child: Text(
-            l.tasbihDragHint,
-            style: TextStyle(color: context.look.sub, fontSize: 13),
+          child: ValueListenableBuilder<bool?>(
+            valueListenable: BeadShader.available,
+            builder: (context, works, _) => Text(
+              effectiveMisbahaRender(
+                        chosen: s.render,
+                        shaders: works ?? true,
+                      ) ==
+                      MisbahaRender.real
+                  ? l.tasbihDragHintReal
+                  : l.tasbihDragHint,
+              style: TextStyle(color: context.look.sub, fontSize: 13),
+            ),
           ),
         ),
       const TargetBar(),

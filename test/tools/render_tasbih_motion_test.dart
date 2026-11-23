@@ -22,6 +22,13 @@ void main() {
     (tester) async {
       tester.view.physicalSize = const Size(360, 640) * 2;
       tester.view.devicePixelRatio = 2;
+      // The bead shader, loaded for real (the true 3D look needs it).
+      await tester.runAsync(() async {
+        BeadShader.ensureLoaded();
+        for (var i = 0; i < 100 && BeadShader.available.value == null; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 20));
+        }
+      });
       for (final render in MisbahaRender.values) {
         final dir = Directory('$outPath/${render.name}')
           ..createSync(recursive: true);
@@ -100,12 +107,13 @@ void main() {
         }
         await g.up();
         await shoot(14);
-        // Quick taps across the round's end: the terminal bead passes.
+        // Quick taps across the round's end: the terminal bead passes (in
+        // true 3D, the joint crosses with the imam).
         for (var i = 0; i < 6; i++) {
           await tester.tap(view);
           await shoot(4);
         }
-        await shoot(18);
+        await shoot(40);
       }
     },
     skip: !run,

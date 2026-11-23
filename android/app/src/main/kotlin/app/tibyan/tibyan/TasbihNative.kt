@@ -9,7 +9,7 @@ import io.flutter.plugin.common.MethodChannel
 import java.io.File
 
 /**
- * «المسبحة»'s channel (`app.tibyan/tasbih`): the bead's click through a
+ * «المسبحة»'s channel (`app.tibyan/tasbih`): the bead's sounds through a
  * SoundPool (no delay, mixes with other sound) and counting with the
  * volume buttons while the app is open.
  */
@@ -21,15 +21,28 @@ class TasbihNative(private val context: Context, messenger: BinaryMessenger) {
     private set
 
   private var pool: SoundPool? = null
-  private var clickId = 0
-  private var loaded = false
+
+  /** Each sound's id in the pool, by its asset; and the ids loaded. */
+  private val ids = HashMap<String, Int>()
+  private val ready = HashSet<Int>()
+
+  /** A sound asked for before it had loaded: played as soon as it has. */
+  private var waiting = 0
 
   init {
     channel.setMethodCallHandler { call, result ->
       try {
         when (call.method) {
           "click" -> {
-            click()
+            play(CLICK)
+            result.success(null)
+          }
+          "play" -> {
+            (call.arguments as? String)?.let { play(it) }
+            result.success(null)
+          }
+          "preload" -> {
+            (call.arguments as? List<*>)?.forEach { (it as? String)?.let { a -> load(a) } }
             result.success(null)
           }
           "setVolumeKeys" -> {
@@ -51,45 +64,65 @@ class TasbihNative(private val context: Context, messenger: BinaryMessenger) {
     } catch (e: Throwable) {}
   }
 
-  private fun click() {
+  /** Plays a bundled sound; one not loaded yet plays once it has. */
+  private fun play(asset: String) {
     try {
-      val p = pool ?: load() ?: return
-      if (loaded) p.play(clickId, 1f, 1f, 1, 0, 1f)
+      val id = load(asset) ?: return
+      if (id in ready) {
+        pool?.play(id, 1f, 1f, 1, 0, 1f)
+      } else {
+        waiting = id
+      }
     } catch (e: Throwable) {}
   }
 
-  private fun load(): SoundPool? =
+  private fun pool(): SoundPool {
+    pool?.let { return it }
+    val p = SoundPool.Builder()
+        .setMaxStreams(4)
+        .setAudioAttributes(
+            AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build(),
+        )
+        .build()
+    p.setOnLoadCompleteListener { pool, id, status ->
       try {
-        // Flutter's assets may be compressed in the APK: copy the click out
-        // once, then load it from the file.
-        val file = File(context.cacheDir, "tasbih_click.wav")
-        if (!file.exists()) {
-          val key = FlutterInjector.instance().flutterLoader()
-              .getLookupKeyForAsset("assets/tasbih/click.wav")
-          context.assets.open(key).use { input ->
-            file.outputStream().use { input.copyTo(it) }
+        if (status == 0) {
+          ready.add(id)
+          if (waiting == id) {
+            waiting = 0
+            pool.play(id, 1f, 1f, 1, 0, 1f)
           }
         }
-        val p = SoundPool.Builder()
-            .setMaxStreams(3)
-            .setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .build(),
-            )
-            .build()
-        p.setOnLoadCompleteListener { pool, id, status ->
-          try {
-            if (status == 0) {
-              loaded = true
-              pool.play(id, 1f, 1f, 1, 0, 1f)
+      } catch (e: Throwable) {}
+    }
+    pool = p
+    return p
+  }
+
+  /** The sound's id in the pool, loading it on first use. */
+  private fun load(asset: String): Int? =
+      try {
+        ids[asset] ?: run {
+          // Only the misbaha's own bundled sounds.
+          if (!asset.startsWith("assets/tasbih/") || asset.contains("..")) return null
+          // Flutter's assets may be compressed in the APK: copy the sound
+          // out once, then load it from the file.
+          val name = if (asset == CLICK) "tasbih_click.wav"
+              else "tasbih_" + asset.substringAfterLast('/')
+          val file = File(context.cacheDir, name)
+          if (!file.exists()) {
+            val key = FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(asset)
+            context.assets.open(key).use { input ->
+              file.outputStream().use { input.copyTo(it) }
             }
-          } catch (e: Throwable) {}
+          }
+          val id = pool().load(file.path, 1)
+          ids[asset] = id
+          id
         }
-        clickId = p.load(file.path, 1)
-        pool = p
-        p
       } catch (e: Throwable) {
         null
       }
@@ -99,5 +132,11 @@ class TasbihNative(private val context: Context, messenger: BinaryMessenger) {
       pool?.release()
     } catch (e: Throwable) {}
     pool = null
+    ids.clear()
+    ready.clear()
+  }
+
+  private companion object {
+    const val CLICK = "assets/tasbih/click.wav"
   }
 }

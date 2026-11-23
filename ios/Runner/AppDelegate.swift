@@ -57,7 +57,7 @@ import WatchConnectivity
   }
 }
 
-/// «المسبحة»'s channel (`app.tibyan/tasbih`): the bundled click, and the
+/// «المسبحة»'s channel (`app.tibyan/tasbih`): the bundled bead sounds, and the
 /// volume buttons counting while the misbaha asks. iOS tells an app of a
 /// volume press only through the output volume changing, so the volume is
 /// set back each time through a hidden system volume view (which also keeps
@@ -65,8 +65,10 @@ import WatchConnectivity
 final class TasbihChannel: NSObject {
   private static var shared: TasbihChannel?
   private let channel: FlutterMethodChannel
-  private var players: [AVAudioPlayer] = []
+  /// A few players of each sound, by its asset, so quick counts overlap.
+  private var players: [String: [AVAudioPlayer]] = [:]
   private var next = 0
+  private static let clickAsset = "assets/tasbih/click.wav"
   private var observing = false
   private var resetting = false
   private var level: Float = 0.5
@@ -91,7 +93,13 @@ final class TasbihChannel: NSObject {
   private func handle(_ call: FlutterMethodCall, _ result: FlutterResult) {
     switch call.method {
     case "click":
-      click()
+      play(TasbihChannel.clickAsset)
+      result(nil)
+    case "play":
+      if let asset = call.arguments as? String { play(asset) }
+      result(nil)
+    case "preload":
+      for asset in (call.arguments as? [String]) ?? [] { _ = load(asset) }
       result(nil)
     case "setVolumeKeys":
       setVolumeKeys((call.arguments as? Bool) ?? false)
@@ -101,21 +109,29 @@ final class TasbihChannel: NSObject {
     }
   }
 
-  private func click() {
-    do {
-      if players.isEmpty {
-        let key = FlutterDartProject.lookupKey(forAsset: "assets/tasbih/click.wav")
-        guard let path = Bundle.main.path(forResource: key, ofType: nil) else { return }
-        let url = URL(fileURLWithPath: path)
-        players = (0..<3).compactMap { _ in try? AVAudioPlayer(contentsOf: url) }
-        players.forEach { $0.prepareToPlay() }
-      }
-      guard !players.isEmpty else { return }
-      let p = players[next % players.count]
-      next += 1
-      p.currentTime = 0
-      p.play()
-    } catch {}
+  /// The players of a bundled sound, made (and readied) on first use.
+  private func load(_ asset: String) -> [AVAudioPlayer] {
+    if let ready = players[asset] { return ready }
+    // Only the misbaha's own bundled sounds.
+    guard asset.hasPrefix("assets/tasbih/"), !asset.contains("..") else { return [] }
+    let key = FlutterDartProject.lookupKey(forAsset: asset)
+    guard let path = Bundle.main.path(forResource: key, ofType: nil) else { return [] }
+    let url = URL(fileURLWithPath: path)
+    let made = (0..<(asset == TasbihChannel.clickAsset ? 3 : 2)).compactMap { _ in
+      try? AVAudioPlayer(contentsOf: url)
+    }
+    made.forEach { $0.prepareToPlay() }
+    players[asset] = made
+    return made
+  }
+
+  private func play(_ asset: String) {
+    let ready = load(asset)
+    guard !ready.isEmpty else { return }
+    let p = ready[next % ready.count]
+    next += 1
+    p.currentTime = 0
+    p.play()
   }
 
   private var slider: UISlider? {
