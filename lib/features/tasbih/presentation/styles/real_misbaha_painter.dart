@@ -80,14 +80,24 @@ class RealMisbahaPainter extends CustomPainter {
 
     // The surface: a faint pool of tint under the loop.
     final (mid, midK, _) = cam.project(0, 0, .1);
-    canvas.drawRect(
-      Offset.zero & size,
-      Paint()
-        ..shader = ui.Gradient.radial(mid, midK * 1.9, [
-          surface.withValues(alpha: .07),
-          surface.withValues(alpha: 0),
-        ]),
+    // It fades out before the nearest edge, so no box shows.
+    final pool = math.min(
+      midK * 1.9,
+      math.min(
+        math.min(mid.dx, size.width - mid.dx),
+        math.min(mid.dy, size.height - mid.dy),
+      ),
     );
+    if (pool > 0) {
+      canvas.drawRect(
+        Offset.zero & size,
+        Paint()
+          ..shader = ui.Gradient.radial(mid, pool, [
+            surface.withValues(alpha: .07),
+            surface.withValues(alpha: 0),
+          ]),
+      );
+    }
 
     // Where everything is.
     final layout = motion.layout;
