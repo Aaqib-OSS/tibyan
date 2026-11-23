@@ -5690,6 +5690,12 @@ abstract class AppLocalizations {
   /// **'الورد والحفظ'**
   String get navGroupWird;
 
+  /// No description provided for @navGroupPrayer.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصلاة'**
+  String get navGroupPrayer;
+
   /// No description provided for @navCollapse.
   ///
   /// In ar, this message translates to:
