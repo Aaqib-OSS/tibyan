@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">تبيان</string>
+    <string name="app_name">تبيان Tibyan</string>
     <string name="shortcut_mushaf_short">تبيان Tibyan – القرآن الكريم</string>
     <string name="shortcut_mushaf_long">تبيان Tibyan – المصحف (القرآن الكريم)</string>
     <string name="khatma_widget_label">الختمة</string>
