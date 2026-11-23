@@ -8,6 +8,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/look_kit.dart';
 import '../../../core/ui/responsive.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/ui/app_toast.dart';
 import '../../../core/ui/confirm_delete_download.dart';
 import '../../mushaf/presentation/widgets/illuminated_frame.dart'
     show NumberFormatter;
@@ -17,8 +18,9 @@ import '../prayer_providers.dart';
 import '../services/prayer_native.dart';
 import '../services/prayer_runtime.dart';
 
-/// The muezzin's photo once downloaded; the first letter of the name
-/// until then (nothing is bundled).
+/// The muezzin's photo, always: the downloaded file when his recordings
+/// are on the device, otherwise fetched from the server and cached. The
+/// first letter of the name only while it loads or when offline.
 class MuezzinAvatar extends ConsumerWidget {
   const MuezzinAvatar({super.key, required this.muezzin, this.size = 44});
 
@@ -39,19 +41,21 @@ class MuezzinAvatar extends ConsumerWidget {
       child: ClipOval(
         child: ColoredBox(
           color: t.control.withValues(alpha: .15),
-          child: !adhan.isInstalled(muezzin.slug)
-              ? Center(child: letter)
-              : FutureBuilder<File>(
-                  future: adhan.fileOf(muezzin.slug, 'photo.jpg'),
-                  builder: (context, snap) => snap.data == null
-                      ? Center(child: letter)
-                      : Image.file(
-                          snap.data!,
-                          fit: BoxFit.cover,
-                          cacheWidth: (size * 3).round(),
-                          errorBuilder: (_, _, _) => Center(child: letter),
-                        ),
-                ),
+          child: ValueListenableBuilder<int>(
+            valueListenable: adhan.changes,
+            builder: (context, _, _) => FutureBuilder<File?>(
+              future: adhan.photoOf(muezzin.slug),
+              builder: (context, snap) => snap.data == null
+                  ? Center(child: letter)
+                  : Image.file(
+                      snap.data!,
+                      key: ValueKey('muezzin-photo-${muezzin.slug}'),
+                      fit: BoxFit.cover,
+                      cacheWidth: (size * 3).round(),
+                      errorBuilder: (_, _, _) => Center(child: letter),
+                    ),
+            ),
+          ),
         ),
       ),
     );
@@ -71,6 +75,10 @@ class AdhanLibraryScreen extends ConsumerStatefulWidget {
 class _AdhanLibraryScreenState extends ConsumerState<AdhanLibraryScreen> {
   String? _previewing;
 
+  /// The muezzin whose play was pressed before his recordings were on the
+  /// device: they are downloading, and play when they arrive.
+  String? _waiting;
+
   /// Read once: `ref` must not be used in [dispose] (the element is
   /// already unmounting then).
   late final PrayerNative _native = ref.read(prayerNativeProvider);
@@ -79,6 +87,39 @@ class _AdhanLibraryScreenState extends ConsumerState<AdhanLibraryScreen> {
   void initState() {
     super.initState();
     _native.playing.addListener(_onPlaying);
+    _adhan.changes.addListener(_onAdhanChange);
+  }
+
+  late final AdhanDownloads _adhan = ref.read(adhanDownloadsProvider);
+
+  void _onAdhanChange() {
+    final slug = _waiting;
+    if (slug == null || !mounted) return;
+    switch (_adhan.stateOf(slug).phase) {
+      case AdhanPhase.installed:
+        setState(() => _waiting = null);
+        unawaited(_play(muezzinOf(slug)));
+      case AdhanPhase.failed:
+        setState(() => _waiting = null);
+        _failed(muezzinOf(slug));
+      default:
+        break;
+    }
+  }
+
+  void _failed(Muezzin m) {
+    final l = AppLocalizations.of(context);
+    ScaffoldMessenger.maybeOf(context)
+      ?..hideCurrentSnackBar()
+      ..showSnackBar(
+        appToast(
+          content: Text(l.downloadFailedOne(m.name(l.localeName == 'ar'))),
+          action: SnackBarAction(
+            label: l.downloadRetry,
+            onPressed: () => _preview(m),
+          ),
+        ),
+      );
   }
 
   void _onPlaying() {
@@ -90,10 +131,14 @@ class _AdhanLibraryScreenState extends ConsumerState<AdhanLibraryScreen> {
   @override
   void dispose() {
     _native.playing.removeListener(_onPlaying);
+    _adhan.changes.removeListener(_onAdhanChange);
     if (_previewing != null) unawaited(_native.stop());
     super.dispose();
   }
 
+  /// Plays [m]'s full recording; one not on the device is downloaded
+  /// first (kept afterwards) and then plays. A second tap stops the
+  /// playback or cancels the download.
   Future<void> _preview(Muezzin m) async {
     final native = ref.read(prayerNativeProvider);
     if (_previewing == m.slug) {
@@ -101,16 +146,42 @@ class _AdhanLibraryScreenState extends ConsumerState<AdhanLibraryScreen> {
       await native.stop();
       return;
     }
-    final adhan = ref.read(adhanDownloadsProvider);
-    final src = adhan.isInstalled(m.slug)
-        ? (await adhan.fileOf(m.slug, 'full.m4a')).path
-        : '$adhanBaseUrl/${m.slug}/full.m4a';
+    if (_waiting == m.slug) {
+      setState(() => _waiting = null);
+      await _adhan.cancel(m.slug);
+      return;
+    }
+    if (_adhan.isInstalled(m.slug)) return _play(m);
+    final l = AppLocalizations.of(context);
+    setState(() => _waiting = m.slug);
+    final ok = await _adhan.download(
+      m.slug,
+      label: m.name(l.localeName == 'ar'),
+      quiet: true,
+    );
+    if (!mounted || _waiting != m.slug) return;
+    if (!ok) {
+      setState(() => _waiting = null);
+      _failed(m);
+    } else {
+      _onAdhanChange();
+    }
+  }
+
+  Future<void> _play(Muezzin m) async {
+    final native = ref.read(prayerNativeProvider);
+    final src = (await _adhan.fileOf(m.slug, 'full.m4a')).path;
     if (!mounted) return;
     final l = AppLocalizations.of(context);
+    if (_previewing != null) await native.stop();
+    if (!mounted) return;
     setState(() => _previewing = m.slug);
-    await native.play([
-      src,
-    ], title: l.adhanPreview(m.name(l.localeName == 'ar')));
+    // In the app only: a preview posts no notification.
+    await native.play(
+      [src],
+      title: l.adhanPreview(m.name(l.localeName == 'ar')),
+      preview: true,
+    );
   }
 
   @override
@@ -147,6 +218,7 @@ class _AdhanLibraryScreenState extends ConsumerState<AdhanLibraryScreen> {
                           key: ValueKey('adhan-row-${m.slug}'),
                           muezzin: m,
                           previewing: _previewing == m.slug,
+                          waiting: _waiting == m.slug,
                           onPreview: () => _preview(m),
                         ),
                     ],
@@ -168,11 +240,16 @@ class AdhanLibraryRow extends ConsumerWidget {
     super.key,
     required this.muezzin,
     this.previewing = false,
+    this.waiting = false,
     this.onPreview,
   });
 
   final Muezzin muezzin;
   final bool previewing;
+
+  /// Play was pressed before the recordings were on the device: the
+  /// button shows the download's progress and cancels it.
+  final bool waiting;
   final VoidCallback? onPreview;
 
   @override
@@ -244,9 +321,30 @@ class AdhanLibraryRow extends ConsumerWidget {
         child: Row(
           children: [
             IconButton(
-              tooltip: l.adhanPreview(name),
+              key: ValueKey('adhan-play-${muezzin.slug}'),
+              tooltip: waiting
+                  ? l.downloadCancelItem(name)
+                  : l.adhanPreview(name),
               onPressed: onPreview,
-              icon: Icon(previewing ? Icons.stop : Icons.play_arrow),
+              icon: waiting
+                  ? Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox.square(
+                          dimension: 28,
+                          child: CircularProgressIndicator(
+                            value:
+                                state.phase == AdhanPhase.downloading &&
+                                    state.progress > 0
+                                ? state.progress
+                                : null,
+                            strokeWidth: 2.5,
+                          ),
+                        ),
+                        const Icon(Icons.close, size: 16),
+                      ],
+                    )
+                  : Icon(previewing ? Icons.stop : Icons.play_arrow),
             ),
             MuezzinAvatar(muezzin: muezzin),
             const SizedBox(width: 10),

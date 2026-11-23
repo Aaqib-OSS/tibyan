@@ -13,6 +13,7 @@ import 'package:tibyan/features/prayer/presentation/prayer_settings_screen.dart'
 import 'package:tibyan/features/prayer/presentation/prayer_times_screen.dart';
 import 'package:tibyan/features/prayer/prayer_providers.dart';
 import 'package:tibyan/features/prayer/services/prayer_alarms.dart';
+import 'package:tibyan/features/prayer/services/prayer_native.dart';
 import 'package:tibyan/features/prayer/services/prayer_runtime.dart';
 import 'package:tibyan/l10n/app_localizations.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
@@ -49,6 +50,7 @@ void main() {
       downloads: downloads,
       supportDir: () async => tmp,
       apple: false,
+      fetchBytes: (_) async => [0xff, 0xd8, 0xff, 0xd9],
       fetchText: (_) async =>
           '${'a' * 64}  minshawi/full.m4a\n'
           '${'b' * 64}  minshawi/short.m4a\n'
@@ -169,6 +171,70 @@ void main() {
       'adhan-minshawi-short.m4a',
       'adhan-minshawi-photo.jpg',
     ]);
+  });
+
+  testWidgets('the library shows a muezzin\'s photo before his download', (
+    tester,
+  ) async {
+    await setUpScreen(tester, const AdhanLibraryScreen());
+    final row = find.byKey(const ValueKey('adhan-row-minshawi'));
+    await tester.scrollUntilVisible(row, 200);
+    await settle(tester);
+    expect(
+      find.descendant(
+        of: row,
+        matching: find.byKey(const ValueKey('muezzin-photo-minshawi')),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('play on a muezzin not downloaded downloads, then plays', (
+    tester,
+  ) async {
+    final native = _FakeNative();
+    final (container, fake) = await setUpScreen(
+      tester,
+      const AdhanLibraryScreen(),
+      overrides: [prayerNativeProvider.overrideWithValue(native)],
+    );
+    final play = find.byKey(const ValueKey('adhan-play-minshawi'));
+    await tester.scrollUntilVisible(play, 200);
+    await tester.tap(play);
+    await settle(tester);
+    expect(fake.enqueued.map((t) => t.taskId), [
+      'adhan-minshawi-full.m4a',
+      'adhan-minshawi-short.m4a',
+      'adhan-minshawi-photo.jpg',
+    ]);
+    expect(native.played, isEmpty);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    // A preview posts no notification: its tasks are in the quiet group,
+    // which has none configured, and are not user-initiated jobs.
+    expect(fake.enqueued.map((t) => t.group).toSet(), {
+      AdhanDownloads.kQuietGroup,
+    });
+    expect(fake.enqueued.every((t) => t.transferHints?.isEmpty ?? true), isTrue);
+    expect(
+      fake.groupNotificationIds.containsKey(AdhanDownloads.kQuietGroup),
+      isFalse,
+    );
+    // The download finishes: every file is in place.
+    final adhan = container.read(adhanDownloadsProvider);
+    await tester.runAsync(() async {
+      for (final f in adhan.filesOf('minshawi')) {
+        final file = await adhan.fileOf('minshawi', f);
+        await file.parent.create(recursive: true);
+        await file.writeAsBytes([1]);
+      }
+      await adhan.refresh();
+    });
+    await settle(tester);
+    expect(native.played, hasLength(1));
+    expect(native.played.single.single, endsWith('full.m4a'));
+    // Played in the app, not through the notifying adhan service.
+    expect(native.previews.single, isTrue);
+    expect(adhan.isInstalled('minshawi'), isTrue);
   });
 
   for (final p in obligatoryPrayers) {
@@ -335,4 +401,26 @@ class _FakeAlarms implements PrayerAlarms {
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _FakeNative extends PrayerNative {
+  final played = <List<String>>[];
+  final previews = <bool>[];
+
+  @override
+  Future<void> play(
+    List<String> files, {
+    required String title,
+    String body = '',
+    String payload = '',
+    bool preview = false,
+    double volume = 0.7,
+  }) async {
+    played.add(files);
+    previews.add(preview);
+    playing.value = true;
+  }
+
+  @override
+  Future<void> stop() async => playing.value = false;
 }

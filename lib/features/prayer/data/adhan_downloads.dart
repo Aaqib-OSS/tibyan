@@ -52,15 +52,22 @@ class AdhanDownloads implements DownloadHandler {
     required BackgroundDownloads downloads,
     Future<Directory> Function()? supportDir,
     Future<String> Function(Uri url)? fetchText,
+    Future<List<int>> Function(Uri url)? fetchBytes,
     bool? apple,
   }) : _downloads = downloads,
        _supportDir = supportDir ?? getApplicationSupportDirectory,
        _fetchText = fetchText ?? _httpText,
+       _fetchBytes = fetchBytes ?? _httpBytes,
        apple = apple ?? isApplePlatform {
     downloads.register(this);
+    downloads.register(_QuietAdhan(this));
   }
 
   static const kGroup = 'adhan-download';
+
+  /// The group of the library's play-before-download: no notification
+  /// while it runs or when it ends (the reader is watching the button).
+  static const kQuietGroup = 'adhan-preview';
   static const folder = 'adhan-downloads';
 
   /// The notification title, in the interface language.
@@ -69,6 +76,7 @@ class AdhanDownloads implements DownloadHandler {
   final BackgroundDownloads _downloads;
   final Future<Directory> Function() _supportDir;
   final Future<String> Function(Uri url) _fetchText;
+  final Future<List<int>> Function(Uri url) _fetchBytes;
   final bool apple;
 
   /// Bumped when a recording is installed or deleted.
@@ -85,6 +93,48 @@ class AdhanDownloads implements DownloadHandler {
     final r = await http.get(url).timeout(const Duration(seconds: 20));
     if (r.statusCode != 200) throw HttpException('${r.statusCode}', uri: url);
     return utf8.decode(r.bodyBytes);
+  }
+
+  static Future<List<int>> _httpBytes(Uri url) async {
+    final r = await http.get(url).timeout(const Duration(seconds: 20));
+    if (r.statusCode != 200) throw HttpException('${r.statusCode}', uri: url);
+    return r.bodyBytes;
+  }
+
+  final _localPhotos = <String, Future<File?>>{};
+  final _cachedPhotos = <String, Future<File?>>{};
+
+  /// The muezzin's photo, shown whether or not his recordings are on the
+  /// device: the downloaded one when installed, otherwise a copy fetched
+  /// once from the server and kept in a cache folder. Null while offline
+  /// (asked again on the next build). The same future is returned for the
+  /// same state, so a rebuild does not flash the placeholder.
+  Future<File?> photoOf(String slug) {
+    if (isInstalled(slug)) {
+      return _localPhotos[slug] ??= fileOf(slug, 'photo.jpg');
+    }
+    _localPhotos.removeWhere((k, _) => k == slug);
+    return _cachedPhotos[slug] ??= _cachedPhoto(slug);
+  }
+
+  Future<File?> _cachedPhoto(String slug) async {
+    try {
+      final file = File(
+        p.join((await _supportDir()).path, 'adhan-photos', '$slug.jpg'),
+      );
+      if (await file.exists() && await file.length() > 0) return file;
+      final bytes = await _fetchBytes(
+        Uri.parse('$adhanBaseUrl/${adhanFolderOf(slug)}/photo.jpg'),
+      );
+      await file.parent.create(recursive: true);
+      final tmp = File('${file.path}.part');
+      await tmp.writeAsBytes(bytes, flush: true);
+      await tmp.rename(file.path);
+      return file;
+    } catch (_) {
+      _cachedPhotos.removeWhere((k, _) => k == slug);
+      return null;
+    }
   }
 
   @override
@@ -149,8 +199,12 @@ class AdhanDownloads implements DownloadHandler {
 
   bool isInstalled(String slug) => _installed.containsKey(slug);
 
-  Iterable<TaskRecord> _records(String slug) => _downloads.tasks.value.values
-      .where((r) => r.group == kGroup && decode(r.task)?.slug == slug);
+  Iterable<TaskRecord> _records(String slug) =>
+      _downloads.tasks.value.values.where(
+        (r) =>
+            (r.group == kGroup || r.group == kQuietGroup) &&
+            decode(r.task)?.slug == slug,
+      );
 
   AdhanState stateOf(String slug) {
     final bytes = _installed[slug];
@@ -187,7 +241,13 @@ class AdhanDownloads implements DownloadHandler {
 
   /// Queues every missing file of [slug]. False when the checksums could
   /// not be read (offline).
-  Future<bool> download(String slug, {String? label}) async {
+  ///
+  /// [quiet]: the library's play button, which posts no notification.
+  Future<bool> download(
+    String slug, {
+    String? label,
+    bool quiet = false,
+  }) async {
     failed.remove(slug);
     final Map<String, String> sums;
     try {
@@ -217,13 +277,13 @@ class AdhanDownloads implements DownloadHandler {
           filename: '$slug-$f',
           directory: folder,
           baseDirectory: BaseDirectory.applicationSupport,
-          group: kGroup,
+          group: quiet ? kQuietGroup : kGroup,
           updates: Updates.statusAndProgress,
           allowPause: true,
           retries: 3,
           displayName: label ?? slug,
           metaData: jsonEncode({'s': slug, 'f': f, 'h': hash}),
-          transferHints: {TransferHint.userInitiated},
+          transferHints: quiet ? const {} : {TransferHint.userInitiated},
         ),
       );
     }
@@ -316,6 +376,27 @@ class AdhanDownloads implements DownloadHandler {
       _placing.remove(task.taskId);
     }
   }
+}
+
+/// The quiet group's tasks, handled as every adhan download but with no
+/// notification.
+class _QuietAdhan implements DownloadHandler {
+  _QuietAdhan(this._adhan);
+
+  final AdhanDownloads _adhan;
+
+  @override
+  String get group => AdhanDownloads.kQuietGroup;
+
+  @override
+  get notifications => null;
+
+  @override
+  Future<void> onUpdate(TaskUpdate update) => _adhan.onUpdate(update);
+
+  @override
+  Future<void> onFinishedWhileAway(DownloadTask task) =>
+      _adhan.onFinishedWhileAway(task);
 }
 
 /// The app's one [AdhanDownloads].

@@ -35,6 +35,43 @@ class PrayerNative(
 ) {
     val channel = MethodChannel(messenger, "app.tibyan/prayer")
     private var pendingLocate: MethodChannel.Result? = null
+    private var inApp: android.media.MediaPlayer? = null
+
+    /** Plays [files] one after the other in the app's own process. */
+    private fun playInApp(files: List<String>, volume: Double, index: Int = 0) {
+        stopInApp(notify = false)
+        if (index >= files.size) {
+            channel.invokeMethod("playing", false)
+            return
+        }
+        try {
+            val v = volume.toFloat().coerceIn(0f, 1f)
+            inApp = android.media.MediaPlayer().apply {
+                setAudioAttributes(
+                    android.media.AudioAttributes.Builder()
+                        .setUsage(android.media.AudioAttributes.USAGE_MEDIA)
+                        .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SPEECH)
+                        .build(),
+                )
+                setDataSource(files[index])
+                setVolume(v, v)
+                setOnCompletionListener { playInApp(files, volume, index + 1) }
+                setOnErrorListener { _, _, _ -> stopInApp(); true }
+                prepare()
+                start()
+            }
+        } catch (_: Exception) {
+            stopInApp()
+        }
+    }
+
+    private fun stopInApp(notify: Boolean = true) {
+        val p = inApp ?: return
+        inApp = null
+        try { p.stop() } catch (_: Exception) {}
+        p.release()
+        if (notify) channel.invokeMethod("playing", false)
+    }
 
     init {
         channel.setMethodCallHandler { call, result ->
@@ -43,6 +80,15 @@ class PrayerNative(
                 "locate" -> locate(result)
                 "play" -> {
                     val files = call.argument<List<String>>("files") ?: emptyList()
+                    if (call.argument<Boolean>("preview") == true) {
+                        // The library's preview: in the app only, no
+                        // service and so no notification.
+                        AdhanService.stop(ctx)
+                        playInApp(files, call.argument<Double>("volume") ?: AlarmVolume.DEFAULT)
+                        result.success(null)
+                        return@setMethodCallHandler
+                    }
+                    stopInApp(notify = false)
                     AdhanService.start(
                         ctx,
                         files,
@@ -58,6 +104,7 @@ class PrayerNative(
                     result.success(null)
                 }
                 "stop" -> {
+                    stopInApp(notify = false)
                     AdhanService.stop(ctx)
                     result.success(null)
                 }
