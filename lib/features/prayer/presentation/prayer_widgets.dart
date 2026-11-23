@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../mushaf/presentation/widgets/illuminated_frame.dart'
     show NumberFormatter;
+import '../data/adhan_catalog.dart';
 import '../domain/prayer_calc.dart';
 import '../domain/prayer_settings.dart';
 
@@ -67,3 +68,18 @@ IconData soundIcon(AlertSound s) => switch (s) {
   AlertSound.tone => Icons.music_note_outlined,
   AlertSound.adhan => Icons.mosque_outlined,
 };
+
+/// A prayer row's summary: «حسب العام», or its own setup
+/// («المنشاوي · حتى «حي على الصلاة»», «النغمة الهادئة»).
+String prayerAdhanSummary(AppLocalizations l, PrayerAdhan? c) {
+  if (c == null) return l.prayerGeneralShort;
+  if (c.sound != AlertSound.adhan) return soundName(l, c.sound);
+  final digits = NumberFormatter(Locale(l.localeName));
+  final parts = [
+    if (c.muezzin case final m?) muezzinOf(m).name(l.localeName == 'ar'),
+    if (c.length case final len?)
+      len == AdhanLength.full ? l.adhanFull : l.adhanShort,
+    if (c.volume case final v?) '${digits((v * 100).round())}٪',
+  ];
+  return parts.isEmpty ? soundName(l, AlertSound.adhan) : parts.join(' · ');
+}

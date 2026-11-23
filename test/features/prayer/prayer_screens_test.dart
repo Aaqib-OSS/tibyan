@@ -82,6 +82,8 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('prayer-sound-asr')));
     await settle(tester);
+    await tester.tap(find.byKey(const ValueKey('prayer-mode-custom')));
+    await settle(tester);
     await tester.tap(find.byKey(const ValueKey('prayer-sound-choice-silent')));
     await settle(tester);
     await tester.tap(find.byKey(const ValueKey('prayer-reminder-10')));
@@ -127,6 +129,10 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('prayer-shuruq')));
     await settle(tester);
     expect(container.read(prayerSettingsProvider).shuruqAlert, isTrue);
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('prayer-length-short')),
+      -200,
+    );
     expect(find.byKey(const ValueKey('prayer-volume')), findsOneWidget);
     await tester.drag(
       find.byKey(const ValueKey('prayer-volume')),
@@ -175,5 +181,114 @@ void main() {
   test('each prayer has its own sky, all share the mosque shape', () {
     final skies = {for (final p in obligatoryPrayers) AdhanScene.of(p).sky1};
     expect(skies, hasLength(5));
+  });
+
+  testWidgets('each prayer\'s adhan: summary rows and its own setup', (
+    tester,
+  ) async {
+    final (container, fake) = await setUpScreen(
+      tester,
+      const PrayerSettingsScreen(),
+    );
+    final row = find.byKey(const ValueKey('prayer-adhan-row-maghrib'));
+    await tester.scrollUntilVisible(row, 200);
+    expect(
+      find.descendant(of: row, matching: find.text('حسب العام')),
+      findsOneWidget,
+    );
+    expect(tester.getSize(row).height, greaterThanOrEqualTo(48));
+    await tester.tap(row);
+    await settle(tester);
+    await tester.tap(find.byKey(const ValueKey('prayer-mode-custom')));
+    await settle(tester);
+    await tester.tap(find.byKey(const ValueKey('prayer-own-muezzin')));
+    await settle(tester);
+    await tester.tap(find.text('محمد صديق المنشاوي').last);
+    await settle(tester);
+    await tester.tap(find.byKey(const ValueKey('prayer-own-length-short')));
+    await settle(tester);
+    final own = container
+        .read(prayerSettingsProvider)
+        .customOf(PrayerKind.maghrib);
+    expect(own?.muezzin, 'minshawi');
+    expect(own?.length, AdhanLength.short);
+    // Not downloaded: offered here, through the download manager.
+    await tester.tap(find.byKey(const ValueKey('prayer-own-download')));
+    await settle(tester);
+    expect(fake.enqueued.map((t) => t.url).join(), contains('minshawi'));
+    expect(find.byKey(const ValueKey('prayer-own-try')), findsOneWidget);
+    // Back to the general settings.
+    await tester.tap(find.byKey(const ValueKey('prayer-mode-general')));
+    await settle(tester);
+    expect(
+      container.read(prayerSettingsProvider).customOf(PrayerKind.maghrib),
+      isNull,
+    );
+  });
+
+  testWidgets('the per-prayer sheet fits at 200% text', (tester) async {
+    await setUpScreen(tester, const PrayerSettingsScreen(), textScale: 2);
+    final row = find.byKey(const ValueKey('prayer-adhan-row-fajr'));
+    await tester.scrollUntilVisible(row, 200);
+    await tester.ensureVisible(row);
+    await settle(tester);
+    await tester.tap(row);
+    await settle(tester);
+    await tester.tap(find.byKey(const ValueKey('prayer-mode-custom')));
+    await settle(tester);
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.getSize(find.byKey(const ValueKey('prayer-mode-custom'))).height,
+      greaterThanOrEqualTo(48),
+    );
+  });
+
+  testWidgets('the times rows show each prayer\'s adhan summary', (
+    tester,
+  ) async {
+    final (container, _) = await setUpScreen(tester, const PrayerTimesScreen());
+    Finder summary(String p) => find.byKey(ValueKey('prayer-summary-$p'));
+    expect(tester.widget<Text>(summary('fajr')).data, 'حسب العام');
+    expect(summary('shuruq'), findsNothing);
+    await container
+        .read(prayerSettingsProvider.notifier)
+        .setCustom(
+          PrayerKind.maghrib,
+          const PrayerAdhan(muezzin: 'minshawi', length: AdhanLength.short),
+        );
+    await container
+        .read(prayerSettingsProvider.notifier)
+        .setSound(PrayerKind.isha, AlertSound.tone);
+    await settle(tester);
+    expect(
+      tester.widget<Text>(summary('maghrib')).data,
+      'محمد صديق المنشاوي · حتى «حي على الصلاة»',
+    );
+    expect(tester.widget<Text>(summary('isha')).data, 'نغمة هادئة');
+    expect(
+      find.bySemanticsLabel(RegExp('المغرب .*محمد صديق المنشاوي')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('the summary fits at 200% text', (tester) async {
+    final (container, _) = await setUpScreen(
+      tester,
+      const PrayerTimesScreen(),
+      textScale: 2,
+    );
+    await container
+        .read(prayerSettingsProvider.notifier)
+        .setCustom(
+          PrayerKind.fajr,
+          const PrayerAdhan(
+            muezzin: 'abdulbasit',
+            length: AdhanLength.short,
+            volume: 0.5,
+          ),
+        );
+    await settle(tester);
+    expect(tester.takeException(), isNull);
+    expect(find.byKey(const ValueKey('prayer-summary-fajr')), findsOneWidget);
   });
 }

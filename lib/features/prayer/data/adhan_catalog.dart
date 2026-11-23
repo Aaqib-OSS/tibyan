@@ -61,6 +61,18 @@ List<String> duaFilesFor({required bool apple}) => [
   if (apple) 'dua_shaarawy.caf',
 ];
 
+/// «الصلاة على النبي» (Sheikh al-Minshawi), downloaded when the reader
+/// turns its reminder on. Kept in the server's `extras/` folder beside
+/// the dua; a download of its own.
+const salawatSlug = 'salawat';
+List<String> salawatFilesFor({required bool apple}) => [
+  'salawat_minshawi.m4a',
+  if (apple) 'salawat_minshawi.caf',
+];
+
+/// The server (and device) folder of a download.
+String adhanFolderOf(String slug) => slug == salawatSlug ? duaSlug : slug;
+
 /// Parses a `SHA256SUMS` file: `<hex>  <path>` per line.
 Map<String, String> parseSums(String text) {
   final out = <String, String>{};

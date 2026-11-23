@@ -36,6 +36,7 @@ class AdhanService : Service() {
     private var index = 0
     private var screenOff: BroadcastReceiver? = null
     private var preview = false
+    private var quiet = false
     private var stopLabel = ""
     private var volume = AlarmVolume.DEFAULT
     private val alarmVolume by lazy {
@@ -95,6 +96,7 @@ class AdhanService : Service() {
         val body = intent?.getStringExtra("body") ?: alert?.optString("body") ?: ""
         val payload = intent?.getStringExtra("payload") ?: alert?.optString("payload") ?: ""
         preview = intent?.getBooleanExtra("preview", false) ?: false
+        quiet = alert?.optBoolean("quiet", false) ?: false
         volume = if (intent?.hasExtra("volume") == true) {
             intent.getDoubleExtra("volume", AlarmVolume.DEFAULT)
         } else {
@@ -221,7 +223,7 @@ class AdhanService : Service() {
         }
         // The full-screen adhan build only: the app's own (Flutter)
         // full-screen adhan, shown over the lock screen.
-        if (fullScreenAllowed(nm)) {
+        if (!quiet && fullScreenAllowed(nm)) {
             val lock = Intent(this, MainActivity::class.java)
                 .setAction(Intent.ACTION_VIEW)
                 .putExtra(MainActivity.EXTRA_LOCK_SCREEN, true)
@@ -250,6 +252,9 @@ class AdhanService : Service() {
                     stop,
                 ).build(),
             )
+            .apply {
+                if (!preview) AdhanGate.prayedAction(this@AdhanService, payload, 6)?.let { addAction(it) }
+            }
             .build()
     }
 

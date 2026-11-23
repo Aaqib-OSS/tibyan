@@ -210,4 +210,57 @@ void main() {
     await a.delete('refaat');
     expect(await alarms.adhanFiles(const PrayerSettings()), isEmpty);
   });
+
+  test('each prayer gets its own files, with the fallback chain', () async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    final a = make();
+    Future<Directory> install(String slug) async {
+      final dir = await a.dirOf(slug);
+      await dir.create(recursive: true);
+      for (final f in adhanFilesFor(apple: false)) {
+        await File(p.join(dir.path, f)).writeAsString('x');
+      }
+      return dir;
+    }
+
+    final refaat = await install('refaat');
+    final minshawi = await install('minshawi');
+    await a.refresh();
+    final alarms = PrayerAlarms(
+      plugin: () async => null,
+      native: PrayerNative(),
+      adhan: a,
+    );
+    const s = PrayerSettings(
+      muezzin: 'refaat',
+      custom: {
+        PrayerKind.fajr: PrayerAdhan(
+          muezzin: 'minshawi',
+          length: AdhanLength.short,
+          volume: 0.3,
+        ),
+        PrayerKind.isha: PrayerAdhan(muezzin: 'ali_mahmoud'),
+      },
+    );
+    expect(await alarms.adhanFiles(s, prayer: PrayerKind.fajr), [
+      p.join(minshawi.path, 'short.m4a'),
+    ]);
+    expect(s.forPrayer(PrayerKind.fajr).adhanVolume, 0.3);
+    // Others follow the general settings.
+    expect(await alarms.adhanFiles(s, prayer: PrayerKind.dhuhr), [
+      p.join(refaat.path, 'full.m4a'),
+    ]);
+    expect(s.forPrayer(PrayerKind.dhuhr).adhanVolume, 0.7);
+    // Its own muezzin not downloaded: the general one.
+    expect(alarms.slugFor(s, PrayerKind.isha), 'refaat');
+    // The general one gone too: the default, then nothing (the tone).
+    await a.delete('refaat');
+    const s2 = PrayerSettings(
+      muezzin: 'minshawi',
+      custom: {PrayerKind.isha: PrayerAdhan(muezzin: 'ali_mahmoud')},
+    );
+    expect(alarms.slugFor(s2, PrayerKind.isha), 'minshawi');
+    await a.delete('minshawi');
+    expect(await alarms.adhanFiles(s2, prayer: PrayerKind.isha), isEmpty);
+  });
 }

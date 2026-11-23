@@ -2283,5 +2283,175 @@
   "searchModeRoot": "By root",
   "searchRootHint": "Type a root, such as رحم or ر ح م",
   "searchRootFound": "Root «{root}»",
-  "searchRootNone": "No root with these letters"
+  "searchRootNone": "No root with these letters",
+  "trackerTitle": "My prayers",
+  "trackerOpen": "My prayers: your prayer log",
+  "prayedAction": "I prayed",
+  "prayedOnTime": "On time",
+  "prayedLate": "Late",
+  "prayedJamaah": "In congregation",
+  "prayedClear": "Clear",
+  "prayedAsk": "How did you pray {prayer}?",
+  "@prayedAsk": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "trackerNotMarked": "Not marked",
+  "trackerPrevDay": "Previous day",
+  "trackerNextDay": "Next day",
+  "qadaTitle": "Qada",
+  "qadaNote": "Your own count: add what you missed, and record what you have made up.",
+  "qadaAdd": "Add a missed {prayer}",
+  "@qadaAdd": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "qadaSettle": "Made up a {prayer}",
+  "@qadaSettle": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "weekTitle": "The last seven days",
+  "weekSummary": "You marked {n} of {total} prayers",
+  "@weekSummary": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "weekBreakdown": "On time {onTime} · Late {late} · In congregation {jamaah}",
+  "@weekBreakdown": {
+    "placeholders": {
+      "onTime": {
+        "type": "String"
+      },
+      "late": {
+        "type": "String"
+      },
+      "jamaah": {
+        "type": "String"
+      }
+    }
+  },
+  "weekGentle": "Every prayer you mark counts, and any day is a good day to start again.",
+  "adhkarTitle": "Adhkar",
+  "adhkarMorning": "Morning",
+  "adhkarEvening": "Evening",
+  "adhkarReset": "Reset the count",
+  "adhkarSettingsTitle": "Adhkar settings",
+  "adhkarProgress": "{done} of {total} done",
+  "@adhkarProgress": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "adhkarCount": "{n} / {count}",
+  "@adhkarCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "adhkarDetails": "Virtue and source",
+  "adhkarFadl": "Virtue",
+  "adhkarSource": "Source",
+  "adhkarChannel": "Adhkar reminders",
+  "adhkarMorningNotice": "Morning adhkar",
+  "adhkarEveningNotice": "Evening adhkar",
+  "adhkarMorningReminder": "Morning adhkar reminder",
+  "adhkarEveningReminder": "Evening adhkar reminder",
+  "adhkarReminderTime": "Time: {time}",
+  "@adhkarReminderTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "salawatTitle": "«Salawat on the Prophet» reminder",
+  "salawatNote": "Plays Sheikh Muhammad Siddiq al-Minshawi's recording at the intervals you choose",
+  "salawatAudioName": "Salawat on the Prophet — Muhammad Siddiq al-Minshawi",
+  "salawatNoticeTitle": "Salawat on the Prophet",
+  "salawatEvery": "Repeat every",
+  "salawatLess": "Less",
+  "salawatMore": "More",
+  "salawatMinutes": "Minutes",
+  "salawatHours": "Hours",
+  "salawatMinNote": "The shortest interval is {n} minutes",
+  "@salawatMinNote": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "salawatWindow": "Only during set hours",
+  "salawatFrom": "From: {time}",
+  "@salawatFrom": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "salawatTo": "To: {time}",
+  "@salawatTo": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "salawatRulesNote": "No sound during calls; it follows «When the phone is in use» in the adhan settings.",
+  "salawatUnsupported": "The «Salawat on the Prophet» reminder is available on Android, iPhone and Mac.",
+  "prayerPerPrayerTitle": "Each prayer's adhan",
+  "prayerPerPrayerNote": "Give a prayer its own muezzin and length if you like; otherwise it follows the general settings.",
+  "prayerFollowGeneral": "Follow the general settings",
+  "prayerGeneralShort": "General",
+  "prayerCustomSetup": "Custom",
+  "prayerSameAsGeneral": "Same as general",
+  "prayerOwnVolume": "Volume",
+  "prayerDownloadMuezzin": "Download {name}",
+  "@prayerDownloadMuezzin": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "prayerMuezzinFallback": "Until it is downloaded, the general muezzin plays, then the gentle tone.",
+  "prayerTryOwn": "Try",
+  "prayerAdhanSummaryLabel": "{prayer}: {summary}",
+  "@prayerAdhanSummaryLabel": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      },
+      "summary": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -545,7 +545,7 @@ void main() {
       expect(rows.map((r) => (r.look, r.material)).toSet(), {(null, null)});
       expect(await db.canAddFasil(), isFalse);
       final v = await db.customSelect('PRAGMA user_version').get();
-      expect(v.single.data.values.single, 10);
+      expect(v.single.data.values.single, db.schemaVersion);
     },
   );
 }

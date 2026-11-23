@@ -10266,6 +10266,372 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لا جذر بهذه الحروف'**
   String get searchRootNone;
+
+  /// No description provided for @trackerTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'صلواتي'**
+  String get trackerTitle;
+
+  /// No description provided for @trackerOpen.
+  ///
+  /// In ar, this message translates to:
+  /// **'صلواتي: سجل صلواتك'**
+  String get trackerOpen;
+
+  /// No description provided for @prayedAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'صليت'**
+  String get prayedAction;
+
+  /// No description provided for @prayedOnTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'في وقتها'**
+  String get prayedOnTime;
+
+  /// No description provided for @prayedLate.
+  ///
+  /// In ar, this message translates to:
+  /// **'متأخرة'**
+  String get prayedLate;
+
+  /// No description provided for @prayedJamaah.
+  ///
+  /// In ar, this message translates to:
+  /// **'في جماعة'**
+  String get prayedJamaah;
+
+  /// No description provided for @prayedClear.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء التسجيل'**
+  String get prayedClear;
+
+  /// No description provided for @prayedAsk.
+  ///
+  /// In ar, this message translates to:
+  /// **'كيف صليت {prayer}؟'**
+  String prayedAsk(String prayer);
+
+  /// No description provided for @trackerNotMarked.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تُسجَّل'**
+  String get trackerNotMarked;
+
+  /// No description provided for @trackerPrevDay.
+  ///
+  /// In ar, this message translates to:
+  /// **'اليوم السابق'**
+  String get trackerPrevDay;
+
+  /// No description provided for @trackerNextDay.
+  ///
+  /// In ar, this message translates to:
+  /// **'اليوم التالي'**
+  String get trackerNextDay;
+
+  /// No description provided for @qadaTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'القضاء'**
+  String get qadaTitle;
+
+  /// No description provided for @qadaNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدّاد خاص بك: أضف ما فاتك، وسجّل ما قضيته.'**
+  String get qadaNote;
+
+  /// No description provided for @qadaAdd.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف {prayer} فائتة'**
+  String qadaAdd(String prayer);
+
+  /// No description provided for @qadaSettle.
+  ///
+  /// In ar, this message translates to:
+  /// **'قضيت {prayer}'**
+  String qadaSettle(String prayer);
+
+  /// No description provided for @weekTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر سبعة أيام'**
+  String get weekTitle;
+
+  /// No description provided for @weekSummary.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجّلت {n} من {total} صلاة'**
+  String weekSummary(String n, String total);
+
+  /// No description provided for @weekBreakdown.
+  ///
+  /// In ar, this message translates to:
+  /// **'في وقتها {onTime} · متأخرة {late} · في جماعة {jamaah}'**
+  String weekBreakdown(String onTime, String late, String jamaah);
+
+  /// No description provided for @weekGentle.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل صلاة تسجّلها تُحسب، ويمكنك البدء من جديد في أي يوم.'**
+  String get weekGentle;
+
+  /// No description provided for @adhkarTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأذكار'**
+  String get adhkarTitle;
+
+  /// No description provided for @adhkarMorning.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصباح'**
+  String get adhkarMorning;
+
+  /// No description provided for @adhkarEvening.
+  ///
+  /// In ar, this message translates to:
+  /// **'المساء'**
+  String get adhkarEvening;
+
+  /// No description provided for @adhkarReset.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة العد'**
+  String get adhkarReset;
+
+  /// No description provided for @adhkarSettingsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعدادات الأذكار'**
+  String get adhkarSettingsTitle;
+
+  /// No description provided for @adhkarProgress.
+  ///
+  /// In ar, this message translates to:
+  /// **'أتممت {done} من {total}'**
+  String adhkarProgress(String done, String total);
+
+  /// No description provided for @adhkarCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{n} / {count}'**
+  String adhkarCount(String n, String count);
+
+  /// No description provided for @adhkarDetails.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفضل والمصدر'**
+  String get adhkarDetails;
+
+  /// No description provided for @adhkarFadl.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفضل'**
+  String get adhkarFadl;
+
+  /// No description provided for @adhkarSource.
+  ///
+  /// In ar, this message translates to:
+  /// **'المصدر'**
+  String get adhkarSource;
+
+  /// No description provided for @adhkarChannel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير الأذكار'**
+  String get adhkarChannel;
+
+  /// No description provided for @adhkarMorningNotice.
+  ///
+  /// In ar, this message translates to:
+  /// **'أذكار الصباح'**
+  String get adhkarMorningNotice;
+
+  /// No description provided for @adhkarEveningNotice.
+  ///
+  /// In ar, this message translates to:
+  /// **'أذكار المساء'**
+  String get adhkarEveningNotice;
+
+  /// No description provided for @adhkarMorningReminder.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير بأذكار الصباح'**
+  String get adhkarMorningReminder;
+
+  /// No description provided for @adhkarEveningReminder.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير بأذكار المساء'**
+  String get adhkarEveningReminder;
+
+  /// No description provided for @adhkarReminderTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوقت: {time}'**
+  String adhkarReminderTime(String time);
+
+  /// No description provided for @salawatTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير «الصلاة على النبي»'**
+  String get salawatTitle;
+
+  /// No description provided for @salawatNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'يشغّل تسجيل الشيخ محمد صديق المنشاوي على فترات تختارها'**
+  String get salawatNote;
+
+  /// No description provided for @salawatAudioName.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصلاة على النبي — محمد صديق المنشاوي'**
+  String get salawatAudioName;
+
+  /// No description provided for @salawatNoticeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصلاة على النبي'**
+  String get salawatNoticeTitle;
+
+  /// No description provided for @salawatEvery.
+  ///
+  /// In ar, this message translates to:
+  /// **'التكرار كل'**
+  String get salawatEvery;
+
+  /// No description provided for @salawatLess.
+  ///
+  /// In ar, this message translates to:
+  /// **'أقل'**
+  String get salawatLess;
+
+  /// No description provided for @salawatMore.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكثر'**
+  String get salawatMore;
+
+  /// No description provided for @salawatMinutes.
+  ///
+  /// In ar, this message translates to:
+  /// **'دقائق'**
+  String get salawatMinutes;
+
+  /// No description provided for @salawatHours.
+  ///
+  /// In ar, this message translates to:
+  /// **'ساعات'**
+  String get salawatHours;
+
+  /// No description provided for @salawatMinNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'أقل فترة {n} دقيقة'**
+  String salawatMinNote(String n);
+
+  /// No description provided for @salawatWindow.
+  ///
+  /// In ar, this message translates to:
+  /// **'خلال ساعات محددة فقط'**
+  String get salawatWindow;
+
+  /// No description provided for @salawatFrom.
+  ///
+  /// In ar, this message translates to:
+  /// **'من: {time}'**
+  String salawatFrom(String time);
+
+  /// No description provided for @salawatTo.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلى: {time}'**
+  String salawatTo(String time);
+
+  /// No description provided for @salawatRulesNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يُشغَّل الصوت أثناء المكالمات، ويتبع إعداد «عندما يكون الهاتف قيد الاستخدام» في إعدادات الأذان.'**
+  String get salawatRulesNote;
+
+  /// No description provided for @salawatUnsupported.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير «الصلاة على النبي» متاح على أندرويد وآيفون وماك.'**
+  String get salawatUnsupported;
+
+  /// No description provided for @prayerPerPrayerTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أذان كل صلاة'**
+  String get prayerPerPrayerTitle;
+
+  /// No description provided for @prayerPerPrayerNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'لكل صلاة مؤذنها وطول أذانها إن شئت؛ وإلا فحسب الإعدادات العامة.'**
+  String get prayerPerPrayerNote;
+
+  /// No description provided for @prayerFollowGeneral.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسب الإعدادات العامة'**
+  String get prayerFollowGeneral;
+
+  /// No description provided for @prayerGeneralShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسب العام'**
+  String get prayerGeneralShort;
+
+  /// No description provided for @prayerCustomSetup.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعداد خاص'**
+  String get prayerCustomSetup;
+
+  /// No description provided for @prayerSameAsGeneral.
+  ///
+  /// In ar, this message translates to:
+  /// **'نفس العام'**
+  String get prayerSameAsGeneral;
+
+  /// No description provided for @prayerOwnVolume.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستوى الصوت'**
+  String get prayerOwnVolume;
+
+  /// No description provided for @prayerDownloadMuezzin.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنزيل {name}'**
+  String prayerDownloadMuezzin(String name);
+
+  /// No description provided for @prayerMuezzinFallback.
+  ///
+  /// In ar, this message translates to:
+  /// **'حتى يكتمل تنزيله يُرفع الأذان بصوت المؤذن العام، ثم بالنغمة الهادئة.'**
+  String get prayerMuezzinFallback;
+
+  /// No description provided for @prayerTryOwn.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرّب'**
+  String get prayerTryOwn;
+
+  /// No description provided for @prayerAdhanSummaryLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'{prayer}: {summary}'**
+  String prayerAdhanSummaryLabel(String prayer, String summary);
 }
 
 class _AppLocalizationsDelegate

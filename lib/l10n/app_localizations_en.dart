@@ -6070,4 +6070,221 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchRootNone => 'No root with these letters';
+
+  @override
+  String get trackerTitle => 'My prayers';
+
+  @override
+  String get trackerOpen => 'My prayers: your prayer log';
+
+  @override
+  String get prayedAction => 'I prayed';
+
+  @override
+  String get prayedOnTime => 'On time';
+
+  @override
+  String get prayedLate => 'Late';
+
+  @override
+  String get prayedJamaah => 'In congregation';
+
+  @override
+  String get prayedClear => 'Clear';
+
+  @override
+  String prayedAsk(String prayer) {
+    return 'How did you pray $prayer?';
+  }
+
+  @override
+  String get trackerNotMarked => 'Not marked';
+
+  @override
+  String get trackerPrevDay => 'Previous day';
+
+  @override
+  String get trackerNextDay => 'Next day';
+
+  @override
+  String get qadaTitle => 'Qada';
+
+  @override
+  String get qadaNote =>
+      'Your own count: add what you missed, and record what you have made up.';
+
+  @override
+  String qadaAdd(String prayer) {
+    return 'Add a missed $prayer';
+  }
+
+  @override
+  String qadaSettle(String prayer) {
+    return 'Made up a $prayer';
+  }
+
+  @override
+  String get weekTitle => 'The last seven days';
+
+  @override
+  String weekSummary(String n, String total) {
+    return 'You marked $n of $total prayers';
+  }
+
+  @override
+  String weekBreakdown(String onTime, String late, String jamaah) {
+    return 'On time $onTime · Late $late · In congregation $jamaah';
+  }
+
+  @override
+  String get weekGentle =>
+      'Every prayer you mark counts, and any day is a good day to start again.';
+
+  @override
+  String get adhkarTitle => 'Adhkar';
+
+  @override
+  String get adhkarMorning => 'Morning';
+
+  @override
+  String get adhkarEvening => 'Evening';
+
+  @override
+  String get adhkarReset => 'Reset the count';
+
+  @override
+  String get adhkarSettingsTitle => 'Adhkar settings';
+
+  @override
+  String adhkarProgress(String done, String total) {
+    return '$done of $total done';
+  }
+
+  @override
+  String adhkarCount(String n, String count) {
+    return '$n / $count';
+  }
+
+  @override
+  String get adhkarDetails => 'Virtue and source';
+
+  @override
+  String get adhkarFadl => 'Virtue';
+
+  @override
+  String get adhkarSource => 'Source';
+
+  @override
+  String get adhkarChannel => 'Adhkar reminders';
+
+  @override
+  String get adhkarMorningNotice => 'Morning adhkar';
+
+  @override
+  String get adhkarEveningNotice => 'Evening adhkar';
+
+  @override
+  String get adhkarMorningReminder => 'Morning adhkar reminder';
+
+  @override
+  String get adhkarEveningReminder => 'Evening adhkar reminder';
+
+  @override
+  String adhkarReminderTime(String time) {
+    return 'Time: $time';
+  }
+
+  @override
+  String get salawatTitle => '«Salawat on the Prophet» reminder';
+
+  @override
+  String get salawatNote =>
+      'Plays Sheikh Muhammad Siddiq al-Minshawi\'s recording at the intervals you choose';
+
+  @override
+  String get salawatAudioName =>
+      'Salawat on the Prophet — Muhammad Siddiq al-Minshawi';
+
+  @override
+  String get salawatNoticeTitle => 'Salawat on the Prophet';
+
+  @override
+  String get salawatEvery => 'Repeat every';
+
+  @override
+  String get salawatLess => 'Less';
+
+  @override
+  String get salawatMore => 'More';
+
+  @override
+  String get salawatMinutes => 'Minutes';
+
+  @override
+  String get salawatHours => 'Hours';
+
+  @override
+  String salawatMinNote(String n) {
+    return 'The shortest interval is $n minutes';
+  }
+
+  @override
+  String get salawatWindow => 'Only during set hours';
+
+  @override
+  String salawatFrom(String time) {
+    return 'From: $time';
+  }
+
+  @override
+  String salawatTo(String time) {
+    return 'To: $time';
+  }
+
+  @override
+  String get salawatRulesNote =>
+      'No sound during calls; it follows «When the phone is in use» in the adhan settings.';
+
+  @override
+  String get salawatUnsupported =>
+      'The «Salawat on the Prophet» reminder is available on Android, iPhone and Mac.';
+
+  @override
+  String get prayerPerPrayerTitle => 'Each prayer\'s adhan';
+
+  @override
+  String get prayerPerPrayerNote =>
+      'Give a prayer its own muezzin and length if you like; otherwise it follows the general settings.';
+
+  @override
+  String get prayerFollowGeneral => 'Follow the general settings';
+
+  @override
+  String get prayerGeneralShort => 'General';
+
+  @override
+  String get prayerCustomSetup => 'Custom';
+
+  @override
+  String get prayerSameAsGeneral => 'Same as general';
+
+  @override
+  String get prayerOwnVolume => 'Volume';
+
+  @override
+  String prayerDownloadMuezzin(String name) {
+    return 'Download $name';
+  }
+
+  @override
+  String get prayerMuezzinFallback =>
+      'Until it is downloaded, the general muezzin plays, then the gentle tone.';
+
+  @override
+  String get prayerTryOwn => 'Try';
+
+  @override
+  String prayerAdhanSummaryLabel(String prayer, String summary) {
+    return '$prayer: $summary';
+  }
 }

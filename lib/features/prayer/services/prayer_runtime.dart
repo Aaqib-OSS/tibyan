@@ -18,6 +18,8 @@ import 'prayer_alarms.dart';
 import 'prayer_desktop.dart';
 import 'occasion_reminders.dart';
 import 'prayer_native.dart';
+import '../../adhkar/adhkar_providers.dart';
+import '../../adhkar/services/adhkar_reminders.dart';
 
 final prayerNativeProvider = Provider<PrayerNative>((ref) => PrayerNative());
 
@@ -33,6 +35,30 @@ final prayerAlarmsProvider = Provider<PrayerAlarms>((ref) {
             .toSet(),
     writeLate: (v) =>
         ref.read(sharedPreferencesProvider).setStringList(_lateKey, v.toList()),
+    extraNatives: () async {
+      final adhan = ref.read(adhanDownloadsProvider);
+      final s = ref.read(adhkarSettingsProvider);
+      final audio = s.salawatOn && adhan.isInstalled(salawatSlug)
+          ? (await adhan.fileOf(salawatSlug, 'salawat_minshawi.m4a')).path
+          : null;
+      return salawatNatives(
+        s,
+        ref.read(prayerSettingsProvider),
+        lookupAppLocalizations(
+          ref.read(settingsProvider).locale ?? const Locale('ar'),
+        ),
+        audio,
+      );
+    },
+  );
+});
+
+final adhkarRemindersProvider = Provider<AdhkarReminders>((ref) {
+  final reminders = ref.watch(reminderSchedulerProvider);
+  return AdhkarReminders(
+    plugin: () async =>
+        reminders is LocalReminderScheduler ? reminders.plugin() : null,
+    adhan: ref.watch(adhanDownloadsProvider),
   );
 });
 
@@ -76,6 +102,7 @@ class PrayerRuntime {
     AdhanDownloads.displayName = _l.adhanLibraryTitle;
     _c.read(prayerNativeProvider).stopLabel = _l.adhanStop;
     _c.listen(prayerSettingsProvider, (_, _) => schedule());
+    _c.listen(adhkarSettingsProvider, (_, _) => schedule());
     final adhan = _c.read(adhanDownloadsProvider);
     adhan.changes.addListener(schedule);
     AppLifecycleListener(
@@ -122,6 +149,13 @@ class PrayerRuntime {
         debugPrint('prayer alerts: $e');
       }
       try {
+        await _c
+            .read(adhkarRemindersProvider)
+            .sync(_c.read(adhkarSettingsProvider), _l);
+      } catch (e) {
+        debugPrint('adhkar reminders: $e');
+      }
+      try {
         await syncOccasionReminders(
           _c.read(reminderSchedulerProvider),
           _c.read(prayerSettingsProvider),
@@ -163,10 +197,19 @@ class PrayerRuntime {
   void markPlayed(DateTime prayerAt) =>
       _played.add(prayerAt.millisecondsSinceEpoch);
 
-  Future<void> playAdhan(PrayerKind prayer, {bool? full}) async {
-    final s = _c.read(prayerSettingsProvider);
-    final files = await _c.read(prayerAlarmsProvider).adhanFiles(s, full: full);
+  /// [general]: the general settings, not [prayer]'s own (the general
+  /// previews).
+  Future<void> playAdhan(
+    PrayerKind prayer, {
+    bool? full,
+    bool general = false,
+  }) async {
+    final all = _c.read(prayerSettingsProvider);
+    final s = general ? all.copyWith(custom: const {}) : all;
+    final alarms = _c.read(prayerAlarmsProvider);
+    final files = await alarms.adhanFiles(s, full: full, prayer: prayer);
     if (files.isEmpty) return;
+    final slug = alarms.slugFor(s, prayer) ?? s.muezzin;
     final l = _l;
     _c.read(prayerNativeProvider).stopLabel = l.adhanStop;
     await _c
@@ -174,10 +217,8 @@ class PrayerRuntime {
         .play(
           files,
           title: l.prayerAdhanNow(prayerName(l, prayer)),
-          body: l.adhanByMuezzin(
-            muezzinOf(s.muezzin).name(l.localeName == 'ar'),
-          ),
-          volume: s.adhanVolume,
+          body: l.adhanByMuezzin(muezzinOf(slug).name(l.localeName == 'ar')),
+          volume: s.forPrayer(prayer).adhanVolume,
         );
   }
 

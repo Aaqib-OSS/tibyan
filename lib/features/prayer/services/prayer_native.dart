@@ -23,6 +23,7 @@ class NativeAdhan {
     DateTime? prayerAt,
     this.shortFiles = const [],
     this.inUse = 'notify',
+    this.quiet = false,
   }) : prayerAt = prayerAt ?? at;
 
   /// «تشغيل الأذان» in the app's language (the notice's action).
@@ -36,6 +37,9 @@ class NativeAdhan {
 
   /// [InUseAdhan]'s name.
   final String inUse;
+
+  /// Not an adhan (the salawat reminder): no full-screen adhan.
+  final bool quiet;
 
   /// «إيقاف» in the app's language.
   final String? stopLabel;
@@ -65,6 +69,7 @@ class NativeAdhan {
     'prayerAt': prayerAt.millisecondsSinceEpoch,
     'shortFiles': shortFiles,
     'inUse': inUse,
+    'quiet': quiet,
   };
 }
 

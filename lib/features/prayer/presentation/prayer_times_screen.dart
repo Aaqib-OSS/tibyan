@@ -17,6 +17,8 @@ import 'prayer_alert_sheet.dart';
 import 'prayer_enable.dart';
 import 'prayer_widgets.dart';
 import 'qibla_screen.dart' show qiblaLocation;
+import 'prayer_tracker_screen.dart';
+import '../data/prayer_log_repository.dart';
 
 const prayerTimesLocation = '/prayer';
 
@@ -83,6 +85,12 @@ class _PrayerTimesScreenState extends ConsumerState<PrayerTimesScreen> {
             LookTopBar(
               title: l.prayerTimesTitle,
               actions: [
+                IconButton(
+                  key: const ValueKey('prayer-tracker'),
+                  tooltip: l.trackerOpen,
+                  onPressed: () => context.push(prayerTrackerLocation),
+                  icon: const Icon(Icons.fact_check_outlined),
+                ),
                 IconButton(
                   key: const ValueKey('prayer-qibla'),
                   tooltip: l.qiblaOpen,
@@ -309,6 +317,8 @@ class _TimesList extends ConsumerWidget {
     final t = context.tokens.colors;
     final day = computeDay(place, placeToday(place, now), settings);
     final next = nextPrayer(place, now, settings);
+    final today = placeToday(place, now);
+    final marks = ref.watch(dayMarksProvider(logDay(today))).value ?? const {};
     final rows = <Widget>[];
     for (final p in _rows) {
       final current =
@@ -319,6 +329,10 @@ class _TimesList extends ConsumerWidget {
           : (settings.shuruqAlert ? AlertSound.tone : null);
       final name = prayerName(l, p);
       final time = formatPrayerTime(l, day[p], place);
+      // The same summary as «أذان كل صلاة» in the settings.
+      final summary = obligatory
+          ? prayerAdhanSummary(l, settings.customOf(p))
+          : null;
       final style = TextStyle(
         fontSize: 16,
         fontWeight: current ? FontWeight.w700 : FontWeight.w400,
@@ -334,21 +348,66 @@ class _TimesList extends ConsumerWidget {
             children: [
               Expanded(
                 child: Semantics(
-                  label: '$name $time',
+                  label: summary == null
+                      ? '$name $time'
+                      : '$name $time · $summary',
                   excludeSemantics: true,
-                  child: Row(
-                    children: [
-                      Expanded(child: Text(name, style: style)),
-                      Text(time, style: style),
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(name, style: style),
+                              if (summary != null)
+                                Text(
+                                  summary,
+                                  key: ValueKey('prayer-summary-${p.name}'),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: t.muted,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        Text(time, style: style),
+                      ],
+                    ),
                   ),
                 ),
               ),
+              // «صليت»: once the prayer's time has come.
+              if (obligatory && !day[p].isAfter(now))
+                IconButton(
+                  key: ValueKey('prayer-prayed-${p.name}'),
+                  tooltip: marks[p] == null
+                      ? '${l.prayedAction} · $name'
+                      : '${prayedName(l, marks[p]!)} · $name',
+                  onPressed: () => showPrayedSheet(
+                    context,
+                    ref,
+                    p,
+                    today,
+                    current: marks[p],
+                  ),
+                  icon: Icon(
+                    marks[p] == null
+                        ? Icons.radio_button_unchecked
+                        : prayedIcon(marks[p]!),
+                    color: marks[p] == null ? t.muted : t.goldText,
+                  ),
+                ),
               IconButton(
                 key: ValueKey('prayer-sound-${p.name}'),
                 tooltip: sound == null
                     ? l.reminderNone
-                    : '${soundName(l, sound)} · $name',
+                    : '${summary ?? soundName(l, sound)} · $name',
                 onPressed: obligatory
                     ? () => showPrayerAlertSheet(context, p)
                     : () => context.push('$prayerTimesLocation/settings'),

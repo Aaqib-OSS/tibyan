@@ -534,11 +534,15 @@ class _AdhanSection extends ConsumerWidget {
             title: l.downloadsSectionAdhan,
             onDownloadAll: null,
           ),
-          for (final m in muezzins)
+          for (final (slug, muezzin) in [
+            for (final m in muezzins) (m.slug, m),
+            // «الصلاة على النبي»: the adhkar reminder's recording.
+            (salawatSlug, null),
+          ])
             Builder(
               builder: (context) {
-                final st = adhan.stateOf(m.slug);
-                final name = m.name(arabic);
+                final st = adhan.stateOf(slug);
+                final name = muezzin?.name(arabic) ?? l.salawatAudioName;
                 final status = switch (st.phase) {
                   AdhanPhase.installed => l.downloadsOnDevice(
                     _mb(context, st.bytes),
@@ -559,34 +563,39 @@ class _AdhanSection extends ConsumerWidget {
                         title: l.adhanDeleteTitle(name),
                         body: l.adhanDeleteBody,
                       );
-                      if (ok) await adhan.delete(m.slug);
+                      if (ok) await adhan.delete(slug);
                     },
                     icon: const Icon(Icons.delete_outline),
                   ),
                   AdhanPhase.downloading => IconButton(
                     tooltip: l.downloadPause,
-                    onPressed: () => adhan.pause(m.slug),
+                    onPressed: () => adhan.pause(slug),
                     icon: const Icon(Icons.pause),
                   ),
                   AdhanPhase.paused => IconButton(
                     tooltip: l.downloadResume,
-                    onPressed: () => adhan.resume(m.slug),
+                    onPressed: () => adhan.resume(slug),
                     icon: const Icon(Icons.play_arrow),
                   ),
                   AdhanPhase.failed => IconButton(
                     tooltip: l.downloadRetry,
-                    onPressed: () => adhan.download(m.slug, label: name),
+                    onPressed: () => adhan.download(slug, label: name),
                     icon: const Icon(Icons.refresh),
                   ),
                   AdhanPhase.idle => IconButton(
                     tooltip: l.adhanDownload(name),
-                    onPressed: () => adhan.download(m.slug, label: name),
+                    onPressed: () => adhan.download(slug, label: name),
                     icon: const Icon(Icons.download),
                   ),
                 };
                 return DownloadRow(
-                  key: ValueKey('downloads-adhan-${m.slug}'),
-                  leading: MuezzinAvatar(muezzin: m, size: 40),
+                  key: ValueKey('downloads-adhan-$slug'),
+                  leading: muezzin == null
+                      ? const SizedBox.square(
+                          dimension: 40,
+                          child: Icon(Icons.graphic_eq),
+                        )
+                      : MuezzinAvatar(muezzin: muezzin, size: 40),
                   title: name,
                   status: '$status · ${l.adhanLicense(adhanLicense)}',
                   fraction: st.progress,

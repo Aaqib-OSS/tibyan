@@ -48,6 +48,7 @@
     <string name="adhan_channel_name">Adhan</string>
     <string name="adhan_stop">Stop</string>
     <string name="adhan_play">Play the adhan</string>
+    <string name="adhan_prayed">I prayed</string>
     <string name="adhan_notice_channel_name">Adhan time (notification)</string>
     <string name="adhan_silent_channel_name">Adhan time (silent)</string>
 </resources>

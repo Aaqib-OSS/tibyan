@@ -4195,5 +4195,175 @@
         "type": "String"
       }
     }
+  },
+  "trackerTitle": "صلواتي",
+  "trackerOpen": "صلواتي: سجل صلواتك",
+  "prayedAction": "صليت",
+  "prayedOnTime": "في وقتها",
+  "prayedLate": "متأخرة",
+  "prayedJamaah": "في جماعة",
+  "prayedClear": "إلغاء التسجيل",
+  "prayedAsk": "كيف صليت {prayer}؟",
+  "@prayedAsk": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "trackerNotMarked": "لم تُسجَّل",
+  "trackerPrevDay": "اليوم السابق",
+  "trackerNextDay": "اليوم التالي",
+  "qadaTitle": "القضاء",
+  "qadaNote": "عدّاد خاص بك: أضف ما فاتك، وسجّل ما قضيته.",
+  "qadaAdd": "أضف {prayer} فائتة",
+  "@qadaAdd": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "qadaSettle": "قضيت {prayer}",
+  "@qadaSettle": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "weekTitle": "آخر سبعة أيام",
+  "weekSummary": "سجّلت {n} من {total} صلاة",
+  "@weekSummary": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "weekBreakdown": "في وقتها {onTime} · متأخرة {late} · في جماعة {jamaah}",
+  "@weekBreakdown": {
+    "placeholders": {
+      "onTime": {
+        "type": "String"
+      },
+      "late": {
+        "type": "String"
+      },
+      "jamaah": {
+        "type": "String"
+      }
+    }
+  },
+  "weekGentle": "كل صلاة تسجّلها تُحسب، ويمكنك البدء من جديد في أي يوم.",
+  "adhkarTitle": "الأذكار",
+  "adhkarMorning": "الصباح",
+  "adhkarEvening": "المساء",
+  "adhkarReset": "إعادة العد",
+  "adhkarSettingsTitle": "إعدادات الأذكار",
+  "adhkarProgress": "أتممت {done} من {total}",
+  "@adhkarProgress": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "adhkarCount": "{n} / {count}",
+  "@adhkarCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "adhkarDetails": "الفضل والمصدر",
+  "adhkarFadl": "الفضل",
+  "adhkarSource": "المصدر",
+  "adhkarChannel": "تذكير الأذكار",
+  "adhkarMorningNotice": "أذكار الصباح",
+  "adhkarEveningNotice": "أذكار المساء",
+  "adhkarMorningReminder": "تذكير بأذكار الصباح",
+  "adhkarEveningReminder": "تذكير بأذكار المساء",
+  "adhkarReminderTime": "الوقت: {time}",
+  "@adhkarReminderTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "salawatTitle": "تذكير «الصلاة على النبي»",
+  "salawatNote": "يشغّل تسجيل الشيخ محمد صديق المنشاوي على فترات تختارها",
+  "salawatAudioName": "الصلاة على النبي — محمد صديق المنشاوي",
+  "salawatNoticeTitle": "الصلاة على النبي",
+  "salawatEvery": "التكرار كل",
+  "salawatLess": "أقل",
+  "salawatMore": "أكثر",
+  "salawatMinutes": "دقائق",
+  "salawatHours": "ساعات",
+  "salawatMinNote": "أقل فترة {n} دقيقة",
+  "@salawatMinNote": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "salawatWindow": "خلال ساعات محددة فقط",
+  "salawatFrom": "من: {time}",
+  "@salawatFrom": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "salawatTo": "إلى: {time}",
+  "@salawatTo": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "salawatRulesNote": "لا يُشغَّل الصوت أثناء المكالمات، ويتبع إعداد «عندما يكون الهاتف قيد الاستخدام» في إعدادات الأذان.",
+  "salawatUnsupported": "تذكير «الصلاة على النبي» متاح على أندرويد وآيفون وماك.",
+  "prayerPerPrayerTitle": "أذان كل صلاة",
+  "prayerPerPrayerNote": "لكل صلاة مؤذنها وطول أذانها إن شئت؛ وإلا فحسب الإعدادات العامة.",
+  "prayerFollowGeneral": "حسب الإعدادات العامة",
+  "prayerGeneralShort": "حسب العام",
+  "prayerCustomSetup": "إعداد خاص",
+  "prayerSameAsGeneral": "نفس العام",
+  "prayerOwnVolume": "مستوى الصوت",
+  "prayerDownloadMuezzin": "تنزيل {name}",
+  "@prayerDownloadMuezzin": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "prayerMuezzinFallback": "حتى يكتمل تنزيله يُرفع الأذان بصوت المؤذن العام، ثم بالنغمة الهادئة.",
+  "prayerTryOwn": "جرّب",
+  "prayerAdhanSummaryLabel": "{prayer}: {summary}",
+  "@prayerAdhanSummaryLabel": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      },
+      "summary": {
+        "type": "String"
+      }
+    }
   }
 }

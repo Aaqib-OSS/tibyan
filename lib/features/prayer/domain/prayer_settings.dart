@@ -36,6 +36,79 @@ enum InUseAdhan {
   full,
 }
 
+/// One prayer's own adhan («إعداد خاص»). A prayer with none follows the
+/// general adhan settings («حسب الإعدادات العامة»). Each null field is
+/// «نفس العام»: it takes the general value.
+@immutable
+class PrayerAdhan {
+  const PrayerAdhan({
+    this.sound = AlertSound.adhan,
+    this.muezzin,
+    this.length,
+    this.volume,
+  });
+
+  final AlertSound sound;
+
+  /// A muezzin's slug; null: the general one.
+  final String? muezzin;
+  final AdhanLength? length;
+
+  /// Android only (0…1); null: the general level.
+  final double? volume;
+
+  PrayerAdhan copyWith({
+    AlertSound? sound,
+    String? Function()? muezzin,
+    AdhanLength? Function()? length,
+    double? Function()? volume,
+  }) => PrayerAdhan(
+    sound: sound ?? this.sound,
+    muezzin: muezzin != null ? muezzin() : this.muezzin,
+    length: length != null ? length() : this.length,
+    volume: volume != null ? volume()?.clamp(0.0, 1.0) : this.volume,
+  );
+
+  Map<String, Object?> toJson() => {
+    'sound': sound.name,
+    if (muezzin != null) 'muezzin': muezzin,
+    if (length != null) 'length': length!.name,
+    if (volume != null) 'volume': volume,
+  };
+
+  static PrayerAdhan? fromJson(Object? j) {
+    if (j is! Map) return null;
+    AlertSound? sound;
+    AdhanLength? length;
+    for (final v in AlertSound.values) {
+      if (v.name == j['sound']) sound = v;
+    }
+    for (final v in AdhanLength.values) {
+      if (v.name == j['length']) length = v;
+    }
+    if (sound == null) return null;
+    final m = j['muezzin'];
+    final vol = j['volume'];
+    return PrayerAdhan(
+      sound: sound,
+      muezzin: m is String && m.isNotEmpty ? m : null,
+      length: length,
+      volume: vol is num ? vol.toDouble().clamp(0.0, 1.0) : null,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is PrayerAdhan &&
+      other.sound == sound &&
+      other.muezzin == muezzin &&
+      other.length == length &&
+      other.volume == volume;
+
+  @override
+  int get hashCode => Object.hash(sound, muezzin, length, volume);
+}
+
 /// The calculation methods offered (the adhan package's, by name).
 enum CalcMethod {
   egyptian,
@@ -144,7 +217,7 @@ class PrayerSettings {
     this.method,
     this.asr = AsrRule.shafii,
     this.offsets = const {},
-    this.sounds = const {},
+    this.custom = const {},
     this.reminders = const {},
     this.shuruqAlert = false,
     this.duhaAlert = false,
@@ -184,7 +257,10 @@ class PrayerSettings {
 
   /// Minutes added to each time (negative: earlier).
   final Map<PrayerKind, int> offsets;
-  final Map<PrayerKind, AlertSound> sounds;
+
+  /// The prayers with their own adhan; the others follow the general
+  /// settings (the adhan, the general muezzin, length and volume).
+  final Map<PrayerKind, PrayerAdhan> custom;
 
   /// Minutes before each prayer to remind (absent or 0: none).
   final Map<PrayerKind, int> reminders;
@@ -224,9 +300,24 @@ class PrayerSettings {
 
   int offsetOf(PrayerKind p) => offsets[p] ?? 0;
 
-  /// The five prayers sound the gentle tone until a choice is made; the
-  /// adhan is chosen for them once its recording is downloaded.
-  AlertSound soundOf(PrayerKind p) => sounds[p] ?? AlertSound.adhan;
+  /// A prayer's sound: its own when it has one, else the adhan (the tone
+  /// until a recording is downloaded).
+  AlertSound soundOf(PrayerKind p) => custom[p]?.sound ?? AlertSound.adhan;
+
+  PrayerAdhan? customOf(PrayerKind p) => custom[p];
+
+  /// These settings as [p]'s alert sees them: its own muezzin, length and
+  /// volume in place of the general ones where it sets them. The general
+  /// muezzin stays the fallback (see `adhanSlugFor`).
+  PrayerSettings forPrayer(PrayerKind? p) {
+    final c = p == null ? null : custom[p];
+    if (c == null) return this;
+    return copyWith(
+      muezzin: c.muezzin,
+      length: c.length,
+      adhanVolume: c.volume,
+    );
+  }
 
   int reminderOf(PrayerKind p) => reminders[p] ?? 0;
 
@@ -237,7 +328,7 @@ class PrayerSettings {
     bool clearMethod = false,
     AsrRule? asr,
     Map<PrayerKind, int>? offsets,
-    Map<PrayerKind, AlertSound>? sounds,
+    Map<PrayerKind, PrayerAdhan>? custom,
     Map<PrayerKind, int>? reminders,
     bool? shuruqAlert,
     bool? duhaAlert,
@@ -261,7 +352,7 @@ class PrayerSettings {
     method: clearMethod ? null : method ?? this.method,
     asr: asr ?? this.asr,
     offsets: offsets ?? this.offsets,
-    sounds: sounds ?? this.sounds,
+    custom: custom ?? this.custom,
     reminders: reminders ?? this.reminders,
     shuruqAlert: shuruqAlert ?? this.shuruqAlert,
     duhaAlert: duhaAlert ?? this.duhaAlert,
@@ -287,7 +378,7 @@ class PrayerSettings {
     'method': method?.name,
     'asr': asr.name,
     'offsets': {for (final e in offsets.entries) e.key.name: e.value},
-    'sounds': {for (final e in sounds.entries) e.key.name: e.value.name},
+    'perPrayer': {for (final e in custom.entries) e.key.name: e.value.toJson()},
     'reminders': {for (final e in reminders.entries) e.key.name: e.value},
     'shuruq': shuruqAlert,
     'duha': duhaAlert,
@@ -327,6 +418,14 @@ class PrayerSettings {
     return out;
   }
 
+  /// Before per-prayer adhans: each prayer kept only its sound. The adhan
+  /// is what «حسب العام» gives; silent or the tone become that prayer's
+  /// own setup with everything else as the general one.
+  static Map<PrayerKind, PrayerAdhan> migrateSounds(Object? j) => {
+    for (final e in _map(j, (v) => _enum(AlertSound.values, v)).entries)
+      if (e.value != AlertSound.adhan) e.key: PrayerAdhan(sound: e.value),
+  };
+
   static int? _int(Object? v) => v is num ? v.toInt() : null;
 
   /// Reads [source]; anything missing or broken falls back to the default.
@@ -344,7 +443,9 @@ class PrayerSettings {
           j['offsets'],
           (v) => _int(v)?.clamp(-maxOffset, maxOffset),
         ),
-        sounds: _map(j['sounds'], (v) => _enum(AlertSound.values, v)),
+        custom: j.containsKey('perPrayer')
+            ? _map(j['perPrayer'], PrayerAdhan.fromJson)
+            : migrateSounds(j['sounds']),
         reminders: _map(j['reminders'], _int),
         shuruqAlert: j['shuruq'] as bool? ?? d.shuruqAlert,
         duhaAlert: j['duha'] as bool? ?? d.duhaAlert,

@@ -127,6 +127,17 @@ void main() {
       ],
     );
     await guidelines(tester);
+    // The third row: each tile is a named button.
+    for (final name in ['القبلة', 'الأذكار', 'صلواتي', 'البحث']) {
+      final f = find.bySemanticsLabel(RegExp('^$name\$'));
+      await tester.ensureVisible(f.first);
+      await tester.pump();
+      expect(
+        tester.getSemantics(f.first),
+        isSemantics(label: name, isButton: true, hasTapAction: true),
+        reason: name,
+      );
+    }
     expect(
       tester.getSemantics(find.bySemanticsLabel(RegExp('^الاستماع'))),
       isSemantics(label: 'الاستماع', isButton: true, hasTapAction: true),

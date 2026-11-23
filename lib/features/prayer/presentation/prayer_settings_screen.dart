@@ -18,6 +18,7 @@ import '../prayer_providers.dart';
 import '../services/prayer_desktop.dart';
 import '../services/prayer_runtime.dart';
 import 'adhan_library_screen.dart' show MuezzinAvatar;
+import 'prayer_alert_sheet.dart' show PrayerAdhanRow;
 import 'prayer_enable.dart';
 import 'prayer_widgets.dart';
 
@@ -307,6 +308,7 @@ class PrayerSettingsScreen extends ConsumerWidget {
                           onPressed: () => PrayerRuntime.instance?.playAdhan(
                             PrayerKind.maghrib,
                             full: false,
+                            general: true,
                           ),
                           icon: const Icon(Icons.volume_up_outlined),
                         ),
@@ -353,10 +355,13 @@ class PrayerSettingsScreen extends ConsumerWidget {
                           await ref
                               .read(prayerAlarmsProvider)
                               .testAdhan(
-                                s,
+                                s.copyWith(custom: const {}),
                                 l,
-                                playInApp: () async => PrayerRuntime.instance
-                                    ?.playAdhan(PrayerKind.maghrib),
+                                playInApp: () async =>
+                                    PrayerRuntime.instance?.playAdhan(
+                                      PrayerKind.maghrib,
+                                      general: true,
+                                    ),
                               );
                           messenger?.showSnackBar(
                             appToast(content: Text(l.adhanTestScheduled)),
@@ -364,6 +369,16 @@ class PrayerSettingsScreen extends ConsumerWidget {
                         },
                       ),
                     ),
+                    header(l.prayerPerPrayerTitle),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+                      child: Text(
+                        l.prayerPerPrayerNote,
+                        style: TextStyle(color: t.muted, fontSize: 12),
+                      ),
+                    ),
+                    for (final p in obligatoryPrayers)
+                      PrayerAdhanRow(prayer: p),
                     header(l.prayerSectionExtra),
                     SwitchListTile(
                       key: const ValueKey('prayer-shuruq'),

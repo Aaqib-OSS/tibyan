@@ -31,7 +31,7 @@ void main() {
         method: CalcMethod.ummAlQura,
         asr: AsrRule.hanafi,
         offsets: {PrayerKind.maghrib: 2},
-        sounds: {PrayerKind.isha: AlertSound.silent},
+        custom: {PrayerKind.isha: PrayerAdhan(sound: AlertSound.silent)},
         reminders: {PrayerKind.dhuhr: 15},
         shuruqAlert: true,
         hijriOffset: -1,
@@ -162,5 +162,54 @@ void main() {
       final s = PrayerSettings.decode(PrayerSettings(inUse: u).encode());
       expect(s.inUse, u);
     }
+  });
+
+  group('per-prayer adhan', () {
+    test('round-trips through JSON', () {
+      const s = PrayerSettings(
+        custom: {
+          PrayerKind.fajr: PrayerAdhan(
+            muezzin: 'minshawi',
+            length: AdhanLength.short,
+            volume: 0.4,
+          ),
+          PrayerKind.asr: PrayerAdhan(sound: AlertSound.tone),
+        },
+      );
+      final back = PrayerSettings.decode(s.encode());
+      expect(back.custom, s.custom);
+      expect(back.customOf(PrayerKind.dhuhr), isNull);
+      expect(back.soundOf(PrayerKind.dhuhr), AlertSound.adhan);
+      expect(back.soundOf(PrayerKind.asr), AlertSound.tone);
+      expect(back.forPrayer(PrayerKind.fajr).muezzin, 'minshawi');
+      expect(back.forPrayer(PrayerKind.asr).muezzin, 'refaat');
+    });
+
+    test('old per-prayer sounds migrate', () {
+      final s = PrayerSettings.decode(
+        '{"muezzin":"tobar","sounds":{"fajr":"adhan","asr":"silent",'
+        '"isha":"tone"}}',
+      );
+      expect(s.customOf(PrayerKind.fajr), isNull);
+      expect(s.soundOf(PrayerKind.fajr), AlertSound.adhan);
+      expect(
+        s.customOf(PrayerKind.asr),
+        const PrayerAdhan(sound: AlertSound.silent),
+      );
+      expect(s.soundOf(PrayerKind.isha), AlertSound.tone);
+      expect(s.forPrayer(PrayerKind.isha).muezzin, 'tobar');
+      // Once saved in the new form, the old key is gone.
+      expect(s.toJson().containsKey('sounds'), isFalse);
+      expect(PrayerSettings.decode(s.encode()).custom, s.custom);
+    });
+
+    test('a broken entry is dropped', () {
+      final s = PrayerSettings.decode(
+        '{"perPrayer":{"fajr":{"sound":"loud"},"isha":7,'
+        '"asr":{"sound":"adhan","volume":4}}}',
+      );
+      expect(s.custom.keys, [PrayerKind.asr]);
+      expect(s.customOf(PrayerKind.asr)?.volume, 1);
+    });
   });
 }
