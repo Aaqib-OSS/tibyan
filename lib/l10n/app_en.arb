@@ -2158,7 +2158,7 @@
   "citiesSourceBody": "GeoNames (geonames.org), under a Creative Commons licence, CC BY 4.0.",
   "adhanTest": "Try the adhan",
   "adhanTestBody": "Adhan test",
-  "adhanTestScheduled": "The adhan starts in 10 seconds, as a real alert would.",
+  "adhanTestScheduled": "The adhan starts in 10 seconds. Lock the screen to see the adhan screen as it will appear at prayer time.",
   "adhanVolume": "Adhan volume",
   "adhanVolumeNote": "The adhan plays at this level even when the ringer or media is muted, then the device volume goes back to what it was. The volume keys lower it during the adhan.",
   "adhanVolumeAppleNote": "On iPhone and Mac the alert follows the device volume; this level is for the adhan inside the app only.",

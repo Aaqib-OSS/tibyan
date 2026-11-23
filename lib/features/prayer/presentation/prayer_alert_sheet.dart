@@ -319,18 +319,22 @@ class PrayerAlertSheet extends ConsumerWidget {
                   icon: const Icon(Icons.play_circle_outline),
                   label: Text(l.prayerTryOwn),
                   onPressed: () async {
+                    // The sheet closes first, so the toast shows on the
+                    // screen beneath it, like «جرّب الأذان» in the settings.
                     final messenger = ScaffoldMessenger.maybeOf(context);
-                    final router = GoRouter.of(context);
-                    await ref
-                        .read(prayerAlarmsProvider)
-                        .testAdhan(
-                          s,
-                          l,
-                          prayer: prayer,
-                          showScene: (loc) => unawaited(router.push(loc)),
-                          playInApp: () async =>
-                              PrayerRuntime.instance?.playAdhan(prayer),
-                        );
+                    final router = GoRouter.maybeOf(context);
+                    final alarms = ref.read(prayerAlarmsProvider);
+                    Navigator.of(context).pop();
+                    await alarms.testAdhan(
+                      s,
+                      l,
+                      prayer: prayer,
+                      showScene: router == null
+                          ? null
+                          : (loc) => unawaited(router.push(loc)),
+                      playInApp: () async =>
+                          PrayerRuntime.instance?.playAdhan(prayer),
+                    );
                     messenger?.showSnackBar(
                       appToast(content: Text(l.adhanTestScheduled)),
                     );

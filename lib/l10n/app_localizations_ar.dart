@@ -5913,7 +5913,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adhanTestScheduled =>
-      'يبدأ الأذان بعد ١٠ ثوانٍ، كما في التنبيه الحقيقي.';
+      'يبدأ الأذان بعد ١٠ ثوانٍ. اقفل الشاشة لترى شاشة الأذان كما ستظهر وقت الصلاة.';
 
   @override
   String get adhanVolume => 'مستوى صوت الأذان';

@@ -12,6 +12,9 @@ import 'package:tibyan/features/prayer/presentation/adhan_screen.dart';
 import 'package:tibyan/features/prayer/presentation/prayer_settings_screen.dart';
 import 'package:tibyan/features/prayer/presentation/prayer_times_screen.dart';
 import 'package:tibyan/features/prayer/prayer_providers.dart';
+import 'package:tibyan/features/prayer/services/prayer_alarms.dart';
+import 'package:tibyan/features/prayer/services/prayer_runtime.dart';
+import 'package:tibyan/l10n/app_localizations.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 
 import '../../downloads/background_downloads_test.dart' show FakeDownloader;
@@ -30,6 +33,7 @@ void main() {
     WidgetTester tester,
     Widget screen, {
     double textScale = 1,
+    List overrides = const [],
   }) async {
     tester.view
       ..physicalSize = const Size(390, 1600)
@@ -58,6 +62,7 @@ void main() {
       overrides: [
         backgroundDownloadsProvider.overrideWithValue(downloads),
         adhanDownloadsProvider.overrideWithValue(adhan),
+        ...overrides,
       ],
     );
     await tester.pumpWidget(
@@ -226,6 +231,29 @@ void main() {
     );
   });
 
+  testWidgets('«جرّب» in the per-prayer sheet shows the toast', (tester) async {
+    final alarms = _FakeAlarms();
+    await setUpScreen(
+      tester,
+      const PrayerSettingsScreen(),
+      overrides: [prayerAlarmsProvider.overrideWithValue(alarms)],
+    );
+    final row = find.byKey(const ValueKey('prayer-adhan-row-maghrib'));
+    await tester.scrollUntilVisible(row, 200);
+    await tester.tap(row);
+    await settle(tester);
+    await tester.tap(find.byKey(const ValueKey('prayer-mode-custom')));
+    await settle(tester);
+    final tryIt = find.byKey(const ValueKey('prayer-own-try'));
+    await tester.ensureVisible(tryIt);
+    await tester.tap(tryIt);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(alarms.tested, PrayerKind.maghrib);
+    expect(find.byKey(const ValueKey('prayer-own-try')), findsNothing);
+    expect(find.textContaining('يبدأ الأذان بعد'), findsOneWidget);
+  });
+
   testWidgets('the per-prayer sheet fits at 200% text', (tester) async {
     await setUpScreen(tester, const PrayerSettingsScreen(), textScale: 2);
     final row = find.byKey(const ValueKey('prayer-adhan-row-fajr'));
@@ -291,4 +319,20 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.byKey(const ValueKey('prayer-summary-fajr')), findsOneWidget);
   });
+}
+
+class _FakeAlarms implements PrayerAlarms {
+  PrayerKind? tested;
+
+  @override
+  Future<void> testAdhan(
+    PrayerSettings s,
+    AppLocalizations l, {
+    required Future<void> Function() playInApp,
+    PrayerKind? prayer,
+    void Function(String location)? showScene,
+  }) async => tested = prayer;
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
