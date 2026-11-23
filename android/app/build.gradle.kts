@@ -64,6 +64,12 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // The name under the icon. Huawei approved the listing with the
+        // localized name alone (تبيان / Tibyan, PR #77), so its build keeps
+        // that; other builds carry both names so launcher search finds the
+        // app by either.
+        manifestPlaceholders["appLabel"] =
+            if (huaweiBuild) "@string/app_name" else "@string/app_name_both"
     }
 
     signingConfigs {
