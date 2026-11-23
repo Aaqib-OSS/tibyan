@@ -389,7 +389,7 @@ class _TimesList extends ConsumerWidget {
                   style: TextButton.styleFrom(
                     foregroundColor: t.goldText,
                     minimumSize: const Size(48, 48),
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
                   ),
                   onPressed: () =>
                       showPrayedSheet(context, ref, p, today, current: null),
@@ -398,7 +398,7 @@ class _TimesList extends ConsumerWidget {
                     excludeSemantics: true,
                     // Stays a short tag beside the time at any text size.
                     child: MediaQuery.withClampedTextScaling(
-                      maxScaleFactor: 1.2,
+                      maxScaleFactor: 1.0,
                       child: Text(l.prayedQuestion),
                     ),
                   ),
