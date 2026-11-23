@@ -75,7 +75,7 @@ object AdhanGate {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val ch = NotificationChannel(
                 channel,
-                ctx.getString(
+                ctx.inAppLanguage().getString(
                     if (silent) R.string.adhan_silent_channel_name else R.string.adhan_notice_channel_name,
                 ),
                 if (silent) NotificationManager.IMPORTANCE_LOW else NotificationManager.IMPORTANCE_DEFAULT,
@@ -118,7 +118,7 @@ object AdhanGate {
             @Suppress("DEPRECATION")
             Notification.Builder(ctx)
         }
-        val label = alert.optString("playLabel").ifEmpty { ctx.getString(R.string.adhan_play) }
+        val label = alert.optString("playLabel").ifEmpty { ctx.inAppLanguage().getString(R.string.adhan_play) }
         nm.notify(
             NOTICE_ID,
             b.setSmallIcon(R.drawable.ic_stat_tibyan)
@@ -156,7 +156,7 @@ object AdhanGate {
             i,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
-        return Notification.Action.Builder(null, ctx.getString(R.string.adhan_prayed), pi).build()
+        return Notification.Action.Builder(null, ctx.inAppLanguage().getString(R.string.adhan_prayed), pi).build()
     }
 
     fun cancelNotice(ctx: Context) {

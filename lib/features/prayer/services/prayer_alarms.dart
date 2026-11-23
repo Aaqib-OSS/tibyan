@@ -369,6 +369,7 @@ class PrayerAlarms {
     AppLocalizations l, {
     required Future<void> Function() playInApp,
     PrayerKind? prayer,
+    void Function(String location)? showScene,
   }) async {
     final at = DateTime.now().add(testDelay);
     final files = await adhanFiles(s, prayer: prayer);
@@ -387,6 +388,10 @@ class PrayerAlarms {
         ? l.soundTone
         : l.adhanByMuezzin(muezzinOf(slugNow).name(l.localeName == 'ar'));
     final payload = 'tibyan://prayer/adhan?p=${scene.name}&test=1';
+    // The full-screen scene comes with the test, like the real adhan's.
+    if (showScene != null) {
+      Timer(testDelay, () => showScene('/prayer/adhan?p=${scene.name}&test=1'));
+    }
     if (Platform.isAndroid) {
       await native.testAdhan(
         NativeAdhan(

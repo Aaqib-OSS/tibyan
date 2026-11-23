@@ -43,3 +43,7 @@ fun Context.inAppLanguage(widgetData: SharedPreferences): Context =
     createConfigurationContext(
         Configuration(resources.configuration).apply { setLocale(Locale(appLanguage(widgetData))) },
     )
+
+/** [this] in the app's language: notification words follow the app, not the device. */
+fun Context.inAppLanguage(): Context =
+    inAppLanguage(getSharedPreferences("HomeWidgetPreferences", Context.MODE_PRIVATE))

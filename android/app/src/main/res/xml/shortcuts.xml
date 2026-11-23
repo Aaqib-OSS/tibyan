@@ -4,7 +4,8 @@
      routed by lib/core/platform/app_shortcuts.dart). The first one continues
      reading the mushaf. Launchers index
      shortcut labels in search, so the app is found by "Tibyan"/"Quran" as
-     well as by its Arabic name «تبيان». -->
+     well as by its Arabic name «تبيان»: the first label carries both names in
+     every language, so either name finds the app (as on iOS Spotlight). -->
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
         android:shortcutId="mushaf"

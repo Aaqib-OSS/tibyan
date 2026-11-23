@@ -6081,6 +6081,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get prayedAction => 'I prayed';
 
   @override
+  String get prayedQuestion => 'Prayed?';
+
+  @override
   String get prayedOnTime => 'On time';
 
   @override

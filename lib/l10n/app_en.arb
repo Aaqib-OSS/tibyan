@@ -2522,5 +2522,9 @@
         "type": "String"
       }
     }
+  },
+  "prayedQuestion": "Prayed?",
+  "@prayedQuestion": {
+    "description": "The prayer-times row's small button to mark a prayer as prayed, before it is marked."
   }
 }
