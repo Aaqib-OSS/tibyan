@@ -300,7 +300,7 @@ class _TafsirScreenState extends ConsumerState<TafsirScreen> {
       actions: [
         IconButton(
           tooltip: l.tafsirSettings,
-          icon: const Icon(Icons.text_fields),
+          icon: const Icon(Icons.tune),
           onPressed: () => showTafsirSettings(context),
         ),
       ],
