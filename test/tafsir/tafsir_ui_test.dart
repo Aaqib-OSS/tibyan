@@ -316,15 +316,15 @@ void main() {
     testWidgets('nothing shown: «اختار التفاسير» opens the settings', (
       tester,
     ) async {
-      await pump(tester, packs: []);
-      await tester.tap(find.byIcon(Icons.tune));
-      await tester.pumpAndSettle();
-      final sw = find.widgetWithText(SwitchListTile, 'التفسير الميسر');
-      await tester.ensureVisible(sw);
-      await tester.tap(sw);
-      await tester.pumpAndSettle();
-      Navigator.of(tester.element(sw)).pop();
-      await tester.pumpAndSettle();
+      // The settings never hide the last text; a reader whose saved
+      // choices hide them all still gets the way back.
+      await pump(
+        tester,
+        packs: [],
+        initialPrefs: {
+          'settings.hiddenCommentaries': ['7', '44', '45'],
+        },
+      );
 
       expect(find.text('اختار التفاسير'), findsOneWidget);
       await tester.tap(find.text('اختار التفاسير'));

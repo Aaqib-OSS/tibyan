@@ -130,19 +130,19 @@ void main() {
     expect(find.text('تفسير تجريبي أول'), findsNothing);
   });
 
-  testWidgets(
-    'English translations follow interface language, Arabic tafsir stays',
-    (tester) async {
-      await pump(tester);
-      expect(find.text('التفسير الميسر'), findsOneWidget);
-      expect(find.text('الترجمة الإنجليزية: صحيح إنترناشونال'), findsNothing);
+  testWidgets('translations stay hidden by default, Arabic tafsir stays', (
+    tester,
+  ) async {
+    await pump(tester);
+    expect(find.text('التفسير الميسر'), findsOneWidget);
+    expect(find.text('الترجمة الإنجليزية: صحيح إنترناشونال'), findsNothing);
 
-      await pump(tester, locale: 'en');
-      expect(find.text('Al-Tafsir al-Muyassar'), findsOneWidget);
-      expect(find.text('Saheeh International'), findsOneWidget);
-      expect(find.text('Pickthall'), findsOneWidget);
-    },
-  );
+    // Translations are hidden by default in English too.
+    await pump(tester, locale: 'en');
+    expect(find.text('Al-Tafsir al-Muyassar'), findsOneWidget);
+    expect(find.text('Saheeh International'), findsNothing);
+    expect(find.text('Pickthall'), findsNothing);
+  });
 
   testWidgets('English tafsir can be explicitly enabled from Arabic settings', (
     tester,

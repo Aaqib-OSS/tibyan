@@ -4436,5 +4436,39 @@
         "type": "String"
       }
     }
-  }
+  },
+  "tafsirSectionTafsirs": "التفاسير",
+  "tafsirSectionTranslations": "الترجمات",
+  "tafsirKeepOne": "يبقى نص واحد ظاهرا على الأقل",
+  "tafsirLibrary": "مكتبة التفاسير",
+  "tafsirLibraryHint": "تفاسير أخرى تنزّلها عند الحاجة، تظهر بعد التنزيل في قائمة التفاسير",
+  "tafsirLibraryAuthor": "{author} (ت {year}هـ)",
+  "@tafsirLibraryAuthor": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      },
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "tafsirPackDelete": "حذف",
+  "tafsirPackDeleteLabel": "حذف {title}",
+  "@tafsirPackDeleteLabel": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "tafsirPackDownloadLabel": "تنزيل {title}",
+  "@tafsirPackDownloadLabel": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "tafsirPackInstalled": "منزّل"
 }

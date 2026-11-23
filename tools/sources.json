@@ -108,6 +108,24 @@
       "evidence": "docs/licenses/2026-09-28_quranenc_english_saheeh.pdf, docs/licenses/2026-09-29_quranenc_sqlite_downloads.pdf"
     },
     {
+      "id": "quranenc-arabic-mokhtasar",
+      "file": "qe_arabic_mokhtasar.sqlite",
+      "url": "https://quranenc.com/downloads/sqlite/arabic_mokhtasar.sqlite",
+      "method": "GET",
+      "sha256": "05086b0661250dca6c6cedd6c4503f169d14dc5fef81ae5042418c07817495e0",
+      "license": "QuranEnc terms: republish without change; credit the publisher (Tafsir Center for Quranic Studies) and QuranEnc.com; state the version; keep updated. No version number is published for this tafsir; the file hash and retrieval date (2026-11-23) stand in for it.",
+      "evidence": "docs/licenses/2026-11-23_quranenc_arabic_mokhtasar_terms.txt"
+    },
+    {
+      "id": "tanzil-ar-jalalayn",
+      "file": "tanzil_ar.jalalayn.txt",
+      "url": "https://tanzil.net/trans/?transID=ar.jalalayn&type=txt-2",
+      "method": "GET",
+      "sha256": "06a3084bbe72d787e6da3bd3825ad20c6b8bdff033c7560091a5c21915a96684",
+      "license": "Tanzil translations: non-commercial use only (Tibyan is free, without ads or payments); link back to tanzil.net/trans. File header: Last Update December 1, 2010.",
+      "evidence": "docs/licenses/2026-09-29_tanzil_translations_terms.pdf"
+    },
+    {
       "id": "tanzil-en-pickthall",
       "file": "tanzil_en.pickthall.txt",
       "url": "https://tanzil.net/trans/?transID=en.pickthall&type=txt-2",

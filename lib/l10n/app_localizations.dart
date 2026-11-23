@@ -10764,6 +10764,66 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'المسافة: {km} كم'**
   String qiblaDistanceRow(String km);
+
+  /// No description provided for @tafsirSectionTafsirs.
+  ///
+  /// In ar, this message translates to:
+  /// **'التفاسير'**
+  String get tafsirSectionTafsirs;
+
+  /// No description provided for @tafsirSectionTranslations.
+  ///
+  /// In ar, this message translates to:
+  /// **'الترجمات'**
+  String get tafsirSectionTranslations;
+
+  /// No description provided for @tafsirKeepOne.
+  ///
+  /// In ar, this message translates to:
+  /// **'يبقى نص واحد ظاهرا على الأقل'**
+  String get tafsirKeepOne;
+
+  /// No description provided for @tafsirLibrary.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكتبة التفاسير'**
+  String get tafsirLibrary;
+
+  /// No description provided for @tafsirLibraryHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاسير أخرى تنزّلها عند الحاجة، تظهر بعد التنزيل في قائمة التفاسير'**
+  String get tafsirLibraryHint;
+
+  /// No description provided for @tafsirLibraryAuthor.
+  ///
+  /// In ar, this message translates to:
+  /// **'{author} (ت {year}هـ)'**
+  String tafsirLibraryAuthor(String author, String year);
+
+  /// No description provided for @tafsirPackDelete.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف'**
+  String get tafsirPackDelete;
+
+  /// No description provided for @tafsirPackDeleteLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف {title}'**
+  String tafsirPackDeleteLabel(String title);
+
+  /// No description provided for @tafsirPackDownloadLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنزيل {title}'**
+  String tafsirPackDownloadLabel(String title);
+
+  /// No description provided for @tafsirPackInstalled.
+  ///
+  /// In ar, this message translates to:
+  /// **'منزّل'**
+  String get tafsirPackInstalled;
 }
 
 class _AppLocalizationsDelegate

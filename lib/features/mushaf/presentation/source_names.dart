@@ -74,6 +74,30 @@ const _ar = <String, SourceText>{
     license: 'شروط موسوعة القرآن الكريم (QuranEnc): دون تعديل أو إضافة أو حذف، مع ذكر الناشر والموقع ورقم الإصدار',
     credit: 'التفسير الميسر: مجمع الملك فهد لطباعة المصحف الشريف، عبر موقع QuranEnc.com',
   ),
+  'quranenc-arabic-mokhtasar': (
+    title: 'المختصر في تفسير القرآن الكريم',
+    publisher: 'مركز تفسير للدراسات القرآنية',
+    license: 'شروط موسوعة القرآن الكريم (QuranEnc): دون تعديل أو إضافة أو حذف، مع ذكر الناشر والموقع ورقم الإصدار',
+    credit: 'المختصر في تفسير القرآن الكريم: مركز تفسير للدراسات القرآنية، عبر موقع QuranEnc.com',
+  ),
+  'tanzil-ar-jalalayn': (
+    title: 'تفسير الجلالين',
+    publisher: 'جلال الدين المحلي وجلال الدين السيوطي، نص موقع Tanzil.net',
+    license: 'شروط Tanzil للترجمات: للاستخدام غير التجاري فقط (تبيان مجاني بلا إعلانات ولا مدفوعات)، مع رابط إلى tanzil.net/trans',
+    credit: 'تفسير الجلالين: عن موقع Tanzil.net (tanzil.net/trans)',
+  ),
+  'quranpedia': (
+    title: 'كتب التفسير التراثية',
+    publisher: 'الموسوعة القرآنية (quranpedia.net)، مركز أصول',
+    license: 'رخصة بيانات الموسوعة القرآنية: الاستخدام داخل التطبيقات مجاني، ويُذكر المصدر ورابطه وتاريخ النسخة عند نشر البيانات',
+    credit: 'عن الموسوعة القرآنية quranpedia.net',
+  ),
+  'jami_wajiz': (
+    title: 'الجامع الوجيز في تفسير آي الكتاب العزيز',
+    publisher: 'الشيخ الدكتور أيمن فاتح آل عامر',
+    license: 'رخصة المشاع الإبداعي «نسب المصنف، منع الاشتقاق» CC BY-ND 4.0 (creativecommons.org/licenses/by-nd/4.0)، والنص معروض دون تعديل',
+    credit: 'الجامع الوجيز: الشيخ الدكتور أيمن فاتح آل عامر، برخصة CC BY-ND 4.0، دون تعديل',
+  ),
   'quranenc-english-saheeh': (
     title: 'الترجمة الإنجليزية: صحيح إنترناشونال',
     publisher: 'صحيح إنترناشونال',
@@ -252,6 +276,30 @@ const _en = <String, SourceText>{
     publisher: 'King Fahd Glorious Quran Printing Complex',
     license: 'QuranEnc terms: no change, addition or removal; credit the publisher, QuranEnc.com and the version',
     credit: 'Al-Tafsir al-Muyassar: King Fahd Complex, via QuranEnc.com',
+  ),
+  'quranenc-arabic-mokhtasar': (
+    title: 'Al-Mukhtasar fi Tafsir al-Quran al-Karim',
+    publisher: 'Tafsir Center for Quranic Studies',
+    license: 'QuranEnc terms: no change, addition or removal; credit the publisher, QuranEnc.com and the version',
+    credit: 'Al-Mukhtasar fi Tafsir al-Quran al-Karim: Tafsir Center for Quranic Studies, via QuranEnc.com',
+  ),
+  'tanzil-ar-jalalayn': (
+    title: 'Tafsir al-Jalalayn',
+    publisher: 'Jalal al-Din al-Mahalli and Jalal al-Din al-Suyuti; text from Tanzil.net',
+    license: 'Tanzil translation terms: non-commercial use only (Tibyan is free, without ads or payments), with a link to tanzil.net/trans',
+    credit: 'Tafsir al-Jalalayn: from Tanzil.net (tanzil.net/trans)',
+  ),
+  'quranpedia': (
+    title: 'Classical tafsir books',
+    publisher: 'Quranpedia (quranpedia.net), OsoulCenter',
+    license: 'Quranpedia data licence: free inside apps; republished data names the source, its link and the dump version',
+    credit: 'From Quranpedia, quranpedia.net',
+  ),
+  'jami_wajiz': (
+    title: "Al-Jami' al-Wajiz fi Tafsir Ay al-Kitab al-Aziz",
+    publisher: 'Sheikh Dr. Ayman Fatih Al-Amer',
+    license: 'Creative Commons Attribution-NoDerivatives 4.0 (creativecommons.org/licenses/by-nd/4.0); the text is shown unchanged',
+    credit: "Al-Jami' al-Wajiz: Sheikh Dr. Ayman Fatih Al-Amer, CC BY-ND 4.0, unchanged",
   ),
   'quranenc-english-saheeh': (
     title: 'English translation: Saheeh International',

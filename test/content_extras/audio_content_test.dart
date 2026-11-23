@@ -263,7 +263,11 @@ void main() {
     Directory? root,
     Map<String, Object> initialPrefs = const {},
   }) async {
-    SharedPreferences.setMockInitialValues(initialPrefs);
+    // English tafsir is hidden until chosen; these checks choose it.
+    SharedPreferences.setMockInitialValues({
+      'settings.englishTafsirVisibility': true,
+      ...initialPrefs,
+    });
     final prefs = await tester.runAsync(SharedPreferences.getInstance);
     final audio = FakeAudio();
     await tester.binding.setSurfaceSize(const Size(420, 1600));
@@ -480,13 +484,14 @@ void main() {
       expect(find.text('Download'), findsNothing);
     });
 
-    testWidgets('hidden in the Arabic interface', (tester) async {
+    testWidgets('hidden by default', (tester) async {
       await pump(
         tester,
         section,
         flags: {Feature.englishTafsir: true},
         specs: [spec],
         root: installed(),
+        initialPrefs: {'settings.englishTafsirVisibility': false},
       );
       expect(find.textContaining('Placeholder'), findsNothing);
     });

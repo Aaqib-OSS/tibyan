@@ -4,6 +4,8 @@ import '../../../core/ui/look_kit.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../content_extras/tafsir_library.dart';
+
 import '../../prayer/data/adhan_catalog.dart';
 
 import '../../../core/theme/app_theme.dart';
@@ -156,6 +158,47 @@ class AboutMushafScreen extends ConsumerWidget {
                           },
                         ),
                       ),
+                  // The downloadable tafsir packs (tafsir library).
+                  for (final s in tafsirLibrarySources)
+                    Card(
+                      key: ValueKey('source-${s.key}'),
+                      child: Builder(
+                        builder: (context) {
+                          final named = sourceText(
+                            s.key,
+                            Localizations.localeOf(context).languageCode,
+                          )!;
+                          return ExpansionTile(
+                            title: Text(named.title),
+                            subtitle: Text(
+                              named.publisher,
+                              style: TextStyle(color: t.muted),
+                            ),
+                            expandedCrossAxisAlignment:
+                                CrossAxisAlignment.start,
+                            childrenPadding: const EdgeInsets.fromLTRB(
+                              16,
+                              0,
+                              16,
+                              16,
+                            ),
+                            children: [
+                              Text(l.versionShort(s.version)),
+                              Text(l.licenseLabel(named.license)),
+                              SelectableText(
+                                s.url,
+                                style: TextStyle(color: t.accent),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                named.credit,
+                                style: TextStyle(color: t.muted),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                   Card(
                     child: ExpansionTile(
                       title: Text(l.reciterPhotosTitle),

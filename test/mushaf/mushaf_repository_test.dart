@@ -42,13 +42,13 @@ void main() {
     }
   });
 
-  test('every verse has al-Muyassar, Saheeh and Pickthall', () async {
+  test('every verse has every bundled tafsir and translation', () async {
     final editions = await repo.commentaryEditions();
-    expect([for (final e in editions) e.sourceId], [7, 8, 9]);
+    expect([for (final e in editions) e.sourceId], [7, 44, 45, 8, 9]);
     expect(editions.first.kind, 'tafsir');
     for (final (s, a) in [(1, 1), (2, 255), (9, 1), (114, 6)]) {
       final entries = await repo.commentary(s, a);
-      expect(entries.keys.toSet(), {7, 8, 9}, reason: '$s:$a');
+      expect(entries.keys.toSet(), {7, 8, 9, 44, 45}, reason: '$s:$a');
       expect(entries.values.every((e) => e.body.isNotEmpty), isTrue);
     }
     // Footnotes come with Saheeh International only.

@@ -22,6 +22,7 @@ import '../books/books_providers.dart';
 import '../books/data/book_pack.dart';
 import '../books/presentation/asbab_section.dart';
 import '../content_extras/english_tafsir.dart';
+import '../content_extras/tafsir_library.dart';
 import '../content_extras/tafsir_audio_button.dart';
 import '../content_extras/verse_audio_index.dart';
 import '../books/presentation/book_section.dart';
@@ -600,6 +601,13 @@ class _VersePage extends ConsumerWidget {
                 .isNotEmpty)
           b,
     ];
+    // Downloaded tafsir packs (the tafsir library), under the same rule.
+    final packs = [
+      for (final i in ref.watch(installedTafsirPacksProvider))
+        if (!settings.hiddenBookTafsirs.contains(tafsirPackKey(i.spec)) &&
+            i.pack.entry(ayah.surah, ayah.number) != null)
+          i,
+    ];
     final arabicUi = languageCode == 'ar';
     // Each shown text is a chip: (settings key, name, card).
     final items = <(String, String, Widget)>[
@@ -626,6 +634,17 @@ class _VersePage extends ConsumerWidget {
             source: b.key,
             title: b.title,
             titleSize: 14,
+          ),
+        ),
+      for (final i in packs)
+        (
+          tafsirPackKey(i.spec),
+          i.pack.title,
+          TafsirPackCard(
+            key: ValueKey('tafsir-pack-${i.spec.id}'),
+            pack: i.pack,
+            surah: ayah.surah,
+            ayah: ayah.number,
           ),
         ),
     ];
@@ -1043,6 +1062,74 @@ class _TafsirSettingsSheet extends ConsumerWidget {
     final arabicUi = languageCode == 'ar';
     final flags = ref.watch(featureFlagsProvider);
     final englishTafsirSpecs = ref.watch(englishTafsirSpecsProvider);
+    final packs = ref.watch(installedTafsirPacksProvider);
+    final englishTafsirOn =
+        englishTafsirSpecs.isNotEmpty && flags.isOn(Feature.englishTafsir);
+    final tafsirEditions = [
+      for (final e in editions)
+        if (e.kind == 'tafsir' && e.language == 'ar') e,
+    ];
+    final translations = [
+      for (final e in editions)
+        if (!(e.kind == 'tafsir' && e.language == 'ar')) e,
+    ];
+    bool editionShown(CommentaryEditionRow e) => settings.isCommentaryShown(
+      e.sourceId,
+      defaultShown: commentaryDefaultShown(
+        kind: e.kind,
+        contentLanguageCode: e.language,
+        languageCode: languageCode,
+      ),
+    );
+    // How many texts are shown: the last one cannot be hidden.
+    final shownCount = [
+      for (final e in editions) editionShown(e),
+      for (final b in books) !settings.hiddenBookTafsirs.contains(b.key),
+      for (final i in packs)
+        !settings.hiddenBookTafsirs.contains(tafsirPackKey(i.spec)),
+      if (englishTafsirOn) settings.isEnglishTafsirShown(languageCode),
+    ].where((v) => v).length;
+
+    Widget guardedSwitch({
+      required Key key,
+      required String title,
+      String? subtitle,
+      required bool value,
+      required ValueChanged<bool> onChanged,
+    }) {
+      final last = value && shownCount <= 1;
+      return SwitchListTile(
+        key: key,
+        contentPadding: EdgeInsets.zero,
+        title: Text(title),
+        subtitle: last
+            ? Text(l.tafsirKeepOne)
+            : subtitle == null
+            ? null
+            : Text(subtitle),
+        value: value,
+        onChanged: last ? null : onChanged,
+      );
+    }
+
+    Widget editionSwitch(CommentaryEditionRow e) => guardedSwitch(
+      key: ValueKey('tafsir-shown-c:${e.sourceId}'),
+      title: arabicUi ? e.nameAr : e.nameEn,
+      value: editionShown(e),
+      onChanged: (v) => controller.setCommentaryShown(e.sourceId, v),
+    );
+
+    Widget keyedSwitch({
+      required String key,
+      required String title,
+      String? subtitle,
+    }) => guardedSwitch(
+      key: ValueKey('tafsir-shown-$key'),
+      title: title,
+      subtitle: subtitle,
+      value: !settings.hiddenBookTafsirs.contains(key),
+      onChanged: (v) => controller.setBookTafsirShown(key, v),
+    );
 
     return SafeArea(
       child: ListView(
@@ -1095,40 +1182,59 @@ class _TafsirSettingsSheet extends ConsumerWidget {
             onChanged: controller.setTafsirKashida,
           ),
           Text(l.tafsirShown, style: Theme.of(context).textTheme.titleSmall),
-          for (final e in editions)
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(arabicUi ? e.nameAr : e.nameEn),
-              value: settings.isCommentaryShown(
-                e.sourceId,
-                defaultShown: commentaryDefaultShown(
-                  kind: e.kind,
-                  contentLanguageCode: e.language,
-                  languageCode: languageCode,
-                ),
-              ),
-              onChanged: (v) => controller.setCommentaryShown(e.sourceId, v),
-            ),
-          if (englishTafsirSpecs.isNotEmpty &&
-              flags.isOn(Feature.englishTafsir))
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(l.englishTafsirVisibilityLabel),
-              value: settings.isEnglishTafsirShown(languageCode),
-              onChanged: controller.setEnglishTafsirShown,
-            ),
+          _SectionLabel(l.tafsirSectionTafsirs),
+          for (final e in tafsirEditions) editionSwitch(e),
           for (final b in books)
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(b.title),
-              subtitle: Text(b.author),
-              value: !settings.hiddenBookTafsirs.contains(b.key),
-              onChanged: (v) => controller.setBookTafsirShown(b.key, v),
+            keyedSwitch(key: b.key, title: b.title, subtitle: b.author),
+          for (final i in packs)
+            keyedSwitch(
+              key: tafsirPackKey(i.spec),
+              title: i.pack.title,
+              subtitle: i.spec.author,
             ),
+          ListTile(
+            key: const ValueKey('tafsir-library-open'),
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.library_books_outlined),
+            title: Text(l.tafsirLibrary),
+            subtitle: Text(l.tafsirLibraryHint),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => showTafsirLibrary(context),
+          ),
+          if (translations.isNotEmpty || englishTafsirOn) ...[
+            _SectionLabel(l.tafsirSectionTranslations),
+            for (final e in translations) editionSwitch(e),
+            if (englishTafsirOn)
+              guardedSwitch(
+                key: const ValueKey('tafsir-shown-english'),
+                title: l.englishTafsirVisibilityLabel,
+                value: settings.isEnglishTafsirShown(languageCode),
+                onChanged: controller.setEnglishTafsirShown,
+              ),
+          ],
         ],
       ),
     );
   }
+}
+
+/// A group label in the tafsir settings.
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(top: 12, bottom: 4),
+    child: Semantics(
+      header: true,
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.labelLarge
+            ?.copyWith(color: context.tokens.colors.muted),
+      ),
+    ),
+  );
 }
 
 /// A horizontal drag handed to the pages' scroll position, as the

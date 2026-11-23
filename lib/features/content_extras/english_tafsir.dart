@@ -35,6 +35,8 @@ class TafsirTextPackSpec {
     required this.bytes,
     required this.title,
     this.fallbacks = const [],
+    this.author,
+    this.diedAh,
   });
 
   final String id;
@@ -47,6 +49,10 @@ class TafsirTextPackSpec {
   final String sha256;
   final int bytes;
   final String title;
+
+  /// The author's short name and death year (AH), for the library list.
+  final String? author;
+  final int? diedAh;
 
   PagePackSpec get pack => PagePackSpec(
     id: id,
