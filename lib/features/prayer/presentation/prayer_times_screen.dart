@@ -376,7 +376,14 @@ class _TimesList extends ConsumerWidget {
                             ],
                           ),
                         ),
-                        Text(time, style: style),
+                        // Shrinks, never overflows, beside «صليت؟» at
+                        // large text sizes.
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(time, style: style),
+                          ),
+                        ),
                       ],
                     ),
                   ),
