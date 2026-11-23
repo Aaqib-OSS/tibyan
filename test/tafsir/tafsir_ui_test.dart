@@ -26,6 +26,8 @@ import '../books/fake_pack.dart';
 
 class _FakeRecitation extends RecitationController {
   final plays = <(int, int?)>[];
+  final ranges = <(int?, int?)>[];
+  final repeats = <int?>[];
 
   @override
   RecitationState build() => const RecitationState();
@@ -43,7 +45,28 @@ class _FakeRecitation extends RecitationController {
     bool nearSpeech = false,
     int? word,
     ReciterRow? reciter,
-  }) async => plays.add((surah, from));
+  }) async {
+    plays.add((surah, from));
+    ranges.add((from, to));
+    repeats.add(repeat);
+    state = RecitationState(
+      active: true,
+      playing: true,
+      surah: surah,
+      ayah: from,
+      timed: true,
+      rangeFrom: from,
+      rangeTo: to,
+      repeat: repeat ?? 1,
+    );
+  }
+
+  /// The stretch of one verse ended: the player pauses there.
+  void endOfVerse() => state = state.copyWith(playing: false);
+
+  @override
+  Future<void> toggle() async =>
+      state = state.copyWith(playing: !state.playing);
 
   void recite(int surah, int ayah) => state = RecitationState(
     active: true,
@@ -306,11 +329,51 @@ void main() {
       expect(shared.single, contains('\n\nالتفسير الميسر'));
     });
 
-    testWidgets('tapping the verse plays it', (tester) async {
+    testWidgets('«استمع للآية» plays this verse only, then stops', (
+      tester,
+    ) async {
       await pump(tester, ayah: 3, packs: []);
-      await tester.tap(find.byKey(const ValueKey('tafsir-verse')).first);
+      final button = find.byKey(const ValueKey('tafsir-play-verse')).first;
+      await tester.ensureVisible(button);
+      await tester.tap(button);
       await tester.pump();
       expect(recitation.plays, [(2, 3)]);
+      // A stretch of this one verse, played once: it does not go on.
+      expect(recitation.ranges, [(3, 3)]);
+      expect(recitation.repeats, [1]);
+      expect(find.text('إيقاف مؤقت'), findsOneWidget);
+
+      recitation.endOfVerse();
+      await tester.pump();
+      expect(find.text('استمع للآية'), findsWidgets);
+      expect(find.text('إيقاف مؤقت'), findsNothing);
+    });
+
+    testWidgets('with «كرّر الآية» on the verse plays until stopped', (
+      tester,
+    ) async {
+      await pump(tester, ayah: 3, packs: []);
+      final repeat = find.byKey(const ValueKey('tafsir-repeat-verse')).first;
+      await tester.ensureVisible(repeat);
+      await tester.tap(repeat);
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('tafsir-play-verse')).first);
+      await tester.pump();
+      expect(recitation.ranges, [(3, 3)]);
+      expect(recitation.repeats, [0]);
+    });
+
+    testWidgets('the verse card: mosaic bands, header, verse', (tester) async {
+      await pump(tester, ayah: 3, packs: []);
+      final card = find.byKey(const ValueKey('tafsir-verse')).first;
+      expect(
+        find.descendant(of: card, matching: find.byType(CustomPaint)),
+        findsWidgets,
+      );
+      expect(
+        find.descendant(of: card, matching: find.textContaining('الآية ٣')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('nothing shown: «اختار التفاسير» opens the settings', (

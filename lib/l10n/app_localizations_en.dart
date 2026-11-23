@@ -6409,4 +6409,159 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tafsirPackInstalled => 'Downloaded';
+
+  @override
+  String deleteDownloadTitle(String name) {
+    return 'Delete “$name”?';
+  }
+
+  @override
+  String get deleteDownloadBody =>
+      'It will be removed from your device. You can download it again at any time.';
+
+  @override
+  String deleteDownloadSize(String size) {
+    return 'Size: $size';
+  }
+
+  @override
+  String downloadDoneOne(String name) {
+    return '“$name” finished downloading';
+  }
+
+  @override
+  String downloadDoneTwo(String a, String b) {
+    return '“$a” and “$b” finished downloading';
+  }
+
+  @override
+  String downloadDoneMany(int count, String n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$n items finished downloading',
+      one: '$n item finished downloading',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String downloadFailedOne(String name) {
+    return 'Couldn’t download “$name”';
+  }
+
+  @override
+  String downloadFailedTwo(String a, String b) {
+    return 'Couldn’t download “$a” and “$b”';
+  }
+
+  @override
+  String downloadFailedMany(int count, String n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Couldn’t download $n items',
+      one: 'Couldn’t download $n item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tasmeeModelName => 'Recitation check model';
+
+  @override
+  String tafsirVerseHeader(String surah, String ayah) {
+    return '$surah · Verse $ayah';
+  }
+
+  @override
+  String get tafsirPauseVerse => 'Pause';
+
+  @override
+  String get tafsirRepeatVerse => 'Repeat verse';
+
+  @override
+  String get downloadsSectionTafsir => 'Tafsir and meanings of the Quran';
+
+  @override
+  String get downloadsGroupTafsir => 'Tafsir';
+
+  @override
+  String get downloadsGroupSciences => 'Quranic sciences';
+
+  @override
+  String get downloadsGroupTranslations => 'Translations';
+
+  @override
+  String get downloadsSectionTools => 'Tools';
+
+  @override
+  String downloadsCentury(String n) {
+    return 'Century $n AH';
+  }
+
+  @override
+  String get downloadAllGroup => 'Download all';
+
+  @override
+  String downloadAllConfirmTitle(String count) {
+    return 'Download $count books?';
+  }
+
+  @override
+  String downloadAllConfirmBody(String size) {
+    return 'Total size: $size. It downloads in the background, and you can stop it at any time.';
+  }
+
+  @override
+  String get downloadAllConfirmOk => 'Download';
+
+  @override
+  String get librarySearchHint => 'Search by title or author';
+
+  @override
+  String get libraryFilterAll => 'All';
+
+  @override
+  String get libraryFilterOnDevice => 'On device';
+
+  @override
+  String get libraryFilterAvailable => 'Available';
+
+  @override
+  String libraryShowInTafsir(String title) {
+    return 'Show “$title” in the tafsir';
+  }
+
+  @override
+  String downloadCancelItem(String title) {
+    return 'Cancel downloading $title';
+  }
+
+  @override
+  String downloadItem(String title) {
+    return 'Download $title';
+  }
+
+  @override
+  String get libraryNoMatch => 'No results';
+
+  @override
+  String tafsirCoverage(String percent) {
+    return 'Coverage $percent%';
+  }
+
+  @override
+  String tafsirPackNotCovered(String title) {
+    return '“$title” says nothing on this verse';
+  }
+
+  @override
+  String get tafsirPackPreviousCovered => 'Previous verse it covers';
+
+  @override
+  String get tafsirPackNextCovered => 'Next verse it covers';
+
+  @override
+  String get tafsirCoverageFull => 'The whole Quran';
 }

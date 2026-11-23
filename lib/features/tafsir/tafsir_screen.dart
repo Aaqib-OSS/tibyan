@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../core/ui/app_toast.dart';
@@ -344,6 +346,7 @@ class _TafsirScreenState extends ConsumerState<TafsirScreen> {
                         key: ValueKey('tafsir-verse-${v.surah}:${v.number}'),
                         pages: _dragger,
                         ayah: v,
+                        onShow: _show,
                       );
                     },
                   ),
@@ -546,9 +549,17 @@ class _RiwayaNote extends ConsumerWidget {
 }
 
 class _VersePage extends ConsumerWidget {
-  const _VersePage({super.key, required this.ayah, required this.pages});
+  const _VersePage({
+    super.key,
+    required this.ayah,
+    required this.pages,
+    this.onShow,
+  });
 
   final AyahRow ayah;
+
+  /// Goes to another verse (Hafs numbers).
+  final void Function(int surah, int ayah)? onShow;
 
   /// Turns the pages on a touch swipe over the texts.
   final _PageDragger pages;
@@ -602,12 +613,14 @@ class _VersePage extends ConsumerWidget {
           b,
     ];
     // Downloaded tafsir packs (the tafsir library), under the same rule.
+    // A pack without a passage for this verse (a sparse tafsir) still
+    // has its chip, dimmed, so the reader does not think it is missing.
     final packs = [
       for (final i in ref.watch(installedTafsirPacksProvider))
-        if (!settings.hiddenBookTafsirs.contains(tafsirPackKey(i.spec)) &&
-            i.pack.entry(ayah.surah, ayah.number) != null)
-          i,
+        if (!settings.hiddenBookTafsirs.contains(tafsirPackKey(i.spec))) i,
     ];
+    bool covers(InstalledTafsirPack i) =>
+        i.pack.entry(ayah.surah, ayah.number) != null;
     final arabicUi = languageCode == 'ar';
     // Each shown text is a chip: (settings key, name, card).
     final items = <(String, String, Widget)>[
@@ -640,14 +653,26 @@ class _VersePage extends ConsumerWidget {
         (
           tafsirPackKey(i.spec),
           i.pack.title,
-          TafsirPackCard(
-            key: ValueKey('tafsir-pack-${i.spec.id}'),
-            pack: i.pack,
-            surah: ayah.surah,
-            ayah: ayah.number,
-          ),
+          covers(i)
+              ? TafsirPackCard(
+                  key: ValueKey('tafsir-pack-${i.spec.id}'),
+                  pack: i.pack,
+                  surah: ayah.surah,
+                  ayah: ayah.number,
+                )
+              : _NotCoveredCard(
+                  key: ValueKey('tafsir-pack-none-${i.spec.id}'),
+                  pack: i.pack,
+                  surah: ayah.surah,
+                  ayah: ayah.number,
+                  onShow: onShow,
+                ),
         ),
     ];
+    final dimmed = {
+      for (final i in packs)
+        if (!covers(i)) tafsirPackKey(i.spec),
+    };
     final controller = ref.read(settingsProvider.notifier);
     // «قارن» shows them all; otherwise the last one chosen, else the first.
     final compare = settings.tafsirCompare && items.length > 1;
@@ -655,19 +680,17 @@ class _VersePage extends ConsumerWidget {
         ? null
         : items.firstWhere(
             (i) => i.$1 == settings.tafsirChoice,
-            orElse: () => items.first,
+            orElse: () => items.firstWhere(
+              (i) => !dimmed.contains(i.$1),
+              orElse: () => items.first,
+            ),
           );
-    final cards = compare ? [for (final i in items) i.$3] : [?chosen?.$3];
-
-    void playVerse() {
-      // The recitation counts verses as the edition does.
-      final k = editionKeyOf(
-        ref.read(riwayaDataProvider).value,
-        ayah.surah,
-        ayah.number,
-      );
-      ref.read(recitationProvider.notifier).play(k.surah, from: k.ayah);
-    }
+    final cards = compare
+        ? [
+            for (final i in items)
+              if (!dimmed.contains(i.$1)) i.$3,
+          ]
+        : [?chosen?.$3];
 
     // On Android the text selection would take horizontal touch drags
     // first; this detector sits under it, so it wins them and turns the
@@ -715,7 +738,10 @@ class _VersePage extends ConsumerWidget {
                                 ),
                                 child: ChoiceChip(
                                   key: ValueKey('tafsir-chip-${i.$1}'),
-                                  label: Text(i.$2),
+                                  label: Opacity(
+                                    opacity: dimmed.contains(i.$1) ? 0.5 : 1,
+                                    child: Text(i.$2),
+                                  ),
                                   selected: i.$1 == chosen?.$1,
                                   materialTapTargetSize:
                                       MaterialTapTargetSize.padded,
@@ -729,55 +755,7 @@ class _VersePage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
                 ],
-                Semantics(
-                  button: true,
-                  hint: l.tafsirPlayVerse,
-                  child: Material(
-                    type: MaterialType.transparency,
-                    child: InkWell(
-                      key: const ValueKey('tafsir-verse'),
-                      borderRadius: BorderRadius.circular(14),
-                      onTap: playVerse,
-                      child: Ink(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: t.bg,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: t.border),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text.rich(
-                              TextSpan(
-                                children: [
-                                  TextSpan(text: '${ayah.displayBody} '),
-                                  TextSpan(
-                                    text: ayah.displayNumber,
-                                    style: TextStyle(color: t.marker),
-                                  ),
-                                ],
-                              ),
-                              textDirection: TextDirection.rtl,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontFamily: 'UthmanicHafs',
-                                fontSize: 24,
-                                height: 2,
-                                color: t.ink,
-                              ),
-                            ),
-                            Icon(
-                              Icons.play_circle_outline,
-                              size: 22,
-                              color: t.marker,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                _VerseCard(ayah: ayah),
                 const SizedBox(height: 16),
                 // «استمع للتفسير» (flag tafsir_audio), when a recording has
                 // the verse; nothing otherwise.
@@ -1254,4 +1232,283 @@ class _PageDragger {
   void update(DragUpdateDetails d) => _drag?.update(d);
   void end(DragEndDetails d) => _drag?.end(d);
   void cancel() => _drag?.cancel();
+}
+
+/// The verse over its tafsir: a soft card between two mosaic bands, the
+/// surah and verse between two markers, the verse, then «استمع للآية»,
+/// which plays this verse only and stops at its end (on and on when the
+/// reader turned «كرّر» on).
+class _VerseCard extends ConsumerStatefulWidget {
+  const _VerseCard({required this.ayah});
+
+  final AyahRow ayah;
+
+  @override
+  ConsumerState<_VerseCard> createState() => _VerseCardState();
+}
+
+class _VerseCardState extends ConsumerState<_VerseCard> {
+  bool _repeat = false;
+
+  /// The verse as the recitation counts it (the edition's numbering).
+  ({int surah, int ayah}) _key() {
+    final k = editionKeyOf(
+      ref.read(riwayaDataProvider).value,
+      widget.ayah.surah,
+      widget.ayah.number,
+    );
+    return (surah: k.surah, ayah: k.ayah);
+  }
+
+  bool _isThis(RecitationState s, ({int surah, int ayah}) k) =>
+      s.active &&
+      s.clip == null &&
+      s.surah == k.surah &&
+      s.rangeFrom == k.ayah &&
+      s.rangeTo == k.ayah;
+
+  Future<void> _play() {
+    final k = _key();
+    // This verse only: a stretch of one verse, played once (or until
+    // stopped with «كرّر»); the mushaf's own recitation is untouched.
+    return ref
+        .read(recitationProvider.notifier)
+        .play(
+          k.surah,
+          from: k.ayah,
+          to: k.ayah,
+          repeat: _repeat ? 0 : 1,
+          verseRepeat: 1,
+        );
+  }
+
+  Future<void> _tap(RecitationState s) async {
+    final k = _key();
+    final mine = _isThis(s, k);
+    if (mine && s.playing) {
+      await ref.read(recitationProvider.notifier).toggle();
+    } else {
+      await _play();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final t = context.tokens.colors;
+    final scheme = Theme.of(context).colorScheme;
+    final ayah = widget.ayah;
+    final digits = NumberFormatter(Localizations.localeOf(context));
+    final s = ref.watch(recitationProvider);
+    final surahRow = ref.watch(surahsProvider).value?[ayah.surah - 1];
+    final k = _key();
+    final playing = _isThis(s, k) && (s.playing || s.loading);
+    final images = ref.watch(frameImagesProvider(t.artTint)).value;
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    Widget band() => SizedBox(
+      height: 22,
+      child: images == null
+          ? ColoredBox(color: t.border)
+          : CustomPaint(painter: _MosaicBand(images)),
+    );
+    Widget marker() => ExcludeSemantics(
+      child: Image.asset(
+        'assets/ornaments/marker_16.png',
+        width: 20,
+        height: 20,
+      ),
+    );
+    final words = ayah.displayBody.split(RegExp(r'\s+')).length;
+    final word = playing ? s.word : null;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          key: const ValueKey('tafsir-verse'),
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: t.bg,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: t.border),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              band(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        marker(),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            l.tafsirVerseHeader(
+                              surahRow == null
+                                  ? digits(ayah.surah)
+                                  : l.surahWord(surahName(context, surahRow)),
+                              digits(ayah.number),
+                            ),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: scheme.primary,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        marker(),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(text: '${ayah.displayBody} '),
+                          TextSpan(
+                            text: ayah.displayNumber,
+                            style: TextStyle(color: t.marker),
+                          ),
+                        ],
+                      ),
+                      textDirection: TextDirection.rtl,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'UthmanicHafs',
+                        fontSize: 24,
+                        height: 2,
+                        color: t.ink,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              band(),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        FilledButton.icon(
+          key: const ValueKey('tafsir-play-verse'),
+          style: FilledButton.styleFrom(
+            minimumSize: const Size.fromHeight(48),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+          onPressed: () => _tap(s),
+          icon: Icon(playing ? Icons.pause : Icons.play_arrow),
+          label: Text(playing ? l.tafsirPauseVerse : l.tafsirPlayVerse),
+        ),
+        if (playing && (word != null || !reduceMotion))
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(2),
+              child: LinearProgressIndicator(
+                minHeight: 3,
+                value: word == null ? null : (word / words).clamp(0.0, 1.0),
+              ),
+            ),
+          ),
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: TextButton.icon(
+            key: const ValueKey('tafsir-repeat-verse'),
+            style: TextButton.styleFrom(minimumSize: const Size(48, 48)),
+            onPressed: () {
+              setState(() => _repeat = !_repeat);
+              if (playing) unawaited(_play());
+            },
+            icon: Icon(_repeat ? Icons.repeat_on : Icons.repeat),
+            label: Semantics(
+              toggled: _repeat,
+              child: Text(l.tafsirRepeatVerse),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// The mosaic repeated along a band.
+class _MosaicBand extends CustomPainter {
+  _MosaicBand(this.images);
+
+  final FrameImages images;
+
+  @override
+  void paint(Canvas canvas, Size size) =>
+      canvas.drawRect(Offset.zero & size, images.mosaicPaint());
+
+  @override
+  bool shouldRepaint(_MosaicBand old) => old.images != images;
+}
+
+/// A library tafsir with nothing on this verse: says so, with the way to
+/// the nearest verses it does speak of.
+class _NotCoveredCard extends StatelessWidget {
+  const _NotCoveredCard({
+    super.key,
+    required this.pack,
+    required this.surah,
+    required this.ayah,
+    this.onShow,
+  });
+
+  final TafsirTextPack pack;
+  final int surah;
+  final int ayah;
+  final void Function(int surah, int ayah)? onShow;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final t = context.tokens.colors;
+    final before = pack.previousCovered(surah, ayah);
+    final after = pack.nextCovered(surah, ayah);
+    final go = onShow;
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: t.bg,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            l.tafsirPackNotCovered(pack.title),
+            textAlign: TextAlign.center,
+            style: TextStyle(color: t.muted, height: 1.6),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 8,
+            children: [
+              if (before != null && go != null)
+                OutlinedButton(
+                  key: const ValueKey('tafsir-pack-previous-covered'),
+                  onPressed: () => go(before.surah, before.ayah),
+                  child: Text(l.tafsirPackPreviousCovered),
+                ),
+              if (after != null && go != null)
+                OutlinedButton(
+                  key: const ValueKey('tafsir-pack-next-covered'),
+                  onPressed: () => go(after.surah, after.ayah),
+                  child: Text(l.tafsirPackNextCovered),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }

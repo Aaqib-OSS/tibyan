@@ -20,6 +20,7 @@ import 'tasmee_sheets.dart';
 import 'tasmee_style.dart';
 import 'tasmee_train_card.dart';
 import '../../../core/ui/responsive.dart';
+import '../../../core/ui/confirm_delete_download.dart';
 
 /// The model on the device: installed or not, and the space it takes.
 final tasmeeModelInfoProvider =
@@ -346,10 +347,11 @@ class TasmeeSettingsScreen extends ConsumerWidget {
 
   Future<void> _delete(BuildContext context, WidgetRef ref) async {
     final l = AppLocalizations.of(context);
-    if (!await _confirm(
+    final bytes = ref.read(tasmeeModelInfoProvider).value?.$2;
+    if (!await confirmDeleteDownload(
       context,
-      l.tasmeeDeleteModel,
-      l.tasmeeDeleteModelBody,
+      name: l.tasmeeModelName,
+      bytes: bytes,
     )) {
       return;
     }

@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'core/downloads/background_downloads.dart';
 import 'core/downloads/cellular_banner.dart';
+import 'core/downloads/download_notices_host.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -66,6 +68,7 @@ class TibyanApp extends ConsumerWidget {
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       debugShowCheckedModeBanner: false,
       routerConfig: router,
+      scaffoldMessengerKey: appMessengerKey,
       scrollBehavior: const AppScrollBehavior(),
       // A tap outside a text field closes the keyboard.
       actions: {...WidgetsApp.defaultActions, ...tapOutsideActions()},
@@ -89,10 +92,13 @@ class TibyanApp extends ConsumerWidget {
       // (a larger system size is kept).
       builder: (context, child) {
         // Downloads held on mobile data ask here, over every screen.
-        final player = CellularDownloadsBanner(
-          child: MacMenu(
-            router: router,
-            child: GlobalPlayer(router: router, child: child!),
+        final player = DownloadNoticesHost(
+          notices: ref.read(backgroundDownloadsProvider).notices,
+          child: CellularDownloadsBanner(
+            child: MacMenu(
+              router: router,
+              child: GlobalPlayer(router: router, child: child!),
+            ),
           ),
         );
         if (!settings.elderlyMode && !settings.forceReduceMotion) {

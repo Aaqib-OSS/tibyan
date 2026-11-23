@@ -14,14 +14,14 @@ import '../../../core/settings/app_settings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/look_kit.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../audio/audio_downloads_screen.dart' show confirmDeleteDownload;
+import '../../../core/ui/confirm_delete_download.dart';
 import '../../audio/background_recitations.dart';
 import '../../prayer/data/adhan_catalog.dart';
 import '../../prayer/data/adhan_downloads.dart';
 import '../../prayer/presentation/adhan_library_screen.dart' show MuezzinAvatar;
 import '../../audio/player_bar.dart';
 import '../../audio/recitation.dart';
-import '../../books/books_providers.dart';
+import '../../content_extras/tafsir_downloads_section.dart';
 import '../../onboarding/background_downloads.dart';
 import '../../search/semantic/meaning_providers.dart';
 import '../../tasmee/data/background_model_download.dart';
@@ -91,6 +91,7 @@ class DownloadsCenterScreen extends ConsumerWidget {
                         children: [
                           const _MushafSection(),
                           const _RecitationsSection(),
+                          const _TafsirSection(),
                           const _AdhanSection(),
                           const _ResourcesSection(),
                           Text(
@@ -391,6 +392,28 @@ class _RecitationsSection extends ConsumerWidget {
   }
 }
 
+/// «التفاسير ومعاني القرآن»: the same widget as the tafsir library page.
+class _TafsirSection extends StatelessWidget {
+  const _TafsirSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _SectionHeader(
+          sectionKey: 'tafsir',
+          title: l.downloadsSectionTafsir,
+          onDownloadAll: null,
+        ),
+        const TafsirDownloadsSection(),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+}
+
 class _ResourcesSection extends ConsumerWidget {
   const _ResourcesSection();
 
@@ -401,15 +424,6 @@ class _ResourcesSection extends ConsumerWidget {
     final downloads = ref.watch(backgroundDownloadsProvider);
     final info = ref.watch(tasmeeModelInfoProvider).value;
     final semantic = ref.watch(semanticDownloadProvider);
-    final books = ref.watch(bookPackSpecsProvider);
-    final bookProgress = ref.watch(bookDownloadsProvider);
-    final installedBooks = {
-      for (final b in ref.watch(installedBookPacksProvider))
-        if (b.spec != null) b.spec!.id,
-    };
-    PackProgress bookState(String id) => installedBooks.contains(id)
-        ? const PackProgress(PackPhase.installed)
-        : bookProgress[id] ?? const PackProgress(PackPhase.idle);
 
     Future<void> downloadModel() async {
       final backend = ref.read(tasmeeBackendProvider);
@@ -427,16 +441,13 @@ class _ResourcesSection extends ConsumerWidget {
         final modelBusy = model.active != null;
         final modelHere = info?.$1 != null;
         bool idle(PackPhase p) => p == PackPhase.idle || p == PackPhase.failed;
-        final anyMissing =
-            (!modelBusy && !modelHere) ||
-            idle(semantic.phase) ||
-            books.any((b) => idle(bookState(b.id).phase));
+        final anyMissing = (!modelBusy && !modelHere) || idle(semantic.phase);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _SectionHeader(
               sectionKey: 'resources',
-              title: l.downloadsSectionResources,
+              title: l.downloadsSectionTools,
               onDownloadAll: !anyMissing
                   ? null
                   : () {
@@ -445,13 +456,6 @@ class _ResourcesSection extends ConsumerWidget {
                         unawaited(
                           ref.read(semanticDownloadProvider.notifier).start(),
                         );
-                      }
-                      for (final b in books) {
-                        if (idle(bookState(b.id).phase)) {
-                          unawaited(
-                            ref.read(bookDownloadsProvider.notifier).start(b),
-                          );
-                        }
                       }
                     },
             ),
@@ -494,16 +498,6 @@ class _ResourcesSection extends ConsumerWidget {
                 ref.read(semanticDownloadProvider.notifier).start(),
               ),
             ),
-            for (final b in books)
-              _PackRow(
-                key: ValueKey('downloads-book-${b.id}'),
-                title: b.title,
-                progress: bookState(b.id),
-                bytes: b.bytes,
-                onStart: () => unawaited(
-                  ref.read(bookDownloadsProvider.notifier).start(b),
-                ),
-              ),
             const SizedBox(height: 8),
           ],
         );
@@ -560,8 +554,8 @@ class _AdhanSection extends ConsumerWidget {
                     onPressed: () async {
                       final ok = await confirmDeleteDownload(
                         context,
-                        title: l.adhanDeleteTitle(name),
-                        body: l.adhanDeleteBody,
+                        name: name,
+                        bytes: st.bytes,
                       );
                       if (ok) await adhan.delete(slug);
                     },

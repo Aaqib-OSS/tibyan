@@ -8,7 +8,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/ui/look_kit.dart';
 import '../../../core/ui/responsive.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../audio/audio_downloads_screen.dart' show confirmDeleteDownload;
+import '../../../core/ui/confirm_delete_download.dart';
 import '../../mushaf/presentation/widgets/illuminated_frame.dart'
     show NumberFormatter;
 import '../data/adhan_catalog.dart';
@@ -201,8 +201,8 @@ class AdhanLibraryRow extends ConsumerWidget {
     Future<void> delete() async {
       final ok = await confirmDeleteDownload(
         context,
-        title: l.adhanDeleteTitle(name),
-        body: l.adhanDeleteBody,
+        name: name,
+        bytes: state.bytes,
       );
       if (ok) await adhan.delete(muezzin.slug);
     }

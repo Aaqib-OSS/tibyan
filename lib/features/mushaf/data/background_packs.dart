@@ -121,6 +121,12 @@ class BackgroundPacks implements DownloadHandler {
     if (t is DownloadTask) await _dl.pause(t);
   }
 
+  /// Stops a pack's download and drops what it had received.
+  Future<void> cancel(PagePackSpec spec) async {
+    await _downloads.cancel([spec.id]);
+    _progress.add((spec.id, const PackProgress(PackPhase.idle)));
+  }
+
   Future<void> resume(PagePackSpec spec) async {
     final t = await _dl.taskForId(spec.id);
     if (t is DownloadTask) await _dl.resume(t);

@@ -6467,4 +6467,161 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tafsirPackInstalled => 'منزّل';
+
+  @override
+  String deleteDownloadTitle(String name) {
+    return 'حذف «$name»؟';
+  }
+
+  @override
+  String get deleteDownloadBody =>
+      'سيُحذف من جهازك ويمكنك تنزيله مرة أخرى في أي وقت.';
+
+  @override
+  String deleteDownloadSize(String size) {
+    return 'الحجم: $size';
+  }
+
+  @override
+  String downloadDoneOne(String name) {
+    return 'اكتمل تنزيل «$name»';
+  }
+
+  @override
+  String downloadDoneTwo(String a, String b) {
+    return 'اكتمل تنزيل «$a» و«$b»';
+  }
+
+  @override
+  String downloadDoneMany(int count, String n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'اكتمل تنزيل $n عنصرًا',
+      few: 'اكتمل تنزيل $n عناصر',
+      two: 'اكتمل تنزيل عنصرين',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String downloadFailedOne(String name) {
+    return 'تعذّر تنزيل «$name»';
+  }
+
+  @override
+  String downloadFailedTwo(String a, String b) {
+    return 'تعذّر تنزيل «$a» و«$b»';
+  }
+
+  @override
+  String downloadFailedMany(int count, String n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تعذّر تنزيل $n عنصرًا',
+      few: 'تعذّر تنزيل $n عناصر',
+      two: 'تعذّر تنزيل عنصرين',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tasmeeModelName => 'نموذج التسميع';
+
+  @override
+  String tafsirVerseHeader(String surah, String ayah) {
+    return '$surah · الآية $ayah';
+  }
+
+  @override
+  String get tafsirPauseVerse => 'إيقاف مؤقت';
+
+  @override
+  String get tafsirRepeatVerse => 'كرّر الآية';
+
+  @override
+  String get downloadsSectionTafsir => 'التفاسير ومعاني القرآن';
+
+  @override
+  String get downloadsGroupTafsir => 'التفاسير';
+
+  @override
+  String get downloadsGroupSciences => 'علوم القرآن';
+
+  @override
+  String get downloadsGroupTranslations => 'الترجمات';
+
+  @override
+  String get downloadsSectionTools => 'أدوات';
+
+  @override
+  String downloadsCentury(String n) {
+    return 'القرن $n الهجري';
+  }
+
+  @override
+  String get downloadAllGroup => 'تنزيل الكل';
+
+  @override
+  String downloadAllConfirmTitle(String count) {
+    return 'تنزيل $count من الكتب؟';
+  }
+
+  @override
+  String downloadAllConfirmBody(String size) {
+    return 'الحجم الإجمالي: $size. يُنزَّل في الخلفية، ويمكنك إيقافه في أي وقت.';
+  }
+
+  @override
+  String get downloadAllConfirmOk => 'تنزيل';
+
+  @override
+  String get librarySearchHint => 'ابحث بالاسم أو المؤلف';
+
+  @override
+  String get libraryFilterAll => 'الكل';
+
+  @override
+  String get libraryFilterOnDevice => 'على الجهاز';
+
+  @override
+  String get libraryFilterAvailable => 'متاح';
+
+  @override
+  String libraryShowInTafsir(String title) {
+    return 'إظهار «$title» في التفسير';
+  }
+
+  @override
+  String downloadCancelItem(String title) {
+    return 'إلغاء تنزيل $title';
+  }
+
+  @override
+  String downloadItem(String title) {
+    return 'تنزيل $title';
+  }
+
+  @override
+  String get libraryNoMatch => 'لا نتائج';
+
+  @override
+  String tafsirCoverage(String percent) {
+    return 'التغطية $percent٪';
+  }
+
+  @override
+  String tafsirPackNotCovered(String title) {
+    return 'لا يذكر «$title» شيئًا في هذه الآية';
+  }
+
+  @override
+  String get tafsirPackPreviousCovered => 'الآية السابقة التي يفسّرها';
+
+  @override
+  String get tafsirPackNextCovered => 'الآية التالية التي يفسّرها';
+
+  @override
+  String get tafsirCoverageFull => 'القرآن كاملًا';
 }

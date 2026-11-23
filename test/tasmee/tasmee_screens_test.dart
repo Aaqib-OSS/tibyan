@@ -688,7 +688,9 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('حذف النموذج'));
     await settle(tester);
-    await tester.tap(find.text('تأكيد'));
+    // The shared «حذف «X»؟» dialog.
+    expect(find.text('حذف «نموذج التسميع»؟'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'حذف'));
     await settle(tester);
     expect(b.deleted, 1);
 
