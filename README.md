@@ -31,8 +31,9 @@
 
 - **المصحف:** طبعات حفص (المدينة الحديثة والقديمة 1405 والشمرلي)، وروايات ورش وقالون والدوري وشعبة، وأشكال تراثية متعددة، والتجويد الملوّن، والصفحتان المتقابلتان على الشاشات العريضة.
 - **التلاوة:** قراء كثيرون، وتظليل الآية والكلمة مع الصوت، والتكرار والسرعة ومؤقت النوم، والتنزيل للاستماع بلا إنترنت.
-- **التفسير ومعاني الكلمات:** التفسير الميسر والترجمات، ودراسة الكلمة، والمتشابهات، والنسخ والمشاركة نصا وصورة.
+- **التفسير ومعاني الكلمات:** التفسير الميسر والمختصر والجلالين وتفاسير أخرى، والترجمات، ودراسة الكلمة، والمتشابهات، والنسخ والمشاركة نصا وصورة.
 - **الحفظ والتسميع:** اختبار كلمة بكلمة، ومراجعة متباعدة، وخريطة الحفظ، وتسميع صوتي يعمل على جهازك.
+- **الصلاة:** مواقيت الصلاة بحسب موقعك، والأذان بأصوات ثلاثة عشر مؤذنًا يُضبط لكل صلاة على حدة، وشاشة أذان كاملة بمشهد متحرك لكل صلاة، واتجاه القبلة ببوصلة وكاميرا وخريطة، وأذكار الصباح والمساء بتذكير، وسجل «صلواتي»، والتقويم الهجري.
 - **الختمة والمسبحة:** مخطط الختمة وتذكيرها وتقاريرها، ودفتر التدبر، والمسبحة، وأدوات الشاشة الرئيسية.
 - **للجميع:** وضع كبار السن، ودعم قارئ الشاشة، وواجهة عربية وإنجليزية، ونسخة احتياطية في ملف واحد.
 
@@ -84,8 +85,9 @@ sudo apt install tibyan
 
 - **Mushaf:** Hafs editions (new Madina, old Madina 1405, Shamarly), the Warsh, Qalun, al-Duri and Shu'bah riwayat, several heritage styles, tajweed colouring, and two facing pages on wide screens.
 - **Recitation:** many reciters, verse and word highlighting in sync with the audio, repeat, speed, sleep timer, and offline downloads.
-- **Tafsir and word meanings:** al-Muyassar and translations, word study, similar verses (mutashabihat), copy and share as text or image.
+- **Tafsir and word meanings:** al-Muyassar, al-Mukhtasar, al-Jalalayn and more tafsirs, plus translations, word study, similar verses (mutashabihat), copy and share as text or image.
 - **Memorization and tasmee:** word-by-word tests, spaced review, a hifz map, and recitation checking that runs on your device.
+- **Prayer:** prayer times for your location, the adhan in thirteen muezzins' voices set per prayer, a full-screen adhan with a moving scene for each prayer, the qibla by compass, camera and map, morning and evening adhkar with reminders, a «My prayers» log, and the Hijri calendar.
 - **Khatma and tasbih:** khatma planner, reminders and reports, a reflection journal, a tasbih counter, and home-screen widgets.
 - **For everyone:** elderly mode, screen-reader support, Arabic and English interface, one-file backup.
 
@@ -141,6 +143,10 @@ Manual steps are at [apt.altibyan.app](https://apt.altibyan.app). For other dist
 | التفسير · Tafsir | خريطة الحفظ · Hifz map | التسميع · Tasmee |
 | <img src="docs/screenshots/tasbih.webp" width="230" alt="Tasbih counter"> | <img src="docs/screenshots/settings.webp" width="230" alt="Settings"> | |
 | المسبحة · Tasbih | الإعدادات · Settings | |
+| <img src="docs/screenshots/prayer-times.webp" width="230" alt="Prayer times with each prayer's adhan"> | <img src="docs/screenshots/adhan-screen.webp" width="230" alt="Full-screen adhan with a moving scene"> | <img src="docs/screenshots/qibla.webp" width="230" alt="Qibla compass with turn guidance"> |
+| مواقيت الصلاة · Prayer times | شاشة الأذان · Adhan screen | القبلة · Qibla |
+| <img src="docs/screenshots/adhkar.webp" width="230" alt="Morning and evening adhkar"> | <img src="docs/screenshots/my-prayers.webp" width="230" alt="My prayers log"> | <img src="docs/screenshots/home.webp" width="230" alt="Home screen"> |
+| الأذكار · Adhkar | صلواتي · My prayers | الرئيسية · Home |
 
 <p align="center"><img src="docs/screenshots/desktop-spread.webp" width="820" alt="Two facing pages on desktop"><br>صفحتان متقابلتان على الحاسوب · Two facing pages on desktop</p>
 
