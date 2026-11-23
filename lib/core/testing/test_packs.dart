@@ -146,7 +146,6 @@ const _testEnglishTafsirPacks = <TafsirTextPackSpec>[
     url: '${_books}test-english-mokhtasar.pack.db',
     sha256: '65607b9dcd11f25928f43a27d7cde03c9560ff9a1669c6fc44701489dc2943e8',
     bytes: 2150400,
-    title:
-        'Al-Mukhtasar fi Tafsir al-Quran al-Karim (English)',
+    title: 'Al-Mukhtasar fi Tafsir al-Quran al-Karim (English)',
   ),
 ];
