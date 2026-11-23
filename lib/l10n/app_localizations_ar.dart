@@ -6624,4 +6624,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tafsirCoverageFull => 'القرآن كاملًا';
+
+  @override
+  String get tafsirOpenIndex => 'فتح الفهرس للانتقال إلى سورة أو آية';
+
+  @override
+  String get trackerMarkAll => 'صلّيت الكل';
+
+  @override
+  String get trackerMarkAllHint => 'يتاح بعد دخول وقت العشاء';
 }

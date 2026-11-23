@@ -40,6 +40,30 @@ DateTime trackerToday(PrayerSettings s, [DateTime? now]) {
       : placeToday(place, n);
 }
 
+/// Whether [day]'s prayers are all due: an earlier day, or today once its
+/// isha time (at the prayer place) has come.
+bool dayFullyDue(PrayerSettings s, DateTime day, DateTime now) {
+  final today = trackerToday(s, now);
+  final d = DateTime(day.year, day.month, day.day);
+  if (d.isBefore(today)) return true;
+  if (d.isAfter(today)) return false;
+  final place = s.place;
+  if (place == null) return false;
+  return !now.isBefore(computeDay(place, today, s)[PrayerKind.isha]);
+}
+
+/// «صلّيت الكل»: marks [day]'s unmarked prayers as on time; the marks
+/// already there are kept.
+Future<void> markWholeDay(
+  PrayerLogRepository repo,
+  DateTime day,
+  Map<PrayerKind, PrayedHow> marks,
+) async {
+  for (final p in obligatoryPrayers) {
+    if (marks[p] == null) await repo.mark(day, p, PrayedHow.onTime);
+  }
+}
+
 /// «صليت»: how [prayer] of [day] was prayed (or clear the mark).
 Future<void> showPrayedSheet(
   BuildContext context,
@@ -193,31 +217,73 @@ class _PrayerTrackerScreenState extends ConsumerState<PrayerTrackerScreen> {
                     stream: repo.watchDay(_day),
                     builder: (context, snap) {
                       final marks = snap.data ?? const {};
-                      return Card(
-                        margin: EdgeInsets.zero,
-                        clipBehavior: Clip.antiAlias,
-                        child: Column(
-                          children: [
-                            for (final p in obligatoryPrayers) ...[
-                              _DayRow(
-                                prayer: p,
-                                how: marks[p],
-                                onTap: () async {
-                                  await showPrayedSheet(
-                                    context,
-                                    ref,
-                                    p,
-                                    _day,
-                                    current: marks[p],
-                                  );
-                                  if (mounted) setState(() => _version++);
-                                },
+                      final allMarked = obligatoryPrayers.every(
+                        (p) => marks[p] != null,
+                      );
+                      final due = dayFullyDue(
+                        ref.watch(prayerSettingsProvider),
+                        _day,
+                        widget.now ?? DateTime.now(),
+                      );
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Card(
+                            margin: EdgeInsets.zero,
+                            clipBehavior: Clip.antiAlias,
+                            child: Column(
+                              children: [
+                                for (final p in obligatoryPrayers) ...[
+                                  _DayRow(
+                                    prayer: p,
+                                    how: marks[p],
+                                    onTap: () async {
+                                      await showPrayedSheet(
+                                        context,
+                                        ref,
+                                        p,
+                                        _day,
+                                        current: marks[p],
+                                      );
+                                      if (mounted) setState(() => _version++);
+                                    },
+                                  ),
+                                  if (p != obligatoryPrayers.last)
+                                    Divider(height: 1, color: t.border),
+                                ],
+                              ],
+                            ),
+                          ),
+                          if (!allMarked) ...[
+                            const SizedBox(height: 8),
+                            FilledButton.tonalIcon(
+                              key: const ValueKey('tracker-mark-all'),
+                              style: FilledButton.styleFrom(
+                                minimumSize: const Size.fromHeight(48),
                               ),
-                              if (p != obligatoryPrayers.last)
-                                Divider(height: 1, color: t.border),
-                            ],
+                              onPressed: due
+                                  ? () async {
+                                      await markWholeDay(repo, _day, marks);
+                                      if (mounted) setState(() => _version++);
+                                    }
+                                  : null,
+                              icon: const Icon(Icons.done_all),
+                              label: Text(l.trackerMarkAll),
+                            ),
+                            if (!due)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(
+                                  l.trackerMarkAllHint,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: t.muted,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
                           ],
-                        ),
+                        ],
                       );
                     },
                   ),

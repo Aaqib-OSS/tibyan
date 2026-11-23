@@ -2587,5 +2587,8 @@
       }
     }
   },
-  "tafsirCoverageFull": "The whole Quran"
+  "tafsirCoverageFull": "The whole Quran",
+  "tafsirOpenIndex": "Open the index to go to a surah or verse",
+  "trackerMarkAll": "I prayed them all",
+  "trackerMarkAllHint": "Available after isha time begins"
 }

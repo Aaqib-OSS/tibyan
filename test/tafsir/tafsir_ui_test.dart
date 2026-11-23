@@ -19,6 +19,8 @@ import 'package:tibyan/features/books/books_providers.dart';
 import 'package:tibyan/features/books/data/book_pack.dart';
 import 'package:tibyan/features/content_extras/english_tafsir.dart';
 import 'package:tibyan/features/mushaf/mushaf_providers.dart';
+import 'package:tibyan/features/mushaf/presentation/index_screen.dart';
+import 'package:tibyan/features/mushaf/presentation/navigation.dart';
 import 'package:tibyan/features/tafsir/tafsir_screen.dart';
 import 'package:tibyan/l10n/app_localizations.dart';
 
@@ -274,6 +276,25 @@ void main() {
       await tester.tap(target);
       await tester.pumpAndSettle();
       await settle(tester);
+      expect(verse(2, 40), findsOneWidget);
+    });
+
+    testWidgets('the title opens the index; a choice stays in the tafsir', (
+      tester,
+    ) async {
+      await pump(tester, packs: []);
+      final title = find.byKey(const ValueKey('tafsir-title-index'));
+      expect(find.bySemanticsLabel(RegExp('الفهرس')), findsOneWidget);
+      expect(tester.getSize(title).height, greaterThanOrEqualTo(48));
+      await tester.tap(title);
+      await tester.pumpAndSettle();
+      expect(find.byType(IndexScreen), findsOneWidget);
+      // A verse chosen in the index comes back to the tafsir.
+      tester.widget<IndexPickScope>(find.byType(IndexPickScope)).onPick(2, 40);
+      await tester.pumpAndSettle();
+      await settle(tester);
+      expect(find.byType(IndexScreen), findsNothing);
+      expect(find.byType(TafsirScreen), findsOneWidget);
       expect(verse(2, 40), findsOneWidget);
     });
 
