@@ -6088,7 +6088,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get qiblaAligned => 'أنت تواجه القبلة';
+  String get qiblaAligned => 'أنت في اتجاه القبلة';
 
   @override
   String qiblaTurnRight(String deg) {
@@ -6102,7 +6102,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get qiblaCalibrate =>
-      'حرّك الهاتف في الهواء على شكل الرقم 8 عدة مرات لمعايرة البوصلة.';
+      'حرّك الموبايل على شكل ∞ عشان البوصلة تبقى دقيقة';
 
   @override
   String get qiblaInterference =>
@@ -6387,5 +6387,41 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String qiblaMapLabel(String place) {
     return 'خريطة: خط من $place إلى الكعبة';
+  }
+
+  @override
+  String qiblaGuideRightSlight(String deg) {
+    return 'لفّ يميناً قليلاً $deg°';
+  }
+
+  @override
+  String qiblaGuideRight(String deg) {
+    return 'لفّ يميناً $deg°';
+  }
+
+  @override
+  String qiblaGuideLeftSlight(String deg) {
+    return 'لفّ شمالاً قليلاً $deg°';
+  }
+
+  @override
+  String qiblaGuideLeft(String deg) {
+    return 'لفّ شمالاً $deg°';
+  }
+
+  @override
+  String get qiblaToastTitle => 'أنت الآن في اتجاه القبلة';
+
+  @override
+  String get qiblaToastSub => 'ثبّت الموبايل';
+
+  @override
+  String qiblaBearingRow(String deg) {
+    return 'الزاوية من الشمال: $deg°';
+  }
+
+  @override
+  String qiblaDistanceRow(String km) {
+    return 'المسافة: $km كم';
   }
 }

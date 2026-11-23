@@ -10198,7 +10198,7 @@ abstract class AppLocalizations {
   /// No description provided for @qiblaAligned.
   ///
   /// In ar, this message translates to:
-  /// **'أنت تواجه القبلة'**
+  /// **'أنت في اتجاه القبلة'**
   String get qiblaAligned;
 
   /// No description provided for @qiblaTurnRight.
@@ -10216,7 +10216,7 @@ abstract class AppLocalizations {
   /// No description provided for @qiblaCalibrate.
   ///
   /// In ar, this message translates to:
-  /// **'حرّك الهاتف في الهواء على شكل الرقم 8 عدة مرات لمعايرة البوصلة.'**
+  /// **'حرّك الموبايل على شكل ∞ عشان البوصلة تبقى دقيقة'**
   String get qiblaCalibrate;
 
   /// No description provided for @qiblaInterference.
@@ -10704,6 +10704,54 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'خريطة: خط من {place} إلى الكعبة'**
   String qiblaMapLabel(String place);
+
+  /// No description provided for @qiblaGuideRightSlight.
+  ///
+  /// In ar, this message translates to:
+  /// **'لفّ يميناً قليلاً {deg}°'**
+  String qiblaGuideRightSlight(String deg);
+
+  /// No description provided for @qiblaGuideRight.
+  ///
+  /// In ar, this message translates to:
+  /// **'لفّ يميناً {deg}°'**
+  String qiblaGuideRight(String deg);
+
+  /// No description provided for @qiblaGuideLeftSlight.
+  ///
+  /// In ar, this message translates to:
+  /// **'لفّ شمالاً قليلاً {deg}°'**
+  String qiblaGuideLeftSlight(String deg);
+
+  /// No description provided for @qiblaGuideLeft.
+  ///
+  /// In ar, this message translates to:
+  /// **'لفّ شمالاً {deg}°'**
+  String qiblaGuideLeft(String deg);
+
+  /// No description provided for @qiblaToastTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنت الآن في اتجاه القبلة'**
+  String get qiblaToastTitle;
+
+  /// No description provided for @qiblaToastSub.
+  ///
+  /// In ar, this message translates to:
+  /// **'ثبّت الموبايل'**
+  String get qiblaToastSub;
+
+  /// No description provided for @qiblaBearingRow.
+  ///
+  /// In ar, this message translates to:
+  /// **'الزاوية من الشمال: {deg}°'**
+  String qiblaBearingRow(String deg);
+
+  /// No description provided for @qiblaDistanceRow.
+  ///
+  /// In ar, this message translates to:
+  /// **'المسافة: {km} كم'**
+  String qiblaDistanceRow(String km);
 }
 
 class _AppLocalizationsDelegate

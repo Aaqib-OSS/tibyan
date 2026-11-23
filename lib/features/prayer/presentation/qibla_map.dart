@@ -7,7 +7,7 @@ import 'package:latlong2/latlong.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/qibla.dart';
-import 'qibla_screen.dart' show KaabaBadge;
+import 'qibla_screen.dart' show KaabaBadge, qiblaTeal;
 
 /// The OpenStreetMap tile server; its policy asks for a real app identity.
 const _osmTiles = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -93,10 +93,9 @@ class _QiblaMapState extends State<QiblaMap> {
                     polylines: [
                       Polyline(
                         points: path,
-                        strokeWidth: 5,
-                        color: t.accent,
-                        borderStrokeWidth: 2,
-                        borderColor: t.paper,
+                        strokeWidth: 4,
+                        color: t.goldText,
+                        pattern: StrokePattern.dashed(segments: [10, 6]),
                       ),
                     ],
                   ),
@@ -106,11 +105,17 @@ class _QiblaMapState extends State<QiblaMap> {
                         point: you,
                         width: 36,
                         height: 36,
-                        child: Icon(
-                          Icons.my_location,
-                          color: t.control,
-                          size: 30,
-                          semanticLabel: l.qiblaYou,
+                        child: Semantics(
+                          label: l.qiblaYou,
+                          child: Container(
+                            key: const ValueKey('qibla-map-you'),
+                            margin: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: qiblaTeal(context),
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                          ),
                         ),
                       ),
                       const Marker(

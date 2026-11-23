@@ -6039,7 +6039,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get qiblaCalibrate =>
-      'Move the phone through the air in a figure 8 a few times to calibrate the compass.';
+      'Move the phone in a ∞ figure so the compass stays accurate.';
 
   @override
   String get qiblaInterference =>
@@ -6329,5 +6329,41 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String qiblaMapLabel(String place) {
     return 'Map: a line from $place to the Kaaba';
+  }
+
+  @override
+  String qiblaGuideRightSlight(String deg) {
+    return 'Turn right a little $deg°';
+  }
+
+  @override
+  String qiblaGuideRight(String deg) {
+    return 'Turn right $deg°';
+  }
+
+  @override
+  String qiblaGuideLeftSlight(String deg) {
+    return 'Turn left a little $deg°';
+  }
+
+  @override
+  String qiblaGuideLeft(String deg) {
+    return 'Turn left $deg°';
+  }
+
+  @override
+  String get qiblaToastTitle => 'You are now facing the Qibla';
+
+  @override
+  String get qiblaToastSub => 'Hold the phone steady';
+
+  @override
+  String qiblaBearingRow(String deg) {
+    return 'Bearing from north: $deg°';
+  }
+
+  @override
+  String qiblaDistanceRow(String km) {
+    return 'Distance: $km km';
   }
 }

@@ -9,7 +9,10 @@ import 'package:tibyan/features/prayer/domain/prayer_settings.dart';
 import 'package:tibyan/features/prayer/domain/qibla.dart';
 import 'package:tibyan/features/prayer/presentation/qibla_camera.dart';
 import 'package:tibyan/features/prayer/presentation/qibla_screen.dart';
+import 'package:tibyan/features/mushaf/presentation/widgets/illuminated_frame.dart'
+    show NumberFormatter;
 import 'package:tibyan/features/prayer/prayer_providers.dart';
+import 'package:tibyan/l10n/app_localizations.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 
 import '../../tasmee/tasmee_test_env.dart';
@@ -77,6 +80,23 @@ void main() {
     expect(kaabaInView(-30), -1);
     expect(kaabaInView(31), isNull);
     expect(kaabaInView(-120), isNull);
+  });
+
+  test('guidance text: direction from the signed turn, «قليلاً» up to 40°', () {
+    final ar = lookupAppLocalizations(const Locale('ar'));
+    final en = lookupAppLocalizations(const Locale('en'));
+    final d = NumberFormatter(const Locale('ar'));
+    final e = NumberFormatter(const Locale('en'));
+    // qibla − heading, shortest way: 136 from 100 is +36 (right).
+    expect(qiblaGuideText(ar, turnTo(100, 136), d), 'لفّ يميناً قليلاً ٣٦°');
+    expect(qiblaGuideText(ar, turnTo(170, 136), d), 'لفّ شمالاً قليلاً ٣٤°');
+    expect(qiblaGuideText(ar, turnTo(80, 136), d), 'لفّ يميناً ٥٦°');
+    expect(qiblaGuideText(ar, turnTo(300, 136), d), 'لفّ شمالاً ١٦٤°');
+    // Across north: from 350 to 10 is right 20.
+    expect(qiblaGuideText(ar, turnTo(350, 10), d), 'لفّ يميناً قليلاً ٢٠°');
+    expect(qiblaGuideText(ar, turnTo(132, 136), d), 'أنت في اتجاه القبلة');
+    expect(qiblaGuideText(en, 41, e), 'Turn right 41°');
+    expect(qiblaGuideText(en, -40, e), 'Turn left a little 40°');
   });
 
   test('magnetic declination (WMM 2025) matches the NOAA model', () {
@@ -154,7 +174,7 @@ void main() {
       expect(km.data, contains('١٢٨٧'));
       c.add((heading: 90.0, accuracy: 10));
       await tester.pump();
-      expect(find.textContaining('استدر يمينًا'), findsOneWidget);
+      expect(find.text('لفّ يميناً ٤٦°'), findsOneWidget);
       // The Kaaba mark sits on the compass ring; the camera is offered.
       expect(find.byType(KaabaBadge), findsOneWidget);
       expect(find.byKey(const ValueKey('qibla-open-camera')), findsOneWidget);
@@ -162,7 +182,10 @@ void main() {
         c.add((heading: 136.0, accuracy: 10));
         await tester.pump();
       }
-      expect(find.text('أنت تواجه القبلة'), findsWidgets);
+      expect(find.text('أنت في اتجاه القبلة'), findsWidgets);
+      expect(find.byKey(const ValueKey('qibla-toast')), findsOneWidget);
+      await tester.pump(const Duration(seconds: 2));
+      expect(find.byKey(const ValueKey('qibla-toast')), findsNothing);
       expect(haptics, hasLength(1));
       expect(find.byKey(const ValueKey('qibla-calibrate')), findsNothing);
     });
@@ -186,6 +209,68 @@ void main() {
       expect(find.byKey(const ValueKey('qibla-no-sensor')), findsOneWidget);
       expect(find.byKey(const ValueKey('qibla-turn')), findsNothing);
       expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('the toast fires once per entry into the Qibla', (
+      tester,
+    ) async {
+      final haptics = <String>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          if (call.method == 'HapticFeedback.vibrate') {
+            haptics.add('${call.arguments}');
+          }
+          return null;
+        },
+      );
+      final c = StreamController<CompassReading>();
+      addTearDown(c.close);
+      await pump(tester, readings: c.stream);
+      Future<void> feed(double h) async {
+        for (var i = 0; i < 30; i++) {
+          c.add((heading: h, accuracy: 10));
+          await tester.pump(const Duration(milliseconds: 10));
+        }
+      }
+
+      final toast = find.byKey(const ValueKey('qibla-toast'));
+      await feed(60);
+      expect(toast, findsNothing);
+      await feed(136);
+      expect(toast, findsOneWidget);
+      expect(find.text('ثبّت الموبايل'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 2));
+      expect(toast, findsNothing);
+      // Staying aligned: no second toast, no second haptic.
+      await feed(137);
+      await tester.pump(const Duration(seconds: 2));
+      expect(toast, findsNothing);
+      expect(haptics, hasLength(1));
+      // Leave and come back: once more.
+      await feed(60);
+      await feed(136);
+      expect(toast, findsOneWidget);
+      expect(haptics, hasLength(2));
+      await tester.pump(const Duration(seconds: 2));
+    });
+
+    testWidgets('reduce motion: the toast still shows', (tester) async {
+      tester.platformDispatcher.accessibilityFeaturesTestValue =
+          const FakeAccessibilityFeatures(disableAnimations: true);
+      addTearDown(
+        tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+      );
+      final c = StreamController<CompassReading>();
+      addTearDown(c.close);
+      await pump(tester, readings: c.stream);
+      for (var i = 0; i < 30; i++) {
+        c.add((heading: 136.0, accuracy: 10));
+        await tester.pump(const Duration(milliseconds: 10));
+      }
+      expect(find.byKey(const ValueKey('qibla-toast')), findsOneWidget);
+      await tester.pump(const Duration(seconds: 2));
+      expect(find.byKey(const ValueKey('qibla-toast')), findsNothing);
     });
 
     testWidgets('no compass: no camera button', (tester) async {

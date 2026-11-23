@@ -9,6 +9,7 @@ import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/interface_style.dart';
 import '../../../core/theme/reveal.dart' show reduceMotion;
 import '../../../core/ui/look_kit.dart';
 import '../../../core/ui/responsive.dart';
@@ -75,6 +76,9 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
   double? _accuracy;
   bool _aligned = false;
   bool _camera = false;
+  Timer? _toastTimer;
+  int _toast = 0;
+  bool _toastOn = false;
 
   static bool get _mobile => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
@@ -130,7 +134,7 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
         : normalizeDegrees(prev + turnTo(prev, heading) * .35);
     final aligned =
         place != null && facesQibla(smooth, qiblaBearing(place.lat, place.lon));
-    if (aligned && !_aligned) unawaited(HapticFeedback.lightImpact());
+    if (aligned && !_aligned) _celebrate();
     setState(() {
       _sensor = _Sensor.live;
       _heading = smooth;
@@ -139,8 +143,21 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
     });
   }
 
+  /// Entering the Qibla (once per entry): the toast, the star and one
+  /// light haptic.
+  void _celebrate() {
+    unawaited(HapticFeedback.lightImpact());
+    _toastTimer?.cancel();
+    _toast++;
+    _toastOn = true;
+    _toastTimer = Timer(qiblaToastDuration, () {
+      if (mounted) setState(() => _toastOn = false);
+    });
+  }
+
   @override
   void dispose() {
+    _toastTimer?.cancel();
     _timeout?.cancel();
     _sub?.cancel();
     super.dispose();
@@ -186,6 +203,24 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
         degrees: l.qiblaDegrees(deg),
         distance: l.qiblaDistance(digits(km)),
       );
+      final row = Wrap(
+        key: const ValueKey('qibla-map-row'),
+        alignment: WrapAlignment.center,
+        spacing: 20,
+        runSpacing: 4,
+        children: [
+          Text(
+            l.qiblaBearingRow(deg),
+            key: const ValueKey('qibla-degrees'),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+          ),
+          Text(
+            l.qiblaDistanceRow(digits(km)),
+            key: const ValueKey('qibla-distance'),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+          ),
+        ],
+      );
       if (_desktop) {
         children.addAll([
           from,
@@ -196,8 +231,8 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
             placeLabel: place.label(arabic),
             tiles: widget.mapTiles,
           ),
-          const SizedBox(height: 16),
-          figures,
+          const SizedBox(height: 12),
+          row,
           const SizedBox(height: 12),
           _Hint(
             key: const ValueKey('qibla-desktop-note'),
@@ -214,6 +249,10 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
         children.addAll([
           from,
           const SizedBox(height: 8),
+          if (live) ...[
+            QiblaGuideBanner(turn: turn, aligned: aligned),
+            const SizedBox(height: 12),
+          ],
           if (_camera && live)
             QiblaCameraView(
               turn: turn,
@@ -225,7 +264,7 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
               child: Semantics(
                 key: const ValueKey('qibla-dial'),
                 label: live
-                    ? '${l.qiblaDegrees(deg)}. ${_turnText(l, turn, digits)}'
+                    ? '${l.qiblaDegrees(deg)}. ${qiblaGuideText(l, turn, digits)}'
                     : l.qiblaDegrees(deg),
                 image: true,
                 excludeSemantics: true,
@@ -239,20 +278,14 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
                 ),
               ),
             ),
-          const SizedBox(height: 12),
-          if (live)
-            _Status(
-              aligned: aligned,
-              text: aligned ? l.qiblaAligned : _turnText(l, turn, digits),
-            ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           figures,
           if (poor) ...[
             const SizedBox(height: 12),
             _Hint(
               key: const ValueKey('qibla-calibrate'),
               icon: Icons.all_inclusive,
-              text: '${l.qiblaCalibrate}\n${l.qiblaInterference}',
+              text: l.qiblaCalibrate,
             ),
           ],
           if (_sensor == _Sensor.waiting)
@@ -291,9 +324,19 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
           children: [
             LookTopBar(title: l.qiblaTitle),
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-                children: children,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: ListView(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+                      children: children,
+                    ),
+                  ),
+                  if (_toastOn)
+                    Positioned.fill(
+                      child: QiblaAlignedToast(key: ValueKey('toast-$_toast')),
+                    ),
+                ],
               ),
             ),
           ],
@@ -303,11 +346,31 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
   }
 }
 
-String _turnText(AppLocalizations l, double turn, NumberFormatter digits) {
+/// How long the «أنت الآن في اتجاه القبلة» toast stays.
+const qiblaToastDuration = Duration(milliseconds: 1800);
+
+/// Beyond this many degrees off, «قليلاً» is dropped.
+const _slightLimit = 40.0;
+
+/// The guidance for a signed [turn] (qibla − heading, shortest way):
+/// which way to turn and the degrees left, or facing the Qibla.
+String qiblaGuideText(AppLocalizations l, double turn, NumberFormatter digits) {
   if (turn.abs() <= qiblaTolerance) return l.qiblaAligned;
   final d = digits(turn.abs().round());
-  return turn > 0 ? l.qiblaTurnRight(d) : l.qiblaTurnLeft(d);
+  final slight = turn.abs() <= _slightLimit;
+  if (turn > 0) {
+    return slight ? l.qiblaGuideRightSlight(d) : l.qiblaGuideRight(d);
+  }
+  return slight ? l.qiblaGuideLeftSlight(d) : l.qiblaGuideLeft(d);
 }
+
+/// The status green: «أنت في اتجاه القبلة» on every look.
+Color qiblaOk(BuildContext context) =>
+    context.look.night ? const Color(0xFF4CC58A) : const Color(0xFF1D7A4F);
+
+/// The place marker's teal on the map.
+Color qiblaTeal(BuildContext context) =>
+    context.look.night ? const Color(0xFF4FB3A5) : const Color(0xFF0F5B52);
 
 /// The bearing and the distance, large and centred.
 class _Figures extends StatelessWidget {
@@ -343,53 +406,229 @@ class _Figures extends StatelessWidget {
   }
 }
 
-/// «استدر يمينًا …» or, facing the Qibla, a filled banner.
-class _Status extends StatelessWidget {
-  const _Status({required this.aligned, required this.text});
+/// The guidance banner over the compass and the camera, read out as it
+/// changes: an arrow the way to turn and the degrees left, or green when
+/// facing the Qibla.
+class QiblaGuideBanner extends StatelessWidget {
+  const QiblaGuideBanner({
+    super.key,
+    required this.turn,
+    required this.aligned,
+  });
 
+  final double turn;
   final bool aligned;
-  final String text;
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final t = context.tokens.colors;
+    final digits = NumberFormatter(Locale(l.localeName));
+    final text = aligned ? l.qiblaAligned : qiblaGuideText(l, turn, digits);
+    final ok = qiblaOk(context);
+    final fg = aligned ? ok : t.goldText;
+    final icon = Icon(
+      aligned
+          ? Icons.check_circle
+          : (turn > 0 ? Icons.rotate_right : Icons.rotate_left),
+      color: fg,
+      size: 28,
+    );
+    // The arrow sits on the side it turns to, in either language.
+    final right = !aligned && turn > 0;
     return Semantics(
       liveRegion: true,
+      label: text,
+      excludeSemantics: true,
       child: AnimatedContainer(
         key: const ValueKey('qibla-turn'),
         duration: reduceMotion(context)
             ? Duration.zero
-            : const Duration(milliseconds: 220),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            : const Duration(milliseconds: 300),
+        constraints: const BoxConstraints(minHeight: 56),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: aligned ? t.accent : Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+          color: (aligned ? ok : t.goldText).withValues(alpha: .16),
         ),
         child: Row(
+          textDirection: TextDirection.ltr,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (aligned) ...[
-              ExcludeSemantics(
-                child: Icon(Icons.check_circle, color: t.accentFg),
-              ),
-              const SizedBox(width: 8),
-            ],
+            if (!right) ...[icon, const SizedBox(width: 8)],
             Flexible(
               child: Text(
                 text,
                 textAlign: TextAlign.center,
+                textDirection: Directionality.of(context),
                 style: TextStyle(
-                  fontSize: aligned ? 20 : 18,
+                  fontSize: 17,
                   fontWeight: FontWeight.w700,
-                  color: aligned ? t.accentFg : null,
+                  color: fg,
                 ),
               ),
             ),
+            if (right) ...[const SizedBox(width: 8), icon],
           ],
         ),
       ),
     );
   }
+}
+
+/// «أنت الآن في اتجاه القبلة»: a centred card with an eight-point star
+/// that scales out and turns 45° as it fades. Less motion: a still star
+/// for a moment, and the card.
+class QiblaAlignedToast extends StatefulWidget {
+  const QiblaAlignedToast({super.key});
+
+  @override
+  State<QiblaAlignedToast> createState() => _QiblaAlignedToastState();
+}
+
+class _QiblaAlignedToastState extends State<QiblaAlignedToast>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _star = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1400),
+  );
+  bool _still = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _still = reduceMotion(context);
+    if (_still) {
+      // A short static star.
+      _star.value = 0;
+      Future<void>.delayed(const Duration(milliseconds: 600), () {
+        if (mounted) _star.value = 1;
+      });
+    } else if (!_star.isAnimating && _star.value == 0) {
+      unawaited(_star.forward());
+    }
+  }
+
+  @override
+  void dispose() {
+    _star.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final ok = qiblaOk(context);
+    final gold = context.tokens.colors.goldText;
+    return IgnorePointer(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned.fill(
+            child: ExcludeSemantics(
+              child: AnimatedBuilder(
+                animation: _star,
+                builder: (context, _) => CustomPaint(
+                  painter: _StarBurstPainter(
+                    p: _star.value,
+                    still: _still,
+                    green: ok,
+                    gold: gold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Semantics(
+            liveRegion: true,
+            child: Container(
+              key: const ValueKey('qibla-toast'),
+              margin: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
+              decoration: BoxDecoration(
+                color: ok,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x40000000),
+                    blurRadius: 40,
+                    offset: Offset(0, 12),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    l.qiblaToastTitle,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    l.qiblaToastSub,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white, fontSize: 13),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Three rings of the eight-point star, green and gold, scaling out and
+/// turning 45° as they fade ([p] 0 → 1).
+class _StarBurstPainter extends CustomPainter {
+  _StarBurstPainter({
+    required this.p,
+    required this.still,
+    required this.green,
+    required this.gold,
+  });
+
+  final double p;
+  final bool still;
+  final Color green;
+  final Color gold;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (p >= 1) return;
+    canvas.save();
+    canvas.translate(size.width / 2, size.height / 2);
+    if (!still) canvas.rotate(p * math.pi / 4);
+    final scale = still ? 1.0 : .4 + .6 * p;
+    final fade = still ? 1.0 : 1 - p;
+    for (var k = 0; k < 3; k++) {
+      final r = (60 + k * 55) * scale;
+      final paint = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3
+        ..color = (k.isOdd ? gold : green).withValues(
+          alpha: (fade * .7 * (1 - k * .25)).clamp(0.0, 1.0),
+        );
+      final path = Path();
+      for (var i = 0; i < 16; i++) {
+        final rr = i.isOdd ? r * .62 : r;
+        final a = i * math.pi / 8;
+        final o = Offset(rr * math.sin(a), -rr * math.cos(a));
+        i == 0 ? path.moveTo(o.dx, o.dy) : path.lineTo(o.dx, o.dy);
+      }
+      canvas.drawPath(path..close(), paint);
+    }
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(_StarBurstPainter o) => o.p != p || o.still != still;
 }
 
 class _Hint extends StatelessWidget {
@@ -423,10 +662,11 @@ class _Hint extends StatelessWidget {
 /// The Kaaba mark (the surah index's Meccan icon) on a round plate, so it
 /// reads on every look.
 class KaabaBadge extends StatelessWidget {
-  const KaabaBadge({super.key, this.size = 44, this.ring});
+  const KaabaBadge({super.key, this.size = 44, this.ring, this.plate});
 
   final double size;
   final Color? ring;
+  final Color? plate;
 
   @override
   Widget build(BuildContext context) {
@@ -437,7 +677,7 @@ class KaabaBadge extends StatelessWidget {
       padding: EdgeInsets.all(size * .14),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: t.paper,
+        color: plate ?? t.paper,
         border: Border.all(color: ring ?? t.goldText, width: 2.5),
       ),
       child: RevelationMark(meccan: true, size: size * .72),

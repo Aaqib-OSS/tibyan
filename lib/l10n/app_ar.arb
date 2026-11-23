@@ -4156,7 +4156,7 @@
       }
     }
   },
-  "qiblaAligned": "أنت تواجه القبلة",
+  "qiblaAligned": "أنت في اتجاه القبلة",
   "qiblaTurnRight": "استدر يمينًا {deg}°",
   "@qiblaTurnRight": {
     "placeholders": {
@@ -4173,7 +4173,7 @@
       }
     }
   },
-  "qiblaCalibrate": "حرّك الهاتف في الهواء على شكل الرقم 8 عدة مرات لمعايرة البوصلة.",
+  "qiblaCalibrate": "حرّك الموبايل على شكل ∞ عشان البوصلة تبقى دقيقة",
   "qiblaInterference": "دقة البوصلة منخفضة: ابتعد عن المعادن والأجهزة الكهربائية وأغطية الهاتف المغناطيسية.",
   "qiblaNoSensor": "لا توجد بوصلة في هذا الجهاز.",
   "qiblaStaticSteps": "حدّد اتجاه الشمال (بخريطة أو بوصلة)، ثم استدر {deg}° باتجاه عقارب الساعة.",
@@ -4381,6 +4381,56 @@
   "@qiblaMapLabel": {
     "placeholders": {
       "place": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaGuideRightSlight": "لفّ يميناً قليلاً {deg}°",
+  "@qiblaGuideRightSlight": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaGuideRight": "لفّ يميناً {deg}°",
+  "@qiblaGuideRight": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaGuideLeftSlight": "لفّ شمالاً قليلاً {deg}°",
+  "@qiblaGuideLeftSlight": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaGuideLeft": "لفّ شمالاً {deg}°",
+  "@qiblaGuideLeft": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaToastTitle": "أنت الآن في اتجاه القبلة",
+  "qiblaToastSub": "ثبّت الموبايل",
+  "qiblaBearingRow": "الزاوية من الشمال: {deg}°",
+  "@qiblaBearingRow": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaDistanceRow": "المسافة: {km} كم",
+  "@qiblaDistanceRow": {
+    "placeholders": {
+      "km": {
         "type": "String"
       }
     }

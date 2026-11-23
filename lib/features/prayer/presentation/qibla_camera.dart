@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
-import 'qibla_screen.dart' show KaabaBadge;
+import 'qibla_screen.dart' show KaabaBadge, qiblaOk;
 
 /// Half the horizontal field of view of a phone's back camera held upright,
 /// degrees (about 60° across).
@@ -160,15 +160,18 @@ class _QiblaCameraViewState extends State<QiblaCameraView>
                   CustomPaint(
                     painter: _GroundPainter(
                       turn: widget.turn,
-                      color: widget.aligned ? t.accent : t.goldText,
+                      color: widget.aligned ? qiblaOk(context) : t.goldText,
+                      width: widget.aligned ? 12 : 8,
                     ),
                   ),
                   if (x != null)
                     Align(
                       alignment: Alignment(x, -.25),
                       child: KaabaBadge(
-                        size: 72,
-                        ring: widget.aligned ? t.accent : t.goldText,
+                        key: const ValueKey('qibla-camera-kaaba'),
+                        size: widget.aligned ? 96 : 68,
+                        plate: Colors.white.withValues(alpha: .9),
+                        ring: widget.aligned ? qiblaOk(context) : t.goldText,
                       ),
                     ),
                 ],
@@ -199,10 +202,15 @@ class _QiblaCameraViewState extends State<QiblaCameraView>
 /// A path on the ground from the bottom centre toward the Qibla on the
 /// horizon; out of view, it bends to the edge the user should turn to.
 class _GroundPainter extends CustomPainter {
-  _GroundPainter({required this.turn, required this.color});
+  _GroundPainter({
+    required this.turn,
+    required this.color,
+    required this.width,
+  });
 
   final double turn;
   final Color color;
+  final double width;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -214,14 +222,22 @@ class _GroundPainter extends CustomPainter {
     );
     final halo = Paint()
       ..color = Colors.black.withValues(alpha: .35)
-      ..strokeWidth = 18
+      ..strokeWidth = width + 8
       ..strokeCap = StrokeCap.round;
     final line = Paint()
       ..color = color
-      ..strokeWidth = 10
+      ..strokeWidth = width
       ..strokeCap = StrokeCap.round;
-    canvas.drawLine(start, end, halo);
-    canvas.drawLine(start, end, line);
+    // Dashed: 4 on, 3 off, in units of the line width.
+    final total = (end - start).distance;
+    final dir = (end - start) / total;
+    final on = width * 2.4, off = width * 1.8;
+    for (var d = 0.0; d < total; d += on + off) {
+      final a = start + dir * d;
+      final b = start + dir * math.min(d + on, total);
+      canvas.drawLine(a, b, halo);
+      canvas.drawLine(a, b, line);
+    }
     // The arrow head at the far end.
     final a = math.atan2(end.dy - start.dy, end.dx - start.dx);
     Offset at(double da, double len) =>
@@ -237,5 +253,6 @@ class _GroundPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_GroundPainter o) => o.turn != turn || o.color != color;
+  bool shouldRepaint(_GroundPainter o) =>
+      o.turn != turn || o.color != color || o.width != width;
 }
