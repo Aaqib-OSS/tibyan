@@ -1,0 +1,11 @@
+Source: https://quranenc.com/ar/browse/arabic_mokhtasar (terms dialog), retrieved 2026-11-23.
+No version number is published for arabic_mokhtasar (it is absent from /api/v1/translations/list).
+
+يتاح تنزيل محتوى الترجمات وإعادة نشره، بالشروط والضوابط التالية:
+1. عدم التعديل أو الإضافة أو الحذف على المحتوى.
+2. الإشارة بوضوح للناشر وللمصدر (QuranEnc.com).
+3. ذكر رقم الإصدار عند إعادة نشر الترجمة.
+4. إبقاء معلومات نسخة الترجمة الموجودة داخل المستند.
+5. إفادة المصدر (QuranEnc.com) بأي ملاحظة على الترجمة.
+6. تطوير الترجمات وفق النسخ الجديدة الصادرة من المصدر (QuranEnc.com).
+7. عدم تضمين إعلانات لا تليق بترجمات معاني القرآن الكريم عند العرض.

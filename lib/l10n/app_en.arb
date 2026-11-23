@@ -2527,5 +2527,15 @@
   "prayedQuestion": "Prayed?",
   "@prayedQuestion": {
     "description": "The prayer-times row's small button to mark a prayer as prayed, before it is marked."
-  }
+  },
+  "tafsirSectionTafsirs": "Tafsirs",
+  "tafsirSectionTranslations": "Translations",
+  "tafsirKeepOne": "At least one text stays shown",
+  "tafsirLibrary": "Tafsir library",
+  "tafsirLibraryHint": "More tafsirs to download when you need them; once downloaded they join the tafsir list",
+  "tafsirLibraryAuthor": "{author} (d. {year} AH)",
+  "tafsirPackDelete": "Delete",
+  "tafsirPackDeleteLabel": "Delete {title}",
+  "tafsirPackDownloadLabel": "Download {title}",
+  "tafsirPackInstalled": "Downloaded"
 }

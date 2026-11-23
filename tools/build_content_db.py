@@ -690,6 +690,8 @@ def main():
         for entry in [texts[key]]
     ])
 
+    add_tafsirs(db, today, order)
+
     db.executemany('INSERT INTO surah VALUES (?,?,?,?,?,?,?,?,?,?,?)', [
         (s['id'], s['name_ar'], s['name_en'], s['meaning_en'],
          'meccan' if s['type'] == 'Meccan' else 'medinan', s['revelation_order'],
@@ -847,7 +849,68 @@ def update_reciters():
     return 0
 
 
+# Tafsirs added after the first build (2026-11-23): (source id, sort order).
+MOKHTASAR_ID, JALALAYN_ID = 44, 45
+
+
+def add_tafsirs(db, today, order):
+    """Al-Mukhtasar (QuranEnc arabic_mokhtasar) and al-Jalalayn (Tanzil
+    ar.jalalayn), verbatim, keyed by Hafs verse like al-Muyassar."""
+    mokhtasar_path = CACHE / 'qe_arabic_mokhtasar.sqlite'
+    jalalayn_path = CACHE / 'tanzil_ar.jalalayn.txt'
+    mokhtasar = read_quranenc(mokhtasar_path)
+    jalalayn, jalalayn_notice = read_tanzil_translation(jalalayn_path)
+    assert set(order) == set(mokhtasar) == set(jalalayn)
+    ids = (MOKHTASAR_ID, JALALAYN_ID)
+    db.execute(f'DELETE FROM commentary WHERE source_id IN {ids}')
+    db.execute(f'DELETE FROM commentary_edition WHERE source_id IN {ids}')
+    db.execute(f'DELETE FROM source WHERE id IN {ids}')
+    db.executemany('INSERT INTO source VALUES (?,?,?,?,?,?,?,?,?,?,?)', [
+        # QuranEnc publishes no version number for this tafsir either; the
+        # SHA-256 and the retrieval date identify the copy.
+        (MOKHTASAR_ID, 'quranenc-arabic-mokhtasar', 'المختصر في تفسير القرآن الكريم',
+         'مركز تفسير للدراسات القرآنية (Tafsir Center for Quranic Studies)', None,
+         'QuranEnc terms: no change, addition or removal; credit the publisher and QuranEnc.com; state the version',
+         'https://quranenc.com/ar/browse/arabic_mokhtasar',
+         'المختصر في تفسير القرآن الكريم: مركز تفسير للدراسات القرآنية، عبر موقع QuranEnc.com',
+         None, sha256(mokhtasar_path), today),
+        (JALALAYN_ID, 'tanzil-ar-jalalayn', 'تفسير الجلالين',
+         'جلال الدين المحلي وجلال الدين السيوطي', '2010-12-01',
+         'Tanzil translations: non-commercial use only; link back to tanzil.net/trans',
+         'https://tanzil.net/trans/ar.jalalayn',
+         'تفسير الجلالين: نص موقع Tanzil.net (tanzil.net/trans)، آخر تحديث 2010-12-01',
+         jalalayn_notice, sha256(jalalayn_path), today),
+    ])
+    db.executemany('INSERT INTO commentary_edition VALUES (?,?,?,?,?,?,?)', [
+        (MOKHTASAR_ID, 'tafsir', 'ar', 'rtl', 'المختصر في التفسير', 'Al-Mukhtasar fi al-Tafsir', 2),
+        (JALALAYN_ID, 'tafsir', 'ar', 'rtl', 'تفسير الجلالين', 'Tafsir al-Jalalayn', 3),
+    ])
+    # Translations after the Arabic tafsirs.
+    db.execute("UPDATE commentary_edition SET sort_order = 10 WHERE source_id = 8")
+    db.execute("UPDATE commentary_edition SET sort_order = 11 WHERE source_id = 9")
+    db.executemany('INSERT INTO commentary VALUES (?,?,?,?,?)', [
+        (sid, *key, *texts[key]) for sid, texts in (
+            (MOKHTASAR_ID, mokhtasar),
+            (JALALAYN_ID, {k: (v, None) for k, v in jalalayn.items()}))
+        for key in order
+    ])
+
+
+def update_tafsirs():
+    """Puts al-Mukhtasar and al-Jalalayn into the content.db already
+    built (`build_content_db.py tafsirs`)."""
+    db = sqlite3.connect(OUT)
+    order = [tuple(r) for r in db.execute('SELECT surah, number FROM ayah ORDER BY id')]
+    add_tafsirs(db, date.today().isoformat(), order)
+    db.commit()
+    db.execute('VACUUM')
+    db.close()
+    print(f'updated {OUT.relative_to(REPO)}: al-Mukhtasar and al-Jalalayn')
+    return 0
+
+
 if __name__ == '__main__':
     mode = sys.argv[1:]
     sys.exit(update_qul() if mode == ['qul']
-             else update_reciters() if mode == ['reciters'] else main())
+             else update_reciters() if mode == ['reciters']
+             else update_tafsirs() if mode == ['tafsirs'] else main())

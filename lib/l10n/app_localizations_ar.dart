@@ -6430,4 +6430,41 @@ class AppLocalizationsAr extends AppLocalizations {
   String qiblaDistanceRow(String km) {
     return 'المسافة: $km كم';
   }
+
+  @override
+  String get tafsirSectionTafsirs => 'التفاسير';
+
+  @override
+  String get tafsirSectionTranslations => 'الترجمات';
+
+  @override
+  String get tafsirKeepOne => 'يبقى نص واحد ظاهرا على الأقل';
+
+  @override
+  String get tafsirLibrary => 'مكتبة التفاسير';
+
+  @override
+  String get tafsirLibraryHint =>
+      'تفاسير أخرى تنزّلها عند الحاجة، تظهر بعد التنزيل في قائمة التفاسير';
+
+  @override
+  String tafsirLibraryAuthor(String author, String year) {
+    return '$author (ت $yearهـ)';
+  }
+
+  @override
+  String get tafsirPackDelete => 'حذف';
+
+  @override
+  String tafsirPackDeleteLabel(String title) {
+    return 'حذف $title';
+  }
+
+  @override
+  String tafsirPackDownloadLabel(String title) {
+    return 'تنزيل $title';
+  }
+
+  @override
+  String get tafsirPackInstalled => 'منزّل';
 }

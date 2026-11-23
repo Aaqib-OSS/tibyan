@@ -14,6 +14,12 @@ abstract final class ContentSources {
 
   /// QuranEnc's english_mokhtasar text (ن12، إ12).
   static const quranEncMokhtasar = 'quranenc-english-mokhtasar';
+
+  /// The classical tafsir packs built from the Quranpedia dumps.
+  static const quranpedia = 'quranpedia';
+
+  /// «الجامع الوجيز» (CC BY-ND 4.0).
+  static const jamiWajiz = 'jami_wajiz';
 }
 
 /// The credit line of [key] in [languageCode] (Arabic for `ar`, else

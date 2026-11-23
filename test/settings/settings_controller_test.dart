@@ -118,7 +118,7 @@ void main() {
     expect(s.locale, const Locale('en'));
   });
 
-  test('foreign tafsir defaults follow the interface language', () async {
+  test('Arabic tafsirs show and translations hide by default', () async {
     expect(
       commentaryDefaultShown(
         kind: 'translation',
@@ -133,7 +133,15 @@ void main() {
         contentLanguageCode: 'en',
         languageCode: 'en',
       ),
-      isTrue,
+      isFalse,
+    );
+    expect(
+      commentaryDefaultShown(
+        kind: 'tafsir',
+        contentLanguageCode: 'en',
+        languageCode: 'en',
+      ),
+      isFalse,
     );
     expect(
       commentaryDefaultShown(
@@ -191,13 +199,33 @@ void main() {
     );
   });
 
+  test('hidden tafsir packs and book tafsirs persist', () async {
+    final c = await containerWith({});
+    expect(c.read(settingsProvider).hiddenBookTafsirs, isEmpty);
+    await c
+        .read(settingsProvider.notifier)
+        .setBookTafsirShown('pack:tafsir-qp-4', false);
+    final sp = await SharedPreferences.getInstance();
+    final restored = await containerWith({
+      for (final k in sp.getKeys()) k: sp.get(k)!,
+    });
+    expect(
+      restored.read(settingsProvider).hiddenBookTafsirs,
+      contains('pack:tafsir-qp-4'),
+    );
+    await restored
+        .read(settingsProvider.notifier)
+        .setBookTafsirShown('pack:tafsir-qp-4', true);
+    expect(restored.read(settingsProvider).hiddenBookTafsirs, isEmpty);
+  });
+
   test(
     'English tafsir visibility override is saved across locale changes',
     () async {
       final c = await containerWith({});
       final controller = c.read(settingsProvider.notifier);
       expect(c.read(settingsProvider).isEnglishTafsirShown('ar'), isFalse);
-      expect(c.read(settingsProvider).isEnglishTafsirShown('en'), isTrue);
+      expect(c.read(settingsProvider).isEnglishTafsirShown('en'), isFalse);
 
       await controller.setEnglishTafsirShown(true);
       await controller.setUnderVerse([7]);

@@ -118,15 +118,14 @@ enum ReadingSpeed {
   final int secondsPerPage;
 }
 
+/// Whether a tafsir or translation shows until the reader chooses: every
+/// Arabic tafsir does, every translation (and foreign tafsir) does not,
+/// whatever the interface language (owner's decision, 2026-11-23).
 bool commentaryDefaultShown({
   required String kind,
   required String contentLanguageCode,
   required String languageCode,
-}) {
-  if (contentLanguageCode.isEmpty) return false;
-  if (kind == 'tafsir' && contentLanguageCode == 'ar') return true;
-  return languageCode == contentLanguageCode;
-}
+}) => kind == 'tafsir' && contentLanguageCode == 'ar';
 
 bool defaultTranslationAudioEnabled(
   LanguageSetting language, {
@@ -257,8 +256,8 @@ class AppSettings {
   /// Keys of the book tafsirs (reviewed packs) the reader turned off.
   final Set<String> hiddenBookTafsirs;
 
-  /// Explicit English-tafsir visibility choice; null follows the interface
-  /// language (English shown, Arabic hidden).
+  /// Explicit English-tafsir visibility choice; null keeps it hidden, like
+  /// every translation.
   final bool? englishTafsirVisibilityOverride;
 
   bool isCommentaryShown(int sourceId, {required bool defaultShown}) {
@@ -268,7 +267,7 @@ class AppSettings {
   }
 
   bool isEnglishTafsirShown(String languageCode) =>
-      englishTafsirVisibilityOverride ?? languageCode != 'ar';
+      englishTafsirVisibilityOverride ?? false;
 
   /// Trial: justify Arabic tafsir with tatweel instead of wider spaces.
   final bool tafsirKashida;
