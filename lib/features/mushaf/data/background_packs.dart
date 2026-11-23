@@ -6,16 +6,21 @@ import 'package:background_downloader/background_downloader.dart';
 import '../../../core/downloads/background_downloads.dart';
 import '../../books/data/book_pack.dart';
 import '../../content_extras/english_tafsir.dart';
+import '../../content_extras/tafsir_library.dart' show tafsirLibraryPacks;
 import 'page_pack.dart';
 
 /// The pack the background downloader knows as [id]: a page pack, a book
-/// pack or an English tafsir pack (all installed by the same code). A
+/// pack, an English tafsir pack or a tafsir library pack (all installed by
+/// the same code). A
 /// finished download of an id not found here is never installed.
 PagePackSpec? downloadablePackSpec(String id) {
   for (final s in [
     ...PagePackSpec.all,
     for (final b in BookPackSpec.all) b.pack,
     for (final t in TafsirTextPackSpec.english) t.pack,
+    // «مكتبة التفاسير»: without these a finished download was never
+    // installed, and its row kept spinning.
+    for (final t in tafsirLibraryPacks) t.pack,
   ]) {
     if (s.id == id) return s;
   }
