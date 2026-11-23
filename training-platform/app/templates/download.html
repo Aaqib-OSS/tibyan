@@ -90,6 +90,10 @@
       <p class="dl-note">{{ 'ملف APK لا يحدّث نسخة Google Play؛ احذف إحداهما قبل تثبيت الأخرى.' if ar else 'The APK can’t update the Google Play version; remove one before installing the other.' }}</p>
     </section>
 
+{% include "_app_features.html" %}
+
+{% include "_app_gallery.html" %}
+
     <section class="install" id="linux" aria-labelledby="linux-title">
       <h2 id="linux-title">{{ 'التثبيت على لينكس' if ar else 'Installing on Linux' }}</h2>
       <p class="install-lead">{{ 'طريقتان، والأولى تُحدّث تبيان تلقائيًا مع تحديثات النظام.' if ar else 'Two ways; the first keeps Tibyan updated with your system updates.' }}</p>
