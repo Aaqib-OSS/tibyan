@@ -16,7 +16,7 @@
 | الحقل | الحد الأقصى | النص بالعربية | Text in English |
 |---|---|---|---|
 | **اسم التطبيق (App Name)** | 30 حرف | تبيان - القرآن الكريم | Tibyan: Quran |
-| **الوصف الموجز (Short Description)** | 80 حرف | مصحف بلا إعلانات: استماع وتفسير وتسميع وحفظ دون إنترنت | Ad-free Quran app: recitation, tafsir, smart oral testing, and offline reading. |
+| **الوصف الموجز (Short Description)** | 80 حرف | مصحف بلا إعلانات: تلاوة وتفسير وتسميع، ومواقيت الصلاة والأذان والقبلة | Ad-free Quran: recitation, tafsir, tasmee, prayer times, adhan and qibla. |
 
 ### الوصف الكامل بالعربية (Full Description - Arabic)
 ```text
@@ -35,25 +35,43 @@
 ٣. مصاحف متعددة وروايات متواترة:
 اختر بين مصحف المدينة المنورة (طبعة 1441هـ وطبعة 1405هـ) ومصحف الشمرلي، مع دعم كامل للروايات القرآنية المتواترة (حفص عن عاصم، ورش عن نافع، قالون عن نافع، والدوري عن أبي عمرو).
 
-٤. التفسير الميسر ومعاني الكلمات:
-تصفح التفسير الميسر تحت كل آية بلمسة واحدة، واطّلع على معاني المفردات الغريبة، وأسباب النزول، وإعراب الآيات، مع إمكانية البحث الفوري في كلمات القرآن وتفسيره.
+٤. التفاسير ومعاني الكلمات:
+اقرأ التفسير الميسر والمختصر في التفسير وتفسير الجلالين والجامع الوجيز تحت كل آية، وتفاسير أمهات الكتب عبر قرآنبيديا، وقارن بين تفسيرين جنبًا إلى جنب، مع معاني المفردات وأسباب النزول وإعراب الآيات.
 
-٥. رحلة حفظ تفاعلية:
+٥. مواقيت الصلاة والأذان:
+مواقيت الصلاة لموقعك تُحسب على جهازك، مع أذان بأصوات ثلاثة عشر مؤذنًا تختار منها لكل صلاة على حدة، وشاشة أذان كاملة بمشهد متحرك خاص بكل صلاة.
+
+٦. اتجاه القبلة:
+بوصلة واضحة ترشدك خطوة بخطوة حتى تواجه القبلة، مع عرض بالكاميرا عند الطلب وخريطة على الحاسوب.
+
+٧. الأذكار و«صلواتي»:
+أذكار الصباح والمساء مع تذكير في الوقت الذي تختاره، وسجل «صلواتي» لمتابعة صلواتك مع عدّاد لصلوات القضاء.
+
+٨. التقويم الهجري:
+التاريخ الهجري والمناسبات الإسلامية، مع تذكير قبل المناسبة بيوم.
+
+٩. تكرار الآيات والبحث الذكي:
+كرّر آية أو مجموعة آيات بالعدد الذي تختاره لتثبيت الحفظ، وابحث في القرآن بالكلمة أو بجذرها أو برقم الآية مباشرة.
+
+١٠. رحلة حفظ تفاعلية:
 نظام شامل لإدارة حفظك وتثبيته؛ خريطة مصورة للأجزاء والصفحات المتقنة والتي تحتاج إلى مراجعة، مع وضع مبتكر لإخفاء الكلمات لاختبار قوة استحضار الآيات.
 
-٦. الختمات الفردية والجماعية:
+١١. الختمات الفردية والجماعية:
 أنشئ خطط ختم مرنة ومخصصة تناسب وقتك، أو شارك أفراد عائلتك وأصدقاءك في ختمات جماعية مع توزيع الأجزاء وتتبع الإنجاز خطوة بخطوة.
 
-٧. جماليات التصميم والوضع الليلي:
+١٢. جماليات التصميم والوضع الليلي:
 ثلاثة أنماط إسلامية بديعة للواجهة (النمط الهندسي، نمط المخطوطة الأثرية، والنمط الليلي الذهبي)، بالإضافة إلى وضع خاص لكبار السن يتيح خطوطًا أكبر وواجهة مبسطة ومريحة للعين.
 
-٨. مسبحة إلكترونية ذكية:
+١٣. واجهة رئيسية جديدة:
+أقسام أوضح في الشاشة الرئيسية، وشريط جانبي يجمع الأقسام كلها على الأجهزة اللوحية والحاسوب.
+
+١٤. مسبحة إلكترونية ذكية:
 مسبحة رقمية ثلاثية الأبعاد تفاعلية، تحتوي على الأذكار المأثورة مع اهتزازات واقعية تشبه حبات المسبحة الحقيقية، مع تزامن فوري مع ساعات اليد الذكية (Wear OS وApple Watch).
 
-٩. مزامنة سحابية آمنة:
+١٥. مزامنة سحابية آمنة:
 تزامن كامل لعلاماتك المرجعية، وختماتك، وسجل تلاوتك بين جميع أجهزتك (الهاتف، التابلت، الحاسوب، والساعة) عبر iCloud وGoogle Drive.
 
-١٠. غير ربحي وخاص تمامًا:
+١٦. غير ربحي وخاص تمامًا:
 تطبيق تبيان وقفٌ خالص لوجه الله، لا يجمع بيانات شخصية، ولا يتضمن إعلانات أو اشتراكات أو مشتريات داخل التطبيق إطلاقًا.
 ```
 
@@ -74,25 +92,43 @@ An advanced on-device speech engine that listens to your live recitation, gently
 3. Multiple Authentic Mushafs & Qira'at:
 Read from the Madina Mushaf (1441H & 1405H editions) or the Shamarly Mushaf, with full support for verified riwayat (Hafs, Warsh, Qalun, and Al-Duri).
 
-4. Simplified Tafsir & Word Meanings:
-Access reliable verse-by-verse explanations (Al-Tafsir Al-Muyassar), instant vocabulary definitions with a single tap, reasons of revelation (Asbab Al-Nuzul), and grammatical analysis (I'rab).
+4. Tafsir & Word Meanings:
+Read Al-Tafsir Al-Muyassar, Al-Mukhtasar fi Al-Tafsir, Tafsir Al-Jalalayn and Al-Jami' Al-Wajiz under every verse, classical tafsirs via Quranpedia, and compare two tafsirs side by side, with word meanings, reasons of revelation (Asbab Al-Nuzul) and grammatical analysis (I'rab).
 
-5. Comprehensive Memorization (Hifz) Journey:
+5. Prayer Times & Adhan:
+Prayer times for your location, computed on your device, with the adhan in thirteen muezzins' voices that you choose prayer by prayer, and a full-screen adhan scene animated for each prayer.
+
+6. Qibla Direction:
+A clear compass that guides you turn by turn until you face the qibla, an optional camera view, and a map on desktop.
+
+7. Adhkar & My Prayers:
+Morning and evening adhkar with reminders at the time you choose, and the «My Prayers» log to follow your prayers, with a qada (missed prayers) counter.
+
+8. Hijri Calendar:
+The Hijri date and Islamic occasions, with a reminder the day before each occasion.
+
+9. Verse Repeat & Smart Search:
+Repeat one verse or a range as many times as you choose to strengthen memorization, and search the Quran by word, by root, or straight by verse number.
+
+10. Comprehensive Memorization (Hifz) Journey:
 A visualized mastery map tracking your memorized pages and review schedules, featuring an interactive word-hiding mode to test your retention.
 
-6. Personal & Group Khatmahs:
+11. Personal & Group Khatmahs:
 Create flexible reading plans tailored to your pace, or collaborate with family and friends in shared group khatmahs with clear part assignments.
 
-7. Islamic Aesthetics & Dark Modes:
+12. Islamic Aesthetics & Dark Modes:
 Choose from three tailored themes (Girih Geometric, Classical Manuscript, and Night Gold), alongside an accessible Elderly Mode featuring enlarged typography and simplified controls.
 
-8. Digital 3D Misbaha & Smartwatch Sync:
+13. A Redesigned Home:
+Clearer sections on the home screen, and a sidebar that gathers every section on tablets and desktop.
+
+14. Digital 3D Misbaha & Smartwatch Sync:
 An interactive 3D misbaha featuring authentic daily adhkar, realistic tactile haptics, and seamless synchronization with Wear OS and Apple Watch complications.
 
-9. Secure Cloud Sync:
+15. Secure Cloud Sync:
 Keep your reading progress, bookmarks, and khatmahs synchronized across iPhone, iPad, Mac, Android, and smartwatches via iCloud Drive and Google Drive.
 
-10. 100% Non-Profit & Private:
+16. 100% Non-Profit & Private:
 Tibyan is dedicated purely for the sake of Allah. It collects no personal data, contains zero advertising, and requires no subscriptions or in-app purchases.
 ```
 
@@ -101,21 +137,21 @@ Tibyan is dedicated purely for the sake of Allah. It collects no personal data, 
 - **الجمهور المستهدف (Target Audience):** 13 سنة فما فوق (13+).
   *(تأكيد للمالك أحمد: تجنب سياسة العائلات Families Policy الإضافية المعقدة).*
 - **الإعلانات:** لا يحتوي على إعلانات إطلاقًا (No Ads).
-- **أذونات التطبيق:** الميكروفون (لتشغيل التسميع محليًا فقط). لا يطلب أذونات الموقع أو جهات الاتصال.
+- **أذونات التطبيق:** الميكروفون (لتشغيل التسميع محليًا فقط)، والموقع (لحساب مواقيت الصلاة واتجاه القبلة على الجهاز)، والكاميرا (لعرض القبلة بالكاميرا عند الطلب فقط)، والإشعارات (الأذان والتذكيرات). لا يطلب جهات الاتصال.
 
 ---
 
 ## 2. بيانات App Store (Apple)
 
-> **قواعد Apple (بعد رفض 2.3.10 و2.3.14، نوفمبر 2026):** ممنوع في نصوص وصور App Store أي كلمة عن السعر أو الإعلانات (مجاني، غير ربحي، وقف، بلا إعلانات، Free، Non-profit، Ad-free، No ads/subscriptions/IAP)، وممنوع ذكر منصات أخرى (Android، Wear OS، Huawei، Windows، Linux، Google Play). مسموح: iPhone وiPad وMac وApple Watch وiCloud وGoogle Drive للمزامنة. لا يُستخدم `preview_30s_portrait.mp4` مع Apple. النصوص أدناه مطابقة لما اعتُمد في App Store Connect (0.8.7، بناء 55).
+> **قواعد Apple (بعد رفض 2.3.10 و2.3.14، نوفمبر 2026):** ممنوع في نصوص وصور App Store أي كلمة عن السعر أو الإعلانات (مجاني، غير ربحي، وقف، بلا إعلانات، Free، Non-profit، Ad-free، No ads/subscriptions/IAP)، وممنوع ذكر منصات أخرى (Android، Wear OS، Huawei، Windows، Linux، Google Play). مسموح: iPhone وiPad وMac وApple Watch وiCloud وGoogle Drive للمزامنة. لا يُستخدم `preview_30s_portrait.mp4` مع Apple. النصوص أدناه محدّثة لإصدار 1.0.0 (بناء 57): مواقيت الصلاة والأذان والقبلة والأذكار و«صلواتي» والتقويم الهجري والتكرار والبحث والتفاسير الجديدة.
 
 ### الحقول الأساسية
 | الحقل | الحد الأقصى | النص بالعربية | Text in English |
 |---|---|---|---|
 | **اسم التطبيق (App Name)** | 30 حرف | تبيان | Tibyan |
 | **العنوان الفرعي (Subtitle)** | 30 حرف | مصحف شامل: تلاوة وحفظ | Quran: Recite, Study, Memorize |
-| **النص الترويجي (Promotional Text)** | 170 حرف | مصحف رقمي متكامل، مع تلاوة متزامنة وتسميع ذكي يعمل على جهازك ومزامنة عبر iCloud. | A complete digital Mushaf with synchronized recitation, smart on-device recitation checking, and sync via iCloud. |
-| **الكلمات المفتاحية (Keywords)** | 100 حرف | قرآن,مصحف,تلاوة,تفسير,تسميع,حفظ,المدينة,الشمرلي,أذكار,مسبحة,ختمة | quran,mushaf,quranic,tafsir,recitation,islam,tajweed,khatmah,tasbih,misbaha |
+| **النص الترويجي (Promotional Text)** | 170 حرف | مصحف رقمي متكامل بتلاوة متزامنة وتسميع ذكي على جهازك، ومعه مواقيت الصلاة والأذان بأصوات ثلاثة عشر مؤذنًا، والقبلة والأذكار والتقويم الهجري. | A complete digital Mushaf with synchronized recitation and on-device recitation checking, plus prayer times, the adhan in 13 voices, qibla, adhkar and the Hijri calendar. |
+| **الكلمات المفتاحية (Keywords)** | 100 حرف | قرآن,مصحف,تفسير,تسميع,حفظ,أذان,مواقيت,قبلة,أذكار,مسبحة,ختمة,هجري,الشمرلي | quran,mushaf,tafsir,recitation,adhan,prayer times,qibla,adhkar,hijri,tajweed,khatmah,tasbih |
 | **الفئة الأساسية (Primary Category)** | - | مراجع (Reference) | Reference |
 | **الفئة الثانوية (Secondary Category)** | - | تعليم (Education) | Education |
 | **التصنيف العمري (Age Rating)** | - | 4+ | 4+ |
@@ -142,25 +178,43 @@ Tibyan is dedicated purely for the sake of Allah. It collects no personal data, 
 ٣. مصاحف متعددة وروايات متواترة:
 اختر بين مصحف المدينة المنورة (طبعة 1441هـ وطبعة 1405هـ) ومصحف الشمرلي، مع دعم كامل للروايات القرآنية المتواترة (حفص عن عاصم، ورش عن نافع، قالون عن نافع، والدوري عن أبي عمرو).
 
-٤. التفسير الميسر ومعاني الكلمات:
-تصفح التفسير الميسر تحت كل آية بلمسة واحدة، واطّلع على معاني المفردات الغريبة، وأسباب النزول، وإعراب الآيات، مع إمكانية البحث الفوري في كلمات القرآن وتفسيره.
+٤. التفاسير ومعاني الكلمات:
+اقرأ التفسير الميسر والمختصر في التفسير وتفسير الجلالين والجامع الوجيز تحت كل آية، وتفاسير أمهات الكتب عبر قرآنبيديا، وقارن بين تفسيرين جنبًا إلى جنب، مع معاني المفردات وأسباب النزول وإعراب الآيات.
 
-٥. رحلة حفظ تفاعلية:
+٥. مواقيت الصلاة والأذان:
+مواقيت الصلاة لموقعك تُحسب على جهازك، مع أذان بأصوات ثلاثة عشر مؤذنًا تختار منها لكل صلاة على حدة، وشاشة أذان كاملة بمشهد متحرك خاص بكل صلاة.
+
+٦. اتجاه القبلة:
+بوصلة واضحة ترشدك خطوة بخطوة حتى تواجه القبلة، مع عرض بالكاميرا عند الطلب وخريطة على Mac.
+
+٧. الأذكار و«صلواتي»:
+أذكار الصباح والمساء مع تذكير في الوقت الذي تختاره، وسجل «صلواتي» لمتابعة صلواتك مع عدّاد لصلوات القضاء.
+
+٨. التقويم الهجري:
+التاريخ الهجري والمناسبات الإسلامية، مع تذكير قبل المناسبة بيوم.
+
+٩. تكرار الآيات والبحث الذكي:
+كرّر آية أو مجموعة آيات بالعدد الذي تختاره لتثبيت الحفظ، وابحث في القرآن بالكلمة أو بجذرها أو برقم الآية مباشرة.
+
+١٠. رحلة حفظ تفاعلية:
 نظام شامل لإدارة حفظك وتثبيته؛ خريطة مصورة للأجزاء والصفحات المتقنة والتي تحتاج إلى مراجعة، مع وضع مبتكر لإخفاء الكلمات لاختبار قوة استحضار الآيات.
 
-٦. الختمات الفردية والجماعية:
+١١. الختمات الفردية والجماعية:
 أنشئ خطط ختم مرنة ومخصصة تناسب وقتك، أو شارك أفراد عائلتك وأصدقاءك في ختمات جماعية مع توزيع الأجزاء وتتبع الإنجاز خطوة بخطوة.
 
-٧. جماليات التصميم والوضع الليلي:
+١٢. جماليات التصميم والوضع الليلي:
 ثلاثة أنماط إسلامية بديعة للواجهة (النمط الهندسي، نمط المخطوطة الأثرية، والنمط الليلي الذهبي)، بالإضافة إلى وضع خاص لكبار السن يتيح خطوطًا أكبر وواجهة مبسطة ومريحة للعين.
 
-٨. مسبحة إلكترونية ذكية:
+١٣. واجهة رئيسية جديدة:
+أقسام أوضح في الشاشة الرئيسية، وشريط جانبي يجمع الأقسام كلها على iPad وMac.
+
+١٤. مسبحة إلكترونية ذكية:
 مسبحة رقمية ثلاثية الأبعاد تفاعلية، تحتوي على الأذكار المأثورة مع اهتزازات واقعية تشبه حبات المسبحة الحقيقية، مع تزامن فوري مع ساعات اليد الذكية (Apple Watch).
 
-٩. مزامنة سحابية آمنة:
+١٥. مزامنة سحابية آمنة:
 تزامن كامل لعلاماتك المرجعية، وختماتك، وسجل تلاوتك بين جميع أجهزتك (الهاتف، التابلت، الحاسوب، والساعة) عبر iCloud وGoogle Drive.
 
-١٠. خاص تمامًا:
+١٦. خاص تمامًا:
 تطبيق تبيان لا يجمع بيانات شخصية، ويعمل محليًا على جهازك قدر الإمكان.
 ```
 
@@ -181,25 +235,43 @@ An advanced on-device speech engine that listens to your live recitation, gently
 3. Multiple Authentic Mushafs & Qira'at:
 Read from the Madina Mushaf (1441H & 1405H editions) or the Shamarly Mushaf, with full support for verified riwayat (Hafs, Warsh, Qalun, and Al-Duri).
 
-4. Simplified Tafsir & Word Meanings:
-Access reliable verse-by-verse explanations (Al-Tafsir Al-Muyassar), instant vocabulary definitions with a single tap, reasons of revelation (Asbab Al-Nuzul), and grammatical analysis (I'rab).
+4. Tafsir & Word Meanings:
+Read Al-Tafsir Al-Muyassar, Al-Mukhtasar fi Al-Tafsir, Tafsir Al-Jalalayn and Al-Jami' Al-Wajiz under every verse, classical tafsirs via Quranpedia, and compare two tafsirs side by side, with word meanings, reasons of revelation (Asbab Al-Nuzul) and grammatical analysis (I'rab).
 
-5. Comprehensive Memorization (Hifz) Journey:
+5. Prayer Times & Adhan:
+Prayer times for your location, computed on your device, with the adhan in thirteen muezzins' voices that you choose prayer by prayer, and a full-screen adhan scene animated for each prayer.
+
+6. Qibla Direction:
+A clear compass that guides you turn by turn until you face the qibla, an optional camera view, and a map on Mac.
+
+7. Adhkar & My Prayers:
+Morning and evening adhkar with reminders at the time you choose, and the «My Prayers» log to follow your prayers, with a qada (missed prayers) counter.
+
+8. Hijri Calendar:
+The Hijri date and Islamic occasions, with a reminder the day before each occasion.
+
+9. Verse Repeat & Smart Search:
+Repeat one verse or a range as many times as you choose to strengthen memorization, and search the Quran by word, by root, or straight by verse number.
+
+10. Comprehensive Memorization (Hifz) Journey:
 A visualized mastery map tracking your memorized pages and review schedules, featuring an interactive word-hiding mode to test your retention.
 
-6. Personal & Group Khatmahs:
+11. Personal & Group Khatmahs:
 Create flexible reading plans tailored to your pace, or collaborate with family and friends in shared group khatmahs with clear part assignments.
 
-7. Islamic Aesthetics & Dark Modes:
+12. Islamic Aesthetics & Dark Modes:
 Choose from three tailored themes (Girih Geometric, Classical Manuscript, and Night Gold), alongside an accessible Elderly Mode featuring enlarged typography and simplified controls.
 
-8. Digital 3D Misbaha & Smartwatch Sync:
+13. A Redesigned Home:
+Clearer sections on the home screen, and a sidebar that gathers every section on iPad and Mac.
+
+14. Digital 3D Misbaha & Smartwatch Sync:
 An interactive 3D misbaha featuring authentic daily adhkar, realistic tactile haptics, and seamless synchronization with Apple Watch complications.
 
-9. Secure Cloud Sync:
+15. Secure Cloud Sync:
 Keep your reading progress, bookmarks, and khatmahs synchronized across iPhone, iPad, Mac, and Apple Watch via iCloud Drive and Google Drive.
 
-10. Fully Private:
+16. Fully Private:
 Tibyan collects no personal data and works locally on your device wherever possible.
 ```
 
