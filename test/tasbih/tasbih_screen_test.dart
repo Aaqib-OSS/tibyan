@@ -67,6 +67,7 @@ void main() {
     TasbihStyle style, {
     Widget screen = const TasbihScreen(),
     Map<String, Object> prefs = const {},
+    double textScale = 1,
   }) async {
     SharedPreferences.setMockInitialValues({
       'settings.tasbih.style': style.name,
@@ -99,6 +100,11 @@ void main() {
           supportedLocales: AppLocalizations.supportedLocales,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           theme: _theme,
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: TextScaler.linear(textScale)),
+            child: child!,
+          ),
           home: LookTheme(child: screen),
         ),
       ),
@@ -184,6 +190,50 @@ void main() {
     expect(c.read(tasbihCounterProvider).count, 1);
     expect(tester.takeException(), isNull);
     await done(tester, db);
+  });
+
+  testWidgets('the misbaha fits at 200% text, in each look', (tester) async {
+    for (final works in [true, false]) {
+      BeadShader.debugSetAvailable(works);
+      final (c, _, db) = await pump(
+        tester,
+        TasbihStyle.misbaha,
+        textScale: 2,
+        prefs: {'settings.tasbih.material': 'turquoise'},
+      );
+      expect(tester.takeException(), isNull);
+      final painter = tester
+          .widget<CustomPaint>(
+            find.descendant(
+              of: find.byType(MisbahaView),
+              matching: find.byType(CustomPaint),
+            ),
+          )
+          .painter;
+      expect(
+        painter,
+        works ? isA<RealMisbahaPainter>() : isA<SuggestedMisbahaPainter>(),
+      );
+      // The counter keeps a large area, and is one button with its value.
+      expect(tester.getSize(find.byType(MisbahaView)).height, greaterThan(270));
+      expect(
+        find.bySemanticsLabel(
+          AppLocalizations.of(tester.element(find.byType(MisbahaView)))
+              .tasbihCountAction,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(works ? 'Tap or drag to count' : 'Pull a bead down, or tap'),
+        findsOneWidget,
+      );
+      await tester.tap(find.byType(MisbahaView));
+      await settle(tester);
+      expect(c.read(tasbihCounterProvider).count, 1);
+      expect(tester.takeException(), isNull);
+      await done(tester, db);
+    }
+    BeadShader.debugSetAvailable(null);
   });
 
   testWidgets('volume buttons, space and enter count', (tester) async {

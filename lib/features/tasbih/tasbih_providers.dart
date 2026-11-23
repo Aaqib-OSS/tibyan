@@ -9,6 +9,7 @@ import '../../core/settings/settings_controller.dart'
     show sharedPreferencesProvider;
 import '../mushaf/mushaf_providers.dart' show userDatabaseProvider;
 import 'data/tasbih_repository.dart';
+import 'domain/bead_sounds.dart';
 import 'domain/dhikr.dart';
 import 'domain/tasbih_counter.dart';
 import 'platform/tasbih_platform.dart';
@@ -128,8 +129,49 @@ class TasbihController extends Notifier<TasbihCounter> {
     return event;
   }
 
+  final _sounds = BeadSoundPicker();
+  DateTime? _roundClosedAt;
+
+  /// The misbaha's own beads sound in its style; the others click.
+  bool _beads(TasbihSettings s) => s.style == TasbihStyle.misbaha;
+
+  /// Loads the chosen material's bead sounds, so the first count has no
+  /// delay (when the screen opens, and when the material changes).
+  void preloadSounds() {
+    final s = _settings;
+    if (!s.sound || !_beads(s)) return;
+    unawaited(
+      ref
+          .read(tasbihPlatformProvider)
+          .preload(BeadSoundPicker.assetsOf(s.material))
+          .catchError((_) {}),
+    );
+  }
+
+  /// The imam's joint has crossed: a lap of 33 beads is done. The heavier
+  /// tap (unless the round's own just fired) and the lap's end sound.
+  void lapFeedback() {
+    final s = _settings;
+    final closed = _roundClosedAt;
+    final justClosed =
+        closed != null &&
+        DateTime.now().difference(closed) < const Duration(milliseconds: 1500);
+    if (s.haptics && !justClosed) {
+      unawaited(HapticFeedback.heavyImpact().catchError((_) {}));
+    }
+    if (s.sound && _beads(s)) {
+      unawaited(
+        ref
+            .read(tasbihPlatformProvider)
+            .play(_sounds.end(s.material))
+            .catchError((_) {}),
+      );
+    }
+  }
+
   void _feedback(CountEvent event) {
     final s = _settings;
+    if (event == CountEvent.roundClosed) _roundClosedAt = DateTime.now();
     if (s.haptics) {
       unawaited(
         switch (event) {
@@ -140,7 +182,13 @@ class TasbihController extends Notifier<TasbihCounter> {
       );
     }
     if (s.sound) {
-      unawaited(ref.read(tasbihPlatformProvider).click().catchError((_) {}));
+      final platform = ref.read(tasbihPlatformProvider);
+      unawaited(
+        (_beads(s)
+                ? platform.play(_sounds.count(s.material))
+                : platform.click())
+            .catchError((_) {}),
+      );
     }
   }
 

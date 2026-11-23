@@ -8,6 +8,7 @@ const _size = Size(300, 600);
 /// The misbaha alone, its count kept here as the counter would.
 class _Host extends StatefulWidget {
   const _Host({
+    super.key,
     required this.render,
     required this.animate,
     this.roundSize,
@@ -15,7 +16,7 @@ class _Host extends StatefulWidget {
     this.counted,
   });
 
-  final MisbahaRender render;
+  final MisbahaRender? render;
   final bool animate;
   final int? roundSize;
   final int start;
@@ -67,8 +68,8 @@ double _phase(WidgetTester tester) {
     ),
   );
   return switch (paint.painter) {
-    final SuggestedMisbahaPainter p => p.phase.value,
-    final RealMisbahaPainter p => p.phase.value,
+    final SuggestedMisbahaPainter p => p.motion.phase,
+    final RealMisbahaPainter p => p.motion.phase,
     _ => throw StateError('no misbaha painter'),
   };
 }
@@ -80,11 +81,7 @@ TerminalBead _terminal(WidgetTester tester) {
       matching: find.byType(CustomPaint),
     ),
   );
-  return switch (paint.painter) {
-    final SuggestedMisbahaPainter p => p.terminal,
-    final RealMisbahaPainter p => p.terminal,
-    _ => throw StateError('no misbaha painter'),
-  };
+  return (paint.painter! as SuggestedMisbahaPainter).terminal;
 }
 
 /// Frames enough for an animation to run its course (its first frame only
@@ -95,7 +92,154 @@ Future<void> _settle(WidgetTester tester) async {
   }
 }
 
+CustomPainter _painter(WidgetTester tester) => tester
+    .widget<CustomPaint>(
+      find.descendant(
+        of: find.byType(MisbahaView),
+        matching: find.byType(CustomPaint),
+      ),
+    )
+    .painter!;
+
 void main() {
+  // As where fragment shaders work (the pieces are drawn as shaded discs:
+  // no program is loaded in a test).
+  setUp(() => BeadShader.debugSetAvailable(true));
+  tearDown(() => BeadShader.debugSetAvailable(null));
+
+  group('which look is drawn', () {
+    testWidgets('true 3D for a reader who never chose', (tester) async {
+      await tester.pumpWidget(const _Host(render: null, animate: true));
+      expect(_painter(tester), isA<RealMisbahaPainter>());
+    });
+
+    testWidgets('the reader\'s own choice is kept', (tester) async {
+      await tester.pumpWidget(
+        const _Host(render: MisbahaRender.suggested, animate: true),
+      );
+      expect(_painter(tester), isA<SuggestedMisbahaPainter>());
+    });
+
+    testWidgets('the suggested look where shaders are unavailable', (
+      tester,
+    ) async {
+      BeadShader.debugSetAvailable(false);
+      for (final chosen in [null, MisbahaRender.real]) {
+        await tester.pumpWidget(_Host(render: chosen, animate: true));
+        expect(_painter(tester), isA<SuggestedMisbahaPainter>());
+        await tester.tap(find.byType(MisbahaView));
+        await _settle(tester);
+        expect(_phase(tester), 1);
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox());
+      }
+    });
+
+    testWidgets('it falls back when the shader turns out not to load', (
+      tester,
+    ) async {
+      BeadShader.debugSetAvailable(null);
+      await tester.pumpWidget(
+        const _Host(render: null, animate: true, start: 7),
+      );
+      // Not known yet: the 3D scene, with nothing drawn.
+      expect((_painter(tester) as RealMisbahaPainter).blank, isTrue);
+      BeadShader.available.value = false;
+      await tester.pump();
+      expect(_painter(tester), isA<SuggestedMisbahaPainter>());
+      await tester.tap(find.byType(MisbahaView));
+      await _settle(tester);
+      expect(_phase(tester), 1);
+    });
+  });
+
+  testWidgets('true 3D: the joint crosses after the 33rd bead, and tells', (
+    tester,
+  ) async {
+    var laps = 0;
+    var count = 31;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StatefulBuilder(
+          builder: (context, set) => MisbahaView(
+            material: BeadMaterial.rosewood,
+            render: MisbahaRender.real,
+            count: count,
+            roundSize: 100,
+            onLap: () => laps++,
+            onCount: () => set(() => count++),
+          ),
+        ),
+      ),
+    );
+    final motion = (_painter(tester) as RealMisbahaPainter).motion;
+    expect(motion.step, 31);
+    await tester.tap(find.byType(MisbahaView));
+    await _settle(tester);
+    expect((laps, motion.jointDue), (0, false));
+    await tester.tap(find.byType(MisbahaView));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(motion.jointCrossing, isTrue);
+    // A tap while it crosses is counted, and its bead follows.
+    await tester.tap(find.byType(MisbahaView));
+    expect(count, 34);
+    for (var i = 0; i < 6; i++) {
+      await _settle(tester);
+    }
+    expect((laps, motion.done, motion.step), (1, 3, 31 + 3 + 1));
+    // At rest nothing asks for frames.
+    expect(tester.binding.hasScheduledFrame, isFalse);
+  });
+
+  testWidgets('true 3D paints each material, with and without a count', (
+    tester,
+  ) async {
+    for (final m in BeadMaterial.values) {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MisbahaView(
+            key: ValueKey(m),
+            material: m,
+            render: MisbahaRender.real,
+            count: 20,
+            roundSize: 33,
+            onCount: () {},
+          ),
+        ),
+      );
+      await tester.tap(find.byType(MisbahaView));
+      await tester.pump(const Duration(milliseconds: 80));
+      expect(tester.takeException(), isNull);
+      await _settle(tester);
+    }
+  });
+
+  testWidgets('true 3D: a sideways drag carries the bead either way', (
+    tester,
+  ) async {
+    for (final dx in [-1.0, 1.0]) {
+      final counted = ValueNotifier(0);
+      await tester.pumpWidget(
+        _Host(
+          key: ValueKey(dx),
+          render: MisbahaRender.real,
+          animate: true,
+          counted: counted,
+        ),
+      );
+      final travel = RealMisbahaPainter.travel(_size);
+      await tester.timedDrag(
+        find.byType(MisbahaView),
+        Offset(dx * (20 + travel * .7), 0),
+        const Duration(milliseconds: 500),
+      );
+      await _settle(tester);
+      expect(counted.value, 1);
+      expect(_phase(tester), 1);
+    }
+  });
+
   for (final render in MisbahaRender.values) {
     group(render.name, () {
       double travel() => render == MisbahaRender.real
@@ -221,22 +365,27 @@ void main() {
         await tester.pump();
         host.external();
         await _settle(tester);
+        await _settle(tester);
         expect(_phase(tester), 3);
         expect(counted.value, 0);
       });
 
-      testWidgets('the terminal bead closes each round', (tester) async {
-        await tester.pumpWidget(
-          _Host(render: render, animate: true, roundSize: 33, start: 31),
-        );
-        final terminal = _terminal(tester);
-        // Count 31 of 33: the bead after the one at the gap ends the round,
-        // and so does every 33rd after it.
-        expect(terminal(0), isFalse);
-        expect(terminal(1), isTrue);
-        expect(terminal(34), isTrue);
-        expect(terminal(2), isFalse);
-      });
+      testWidgets(
+        'the terminal bead closes each round',
+        skip: render == MisbahaRender.real,
+        (tester) async {
+          await tester.pumpWidget(
+            _Host(render: render, animate: true, roundSize: 33, start: 31),
+          );
+          final terminal = _terminal(tester);
+          // Count 31 of 33: the bead after the one at the gap ends the round,
+          // and so does every 33rd after it.
+          expect(terminal(0), isFalse);
+          expect(terminal(1), isTrue);
+          expect(terminal(34), isTrue);
+          expect(terminal(2), isFalse);
+        },
+      );
     });
   }
 }

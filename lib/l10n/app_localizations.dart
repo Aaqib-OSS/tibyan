@@ -7106,6 +7106,12 @@ abstract class AppLocalizations {
   /// **'اسحب الحبة لأسفل، أو اضغط'**
   String get tasbihDragHint;
 
+  /// Gesture hint beneath the true 3D bead counter.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط أو اسحب للعدّ'**
+  String get tasbihDragHintReal;
+
   /// Gesture hint at the bottom of the full-screen counter.
   ///
   /// In ar, this message translates to:
@@ -7219,6 +7225,24 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لؤلؤ'**
   String get tasbihMaterialPearl;
+
+  /// Rosewood option in the bead material picker.
+  ///
+  /// In ar, this message translates to:
+  /// **'خشب الورد'**
+  String get tasbihMaterialRosewood;
+
+  /// Turquoise option in the bead material picker.
+  ///
+  /// In ar, this message translates to:
+  /// **'فيروز'**
+  String get tasbihMaterialTurquoise;
+
+  /// Yusr (black coral) option in the bead material picker.
+  ///
+  /// In ar, this message translates to:
+  /// **'يُسر'**
+  String get tasbihMaterialYusr;
 
   /// Label for the counter vibration switch in Tasbih settings.
   ///

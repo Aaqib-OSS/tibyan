@@ -4224,6 +4224,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasbihDragHint => 'Pull a bead down, or tap';
 
   @override
+  String get tasbihDragHintReal => 'Tap or drag to count';
+
+  @override
   String get tasbihScreenHint => 'Tap anywhere to count; swipe down to leave';
 
   @override
@@ -4280,6 +4283,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasbihMaterialPearl => 'Pearl';
+
+  @override
+  String get tasbihMaterialRosewood => 'Rosewood';
+
+  @override
+  String get tasbihMaterialTurquoise => 'Turquoise';
+
+  @override
+  String get tasbihMaterialYusr => 'Yusr';
 
   @override
   String get tasbihHaptics => 'Light vibration with each count';

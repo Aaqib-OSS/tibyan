@@ -2976,6 +2976,10 @@
   "@tasbihDragHint": {
     "description": "Gesture hint beneath the bead counter."
   },
+  "tasbihDragHintReal": "اضغط أو اسحب للعدّ",
+  "@tasbihDragHintReal": {
+    "description": "Gesture hint beneath the true 3D bead counter."
+  },
   "tasbihScreenHint": "اضغط في أي مكان للعدّ، واسحب لأسفل للخروج",
   "@tasbihScreenHint": {
     "description": "Gesture hint at the bottom of the full-screen counter."
@@ -3045,6 +3049,18 @@
   "tasbihMaterialPearl": "لؤلؤ",
   "@tasbihMaterialPearl": {
     "description": "Pearl option in the bead material picker."
+  },
+  "tasbihMaterialRosewood": "خشب الورد",
+  "@tasbihMaterialRosewood": {
+    "description": "Rosewood option in the bead material picker."
+  },
+  "tasbihMaterialTurquoise": "فيروز",
+  "@tasbihMaterialTurquoise": {
+    "description": "Turquoise option in the bead material picker."
+  },
+  "tasbihMaterialYusr": "يُسر",
+  "@tasbihMaterialYusr": {
+    "description": "Yusr (black coral) option in the bead material picker."
   },
   "tasbihHaptics": "اهتزاز خفيف مع كل عدّة",
   "@tasbihHaptics": {

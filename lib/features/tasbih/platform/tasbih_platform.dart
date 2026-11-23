@@ -12,6 +12,13 @@ abstract interface class TasbihPlatform {
   /// Plays the bundled click (assets/tasbih/click.wav), with no delay.
   Future<void> click();
 
+  /// Plays a bundled sound (a bead's knock, `assets/tasbih/beads/…`) the
+  /// same way: natively, with no delay.
+  Future<void> play(String asset);
+
+  /// Loads [assets] ahead of their first [play].
+  Future<void> preload(List<String> assets);
+
   /// While on, the volume buttons count (and do not change the volume).
   Future<void> setVolumeKeys(bool on);
 
@@ -44,6 +51,10 @@ abstract interface class TasbihPlatform {
 
 class NoTasbihPlatform implements TasbihPlatform {
   int clicks = 0;
+
+  /// The sounds asked for by [play], in order, and by [preload].
+  final played = <String>[];
+  final preloaded = <String>[];
   bool volumeKeys = false;
   int pending = 0;
   Map<String, String>? widget;
@@ -64,6 +75,14 @@ class NoTasbihPlatform implements TasbihPlatform {
 
   @override
   Future<void> click() async => clicks++;
+
+  @override
+  Future<void> play(String asset) async => played.add(asset);
+
+  @override
+  Future<void> preload(List<String> assets) async => preloaded
+    ..clear()
+    ..addAll(assets);
 
   @override
   Future<void> setVolumeKeys(bool on) async => volumeKeys = on;
@@ -141,6 +160,12 @@ class ChannelTasbihPlatform implements TasbihPlatform {
 
   @override
   Future<void> click() => _call('click');
+
+  @override
+  Future<void> play(String asset) => _call('play', asset);
+
+  @override
+  Future<void> preload(List<String> assets) => _call('preload', assets);
 
   @override
   Future<void> setVolumeKeys(bool on) => _call('setVolumeKeys', on);

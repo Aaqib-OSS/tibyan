@@ -25,13 +25,33 @@ enum MisbahaRender {
   /// «إيحاء ثلاثي الأبعاد»: flat circles shaded to look round.
   suggested,
 
-  /// «ثلاثي الأبعاد حقيقي»: spheres placed in 3D, seen through a
+  /// «ثلاثي الأبعاد حقيقي»: a misbaha lying on a surface, seen through a
   /// perspective camera and lit per pixel.
   real,
 }
 
-/// The beads' material.
-enum BeadMaterial { amber, wood, pearl }
+/// The rendering drawn: the reader's own choice when there is one, else
+/// the true 3D one; and the suggested look wherever fragment shaders are
+/// not available, whatever was chosen.
+MisbahaRender effectiveMisbahaRender({
+  required MisbahaRender? chosen,
+  required bool shaders,
+}) => shaders ? chosen ?? MisbahaRender.real : MisbahaRender.suggested;
+
+/// The beads' material. The names are stored: new ones are added at the
+/// end and none is renamed.
+enum BeadMaterial {
+  amber,
+  wood,
+  pearl,
+  rosewood,
+  turquoise,
+  yusr;
+
+  /// The material's bead sounds (`assets/tasbih/beads/<key>_N.wav`): both
+  /// woods sound alike.
+  String get soundKey => this == rosewood ? wood.name : name;
+}
 
 /// The misbaha's settings, kept under `settings.tasbih.*` so a backup
 /// carries them.
@@ -39,7 +59,7 @@ enum BeadMaterial { amber, wood, pearl }
 class TasbihSettings {
   const TasbihSettings({
     this.style = TasbihStyle.misbaha,
-    this.render = MisbahaRender.suggested,
+    this.render,
     this.material = BeadMaterial.amber,
     this.haptics = true,
     this.sound = false,
@@ -50,7 +70,10 @@ class TasbihSettings {
   });
 
   final TasbihStyle style;
-  final MisbahaRender render;
+
+  /// The rendering the reader chose; null when they never chose one
+  /// (see [effectiveMisbahaRender]).
+  final MisbahaRender? render;
   final BeadMaterial material;
 
   /// A light tap with each count; a stronger one when a round closes.
@@ -112,7 +135,9 @@ class TasbihSettingsController extends Notifier<TasbihSettings> {
     final target = p.getInt('${_p}target');
     return TasbihSettings(
       style: pick(TasbihStyle.values, 'style', d.style),
-      render: pick(MisbahaRender.values, 'render', d.render),
+      render: MisbahaRender.values
+          .where((v) => v.name == p.getString('${_p}render'))
+          .firstOrNull,
       material: pick(BeadMaterial.values, 'material', d.material),
       haptics: p.getBool('${_p}haptics') ?? d.haptics,
       sound: p.getBool('${_p}sound') ?? d.sound,
