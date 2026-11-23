@@ -106,7 +106,7 @@ class AdhanService : Service() {
         // In the app's language (the system's may differ).
         stopLabel = intent?.getStringExtra("stopLabel")
             ?: alert?.optString("stopLabel")?.ifEmpty { null }
-            ?: getString(R.string.adhan_stop)
+            ?: inAppLanguage().getString(R.string.adhan_stop)
         val notification = notification(title, body, payload)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(
@@ -192,7 +192,7 @@ class AdhanService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val ch = NotificationChannel(
                 CHANNEL,
-                getString(R.string.adhan_channel_name),
+                inAppLanguage().getString(R.string.adhan_channel_name),
                 NotificationManager.IMPORTANCE_HIGH,
             )
             // The adhan itself is the sound.
