@@ -21,6 +21,9 @@ All notable changes to Tibyan are recorded here. The format follows
 - Wide screens: a «الصلاة» group in the sidebar (prayer times, qibla, my prayers, adhkar).
 - Windows (Store build): opens at login, hidden in the tray, for prayer alerts.
 - Tafsir: new tafsirs — al-Mukhtasar, al-Jalalayn and al-Jami' al-Wajiz — plus 59 Quranpedia books as optional downloads; show or hide each tafsir.
+- Tafsir library: more tafsirs, including al-Tustari and al-Durr al-Manthur; library packs install reliably.
+- Nuqayah per-verse tafsir audio.
+- Downloads: toasts when a download starts and ends, a shared delete confirmation, a reorganized downloads center with a tafsir section, and verse-only playback.
 
 ### Changed
 - Home: search in row 2; prayer times, qibla, my prayers and adhkar in row 3; no tile subtitles.
@@ -30,6 +33,7 @@ All notable changes to Tibyan are recorded here. The format follows
 - Downloads and updates use altibyan.app, with the old host as a fallback.
 
 ### Fixed
+- Adhan library: muezzin photos always show; playing an undownloaded muezzin downloads it, then plays it, without a notification.
 - Tafsir: a clear settings icon; during a standalone tafsir the player sheet keeps only speed, sleep and the player's look.
 - Browsing a reciter no longer switches the playing recitation.
 - Volume keys adjust the adhan on Android; a stopped adhan stays stopped.
