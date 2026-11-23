@@ -239,11 +239,15 @@ void main() {
       );
     });
 
-    test('no index is published yet, only the test ones', () {
+    test('the published indexes are Nuqayah\'s, besides the test ones', () {
       expect(
         AudioIndexSpec.all.where((s) => !testAudioIndexes.contains(s)),
-        isEmpty,
+        unorderedEquals(AudioIndexSpec.nuqayah),
       );
+      for (final s in AudioIndexSpec.nuqayah) {
+        expect(s.url, contains('/mirror/audio-index/'));
+        expect(s.url, isNot(contains('/mirror/test/')));
+      }
       expect(
         TafsirTextPackSpec.english.where(
           (s) => !testEnglishTafsirPacks.contains(s),

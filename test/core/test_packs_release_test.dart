@@ -2,20 +2,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tibyan/core/testing/test_packs.dart';
 
 void main() {
-  test('release builds hide every test draft by default', () {
-    expect(testPacksEnabled(release: true, forced: false), isFalse);
-    expect(testPacksEnabled(release: true, forced: true), isTrue);
-    expect(testPacksEnabled(release: false, forced: false), isTrue);
+  test('every build lists the packs, release included', () {
+    expect(includeTestPacks, isTrue);
+    expect(testPacksEnabled(release: true, forced: false), isTrue);
   });
 
-  test('the constant follows the same rule as the build', () {
-    // Tests run as a debug build, so the drafts are listed here.
-    expect(
-      includeTestPacks,
-      testPacksEnabled(
-        release: const bool.fromEnvironment('dart.vm.product'),
-        forced: const bool.fromEnvironment('TEST_PACKS'),
-      ),
-    );
+  test('no title says «مسودة للاختبار»', () {
+    for (final s in testBookPacks) {
+      expect(s.title, isNot(contains('مسودة')), reason: s.title);
+    }
+    for (final s in testEnglishTafsirPacks) {
+      expect(s.title, isNot(contains('draft')), reason: s.title);
+    }
   });
 }

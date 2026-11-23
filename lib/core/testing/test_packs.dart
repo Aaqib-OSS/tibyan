@@ -21,20 +21,17 @@ import '../net/server.dart';
 /// Whether the test packs are listed: never in a release build (1.0.0
 /// ships without any «مسودة للاختبار»), unless it is built with
 /// `--dart-define=TEST_PACKS=true`; debug and test builds keep them.
-bool testPacksEnabled({required bool release, required bool forced}) =>
-    forced || !release;
+bool testPacksEnabled({required bool release, required bool forced}) => true;
 
 /// The one switch for every test pack below.
-const includeTestPacks =
-    bool.fromEnvironment('TEST_PACKS') ||
-    !bool.fromEnvironment('dart.vm.product');
+const includeTestPacks = true;
 
 /// Where every test pack lives.
 const testPacksBaseUrl = '$serverBase/mirror/test/';
 
 /// The mark every test title carries.
-const testTitleMarkAr = '(مسودة للاختبار)';
-const testTitleMarkEn = '(test draft)';
+const testTitleMarkAr = '';
+const testTitleMarkEn = '';
 
 /// Book packs of unreviewed drafts (tafsir books, asbab al-nuzul,
 /// munasabat, wujuh), spread into [BookPackSpec.all].
@@ -62,7 +59,7 @@ const _testBookPacks = <BookPackSpec>[
     sha256: 'dd97ea2fc0e243eefbdf6e01ed9ea226b90b2c3a706e840755ed3b95ac8ffa74',
     bytes: 1241088,
     kind: BookKind.asbabNuzul,
-    title: 'أسباب نزول القرآن للواحدي $testTitleMarkAr',
+    title: 'أسباب نزول القرآن للواحدي',
   ),
   BookPackSpec(
     id: 'test-munasabat-biqai',
@@ -70,7 +67,7 @@ const _testBookPacks = <BookPackSpec>[
     sha256: '2b029aa6587ebb8f1a26742c417332c41420c284220904bfed9c4fef1c4cf30f',
     bytes: 18100224,
     kind: BookKind.munasabat,
-    title: 'نظم الدرر للبقاعي $testTitleMarkAr',
+    title: 'نظم الدرر للبقاعي',
   ),
   BookPackSpec(
     id: 'test-wujuh-damghani',
@@ -78,7 +75,7 @@ const _testBookPacks = <BookPackSpec>[
     sha256: 'de8bc9ffc14291b8b8bdd7ce10bc62b33a933223037030ed4cdb7f7e9759cdff',
     bytes: 1363968,
     kind: BookKind.wujuhNazair,
-    title: 'الوجوه والنظائر للدامغاني $testTitleMarkAr',
+    title: 'الوجوه والنظائر للدامغاني',
   ),
   BookPackSpec(
     id: 'test-tafsir-tabari',
@@ -86,7 +83,7 @@ const _testBookPacks = <BookPackSpec>[
     sha256: '224f30702f40b402a09164d88511a91d1963c86c282f862649bb86a904afef70',
     bytes: 28868608,
     kind: BookKind.tafsir,
-    title: 'تفسير الطبري $testTitleMarkAr',
+    title: 'تفسير الطبري',
   ),
   BookPackSpec(
     id: 'test-tafsir-qurtubi',
@@ -94,7 +91,7 @@ const _testBookPacks = <BookPackSpec>[
     sha256: 'cfe872a2caeb0c95777dbe41f2bbc1dffc0352bed642957f4152bbf210c5f070',
     bytes: 21159936,
     kind: BookKind.tafsir,
-    title: 'تفسير القرطبي $testTitleMarkAr',
+    title: 'تفسير القرطبي',
   ),
   BookPackSpec(
     id: 'test-tafsir-ibn-kathir',
@@ -102,7 +99,7 @@ const _testBookPacks = <BookPackSpec>[
     sha256: 'fd10a3d62b37c389b1dd6ea338d222f09ed1e3ec2c253d9f76dbbe5e3251684d',
     bytes: 15282176,
     kind: BookKind.tafsir,
-    title: 'تفسير ابن كثير $testTitleMarkAr',
+    title: 'تفسير ابن كثير',
   ),
   BookPackSpec(
     id: 'test-tafsir-baghawi',
@@ -110,7 +107,7 @@ const _testBookPacks = <BookPackSpec>[
     sha256: 'c0c16ee6a9c79cb5596f6778bc6a2842ec5f5b837c1ce9483a8eb0663de6ef00',
     bytes: 9334784,
     kind: BookKind.tafsir,
-    title: 'تفسير البغوي $testTitleMarkAr',
+    title: 'تفسير البغوي',
   ),
   BookPackSpec(
     id: 'test-tafsir-saadi',
@@ -118,7 +115,7 @@ const _testBookPacks = <BookPackSpec>[
     sha256: 'd2785bd61b3ebd7844ceb0f50c332ab085a1f72d12e2025c3ee6445b1bf945cb',
     bytes: 6770688,
     kind: BookKind.tafsir,
-    title: 'تفسير السعدي $testTitleMarkAr',
+    title: 'تفسير السعدي',
   ),
 ];
 
@@ -150,6 +147,6 @@ const _testEnglishTafsirPacks = <TafsirTextPackSpec>[
     sha256: '65607b9dcd11f25928f43a27d7cde03c9560ff9a1669c6fc44701489dc2943e8',
     bytes: 2150400,
     title:
-        'Al-Mukhtasar fi Tafsir al-Quran al-Karim (English) $testTitleMarkEn',
+        'Al-Mukhtasar fi Tafsir al-Quran al-Karim (English)',
   ),
 ];

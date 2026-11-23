@@ -156,7 +156,12 @@ class VerseAudioIndex {
   final Map<int, Uri> surahs;
   final Map<(int, int), (int, int)> offsets;
 
-  String title(String languageCode) => languageCode == 'ar' ? titleAr : titleEn;
+  /// Without the closed test's «(مسودة للاختبار)» mark, which is never shown.
+  String title(String languageCode) =>
+      (languageCode == 'ar' ? titleAr : titleEn)
+          .replaceAll('(مسودة للاختبار)', '')
+          .replaceAll('(test draft)', '')
+          .trim();
 
   /// Where the audio of [surah]:[ayah] is, or null when the index has
   /// none: the verse's own file, else its stretch of the surah's file,
@@ -197,11 +202,32 @@ class AudioIndexSpec {
   final String url;
   final String sha256;
 
-  /// Every index the app may fetch. Empty until the permission arrives
-  /// and the index is published (docs/features/audio_content.md), apart
-  /// from the closed-test indexes ([testAudioIndexes], removed before a
-  /// public release).
-  static const all = <AudioIndexSpec>[...testAudioIndexes];
+  /// Nuqayah's tafsir audio (al-Muyassar and al-Sa'di), by their written
+  /// permission (no ads, no profit; docs/DATA_SOURCES.md), in every build.
+  static const nuqayah = <AudioIndexSpec>[
+    AudioIndexSpec(
+      id: 'nuqayah-almuyassar',
+      kind: VerseAudioKind.tafsir,
+      url: '$serverBase/mirror/audio-index/nuqayah-almuyassar.json',
+      sha256:
+          '3c538bf0276984321c6ab6418a07f09520e1ddbed09debbf57318ee955772c43',
+    ),
+    AudioIndexSpec(
+      id: 'nuqayah-saadi',
+      kind: VerseAudioKind.tafsir,
+      url: '$serverBase/mirror/audio-index/nuqayah-saadi.json',
+      sha256:
+          '7129d41f2c210cb80a7ea1b0fc284ca7b22323a1f6be4d869e747f78a3bf5ef2',
+    ),
+  ];
+
+  /// Every index the app may fetch: Nuqayah's, then the closed-test ones
+  /// (debug builds) other than Nuqayah's drafts, which these replace.
+  static final all = <AudioIndexSpec>[
+    ...nuqayah,
+    for (final t in testAudioIndexes)
+      if (!t.id.startsWith('test-nuqayah-')) t,
+  ];
 }
 
 /// Fetches and keeps the indexes, under `<app support>/audio-index/` (not
