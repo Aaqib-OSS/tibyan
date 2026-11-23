@@ -204,7 +204,12 @@ class BookPack {
         id: r['id'] as int,
         key: r['key'] as String,
         kind: r['kind'] as String,
-        title: r['title'] as String,
+        // Packs built for the closed test carry «(مسودة للاختبار)» in
+        // their titles; the app never shows it.
+        title: (r['title'] as String)
+            .replaceAll('(مسودة للاختبار)', '')
+            .replaceAll('(test draft)', '')
+            .trim(),
         author: r['author'] as String,
         edition: _text(r['edition']),
         publisher: _text(r['publisher']),

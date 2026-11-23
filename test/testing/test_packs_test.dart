@@ -21,7 +21,7 @@ void main() {
       expect(underTest(s.url), isTrue, reason: s.url);
       expect(s.url, endsWith('/${s.id}.pack.db'));
       expect(s.id, startsWith('test-'));
-      expect(s.title, contains(testTitleMarkAr), reason: s.title);
+      expect(s.title, isNot(contains('مسودة')), reason: s.title);
       expect(s.sha256, matches(hex));
       expect(s.bytes, greaterThan(0));
       expect(BookPackSpec.all, contains(s));
@@ -34,7 +34,10 @@ void main() {
       expect(s.id, startsWith('test-'));
       expect(s.sha256, matches(hex));
       expect(VerseAudioKind.feature(s.kind), isNotNull);
-      expect(AudioIndexSpec.all, contains(s));
+      // Nuqayah's drafts are replaced by the published indexes.
+      if (!s.id.startsWith('test-nuqayah-')) {
+        expect(AudioIndexSpec.all, contains(s));
+      }
     }
   });
 
@@ -42,7 +45,7 @@ void main() {
     for (final s in testEnglishTafsirPacks) {
       expect(underTest(s.url), isTrue, reason: s.url);
       expect(s.id, startsWith('test-'));
-      expect(s.title, contains(testTitleMarkEn), reason: s.title);
+      expect(s.title, isNot(contains('draft')), reason: s.title);
       expect(s.sha256, matches(hex));
       expect(TafsirTextPackSpec.english, contains(s));
     }
