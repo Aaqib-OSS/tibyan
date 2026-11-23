@@ -4156,7 +4156,7 @@
       }
     }
   },
-  "qiblaAligned": "أنت متجه إلى القبلة",
+  "qiblaAligned": "أنت تواجه القبلة",
   "qiblaTurnRight": "استدر يمينًا {deg}°",
   "@qiblaTurnRight": {
     "placeholders": {
@@ -4362,6 +4362,25 @@
         "type": "String"
       },
       "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "qiblaOpenCamera": "افتح الكاميرا",
+  "qiblaCloseCamera": "أغلق الكاميرا",
+  "qiblaCameraHint": "أمسك الهاتف قائمًا واستدر حتى تصير الكعبة في الوسط.",
+  "qiblaCameraDenied": "لم يُسمح باستخدام الكاميرا. يمكنك السماح بها من إعدادات الجهاز، أو متابعة البوصلة.",
+  "qiblaCameraUnavailable": "تعذّر تشغيل الكاميرا على هذا الجهاز.",
+  "qiblaCameraLabel": "عرض الكاميرا مع سهم اتجاه القبلة",
+  "qiblaKaaba": "الكعبة",
+  "qiblaYou": "موقعك",
+  "qiblaDesktopNote": "لا توجد بوصلة في الحاسوب: اتبع الخط على الخريطة وزاوية الاتجاه من الشمال.",
+  "qiblaMapOffline": "تعذّر تحميل الخريطة، فرُسم الخط بدونها.",
+  "qiblaMapAttribution": "© مساهمو OpenStreetMap",
+  "qiblaMapLabel": "خريطة: خط من {place} إلى الكعبة",
+  "@qiblaMapLabel": {
+    "placeholders": {
+      "place": {
         "type": "String"
       }
     }

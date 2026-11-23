@@ -6088,7 +6088,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get qiblaAligned => 'أنت متجه إلى القبلة';
+  String get qiblaAligned => 'أنت تواجه القبلة';
 
   @override
   String qiblaTurnRight(String deg) {
@@ -6346,5 +6346,46 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String prayerAdhanSummaryLabel(String prayer, String summary) {
     return '$prayer: $summary';
+  }
+
+  @override
+  String get qiblaOpenCamera => 'افتح الكاميرا';
+
+  @override
+  String get qiblaCloseCamera => 'أغلق الكاميرا';
+
+  @override
+  String get qiblaCameraHint =>
+      'أمسك الهاتف قائمًا واستدر حتى تصير الكعبة في الوسط.';
+
+  @override
+  String get qiblaCameraDenied =>
+      'لم يُسمح باستخدام الكاميرا. يمكنك السماح بها من إعدادات الجهاز، أو متابعة البوصلة.';
+
+  @override
+  String get qiblaCameraUnavailable => 'تعذّر تشغيل الكاميرا على هذا الجهاز.';
+
+  @override
+  String get qiblaCameraLabel => 'عرض الكاميرا مع سهم اتجاه القبلة';
+
+  @override
+  String get qiblaKaaba => 'الكعبة';
+
+  @override
+  String get qiblaYou => 'موقعك';
+
+  @override
+  String get qiblaDesktopNote =>
+      'لا توجد بوصلة في الحاسوب: اتبع الخط على الخريطة وزاوية الاتجاه من الشمال.';
+
+  @override
+  String get qiblaMapOffline => 'تعذّر تحميل الخريطة، فرُسم الخط بدونها.';
+
+  @override
+  String get qiblaMapAttribution => '© مساهمو OpenStreetMap';
+
+  @override
+  String qiblaMapLabel(String place) {
+    return 'خريطة: خط من $place إلى الكعبة';
   }
 }

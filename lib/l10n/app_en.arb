@@ -2453,5 +2453,24 @@
         "type": "String"
       }
     }
+  },
+  "qiblaOpenCamera": "Open camera",
+  "qiblaCloseCamera": "Close camera",
+  "qiblaCameraHint": "Hold the phone upright and turn until the Kaaba is in the middle.",
+  "qiblaCameraDenied": "Camera access was not allowed. You can allow it in the device settings, or keep using the compass.",
+  "qiblaCameraUnavailable": "The camera could not be started on this device.",
+  "qiblaCameraLabel": "Camera view with the Qibla direction arrow",
+  "qiblaKaaba": "The Kaaba",
+  "qiblaYou": "Your location",
+  "qiblaDesktopNote": "Computers have no compass: follow the line on the map and the bearing from north.",
+  "qiblaMapOffline": "The map could not be loaded, so the line is drawn without it.",
+  "qiblaMapAttribution": "© OpenStreetMap contributors",
+  "qiblaMapLabel": "Map: a line from {place} to the Kaaba",
+  "@qiblaMapLabel": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
   }
 }
