@@ -214,6 +214,71 @@ void main() {
     }
   }
 
+  // 100 is 99 beads (three whole laps) and the imam: the last count moves
+  // no bead, so the next round starts with the beads at the lap's start.
+  for (final render in ['real', 'suggested']) {
+    testWidgets('$render misbaha: a round of 100 ends on the imam', (
+      tester,
+    ) async {
+      final (c, _, db) = await pump(
+        tester,
+        TasbihStyle.misbaha,
+        prefs: {
+          'settings.tasbih.dhikr': 'app:muslimdata69',
+          'settings.tasbih.render': render,
+        },
+      );
+      MisbahaMotion motion() {
+        final p = tester
+            .widgetList<CustomPaint>(
+              find.descendant(
+                of: find.byType(MisbahaView),
+                matching: find.byType(CustomPaint),
+              ),
+            )
+            .map((w) => w.painter)
+            .firstWhere(
+              (p) => p is RealMisbahaPainter || p is SuggestedMisbahaPainter,
+            );
+        return p is RealMisbahaPainter
+            ? p.motion
+            : (p! as SuggestedMisbahaPainter).motion;
+      }
+
+      for (var i = 0; i < 100; i++) {
+        await tester.tap(find.byType(MisbahaView), warnIfMissed: false);
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 5)),
+        );
+        await tester.pump(const Duration(milliseconds: 60));
+        if (i == 98) {
+          await settle(tester);
+          // 99 beads over: the string is back at the lap's start.
+          expect(motion().asked, 99);
+        }
+      }
+      // The 100th count asked for no bead (the string may already have
+      // been put at the new round's start).
+      expect(motion().asked, anyOf(99, 0));
+      for (var i = 0; i < 6; i++) {
+        await settle(tester);
+      }
+      final k = c.read(tasbihCounterProvider);
+      expect((k.rounds, k.count, k.stage?.index), (1, 0, 0));
+      expect(findMeta('1/4 · 0/33'), findsOneWidget);
+      // The new round: the string at rest at the start, nothing owed.
+      final m = motion();
+      expect((m.asked, m.owed, m.phase), (0, 0, 0.0));
+      if (render == 'real') expect(m.step % misbahaItems, 0);
+      // The next tap moves the first bead.
+      await tester.tap(find.byType(MisbahaView), warnIfMissed: false);
+      await tester.pump(const Duration(milliseconds: 60));
+      expect(motion().asked, 1);
+      expect(c.read(tasbihCounterProvider).count, 1);
+      await done(tester, db);
+    });
+  }
+
   testWidgets('a staged round kept at 99 reopens at 99 (not closed by the '
       "settings' target)", (tester) async {
     final (c, _, db) = await pump(
