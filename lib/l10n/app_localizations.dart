@@ -11130,6 +11130,30 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تابع القراءة'**
   String get homeContinueButton;
+
+  /// Home hifz card: juz ladder
+  ///
+  /// In ar, this message translates to:
+  /// **'محفوظ'**
+  String get hifzLadderMemorized;
+
+  /// Home hifz card: juz ladder
+  ///
+  /// In ar, this message translates to:
+  /// **'متقن'**
+  String get hifzLadderMastered;
+
+  /// Home hifz card: juz ladder
+  ///
+  /// In ar, this message translates to:
+  /// **'من الجزء ١ إلى ٣٠'**
+  String get hifzLadderRange;
+
+  /// Home hifz card: juz ladder
+  ///
+  /// In ar, this message translates to:
+  /// **'الجزء {juz}: محفوظ {memorized}٪، متقن {mastered}٪'**
+  String hifzLadderJuz(String juz, String memorized, String mastered);
 }
 
 class _AppLocalizationsDelegate

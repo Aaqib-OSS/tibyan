@@ -106,6 +106,22 @@ class HifzRepository {
 
   /// Every verse with its pages in the three editions and its surah, for
   /// the hifz map: (ref, surah, page 1441, page 1405, Shamarly start, end).
+  /// Every verse's `surah:ayah`, `ayah.id` and juz (the same in every
+  /// edition: the juz follows the verses, not the pages).
+  Future<List<(String, int, int)>> verseJuz() async {
+    final rows = await _db
+        .customSelect('SELECT id, surah, number, juz FROM ayah ORDER BY id')
+        .get();
+    return [
+      for (final r in rows)
+        (
+          '${r.read<int>('surah')}:${r.read<int>('number')}',
+          r.read<int>('id'),
+          r.read<int>('juz'),
+        ),
+    ];
+  }
+
   Future<List<(String, int, int, int, int, int)>> verseCells() async {
     final rows = await _db
         .customSelect(

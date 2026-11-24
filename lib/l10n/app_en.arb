@@ -2605,5 +2605,9 @@
   "nextPrayerAdhanAt": "Adhan {time}",
   "nextPrayerSetupBody": "Choose your city to see the next prayer and the time left until its adhan.",
   "nextPrayerOpenHint": "Opens prayer times",
-  "homeContinueButton": "Continue reading"
+  "homeContinueButton": "Continue reading",
+  "hifzLadderMemorized": "Memorized",
+  "hifzLadderMastered": "Mastered",
+  "hifzLadderRange": "Juz 1 to 30",
+  "hifzLadderJuz": "Juz {juz}: {memorized}% memorized, {mastered}% mastered"
 }

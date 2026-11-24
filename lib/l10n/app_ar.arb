@@ -4687,5 +4687,32 @@
   "homeContinueButton": "تابع القراءة",
   "@homeContinueButton": {
     "description": "Home continue-reading arch: the capsule button's label"
+  },
+  "hifzLadderMemorized": "محفوظ",
+  "@hifzLadderMemorized": {
+    "description": "Home hifz card: juz ladder"
+  },
+  "hifzLadderMastered": "متقن",
+  "@hifzLadderMastered": {
+    "description": "Home hifz card: juz ladder"
+  },
+  "hifzLadderRange": "من الجزء ١ إلى ٣٠",
+  "@hifzLadderRange": {
+    "description": "Home hifz card: juz ladder"
+  },
+  "hifzLadderJuz": "الجزء {juz}: محفوظ {memorized}٪، متقن {mastered}٪",
+  "@hifzLadderJuz": {
+    "description": "Home hifz card: juz ladder",
+    "placeholders": {
+      "juz": {
+        "type": "String"
+      },
+      "memorized": {
+        "type": "String"
+      },
+      "mastered": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -208,7 +208,10 @@ class HomeScreen extends ConsumerWidget {
             ),
           )
         : null;
-    final journey = _JourneyCard(progress: ref.watch(journeyProvider));
+    final journey = _JourneyCard(
+      progress: ref.watch(journeyProvider),
+      ladder: ref.watch(juzLadderProvider),
+    );
 
     return LookScaffold(
       maxWidth: double.infinity,
@@ -582,22 +585,167 @@ String journeyLine(BuildContext context, Journey p) {
 /// «مسيرة الحفظ»: memorized and mastered verses, beside the khatma's card.
 /// A calm share, no streaks or levels.
 class _JourneyCard extends StatelessWidget {
-  const _JourneyCard({required this.progress});
+  const _JourneyCard({required this.progress, required this.ladder});
 
   final Journey progress;
+  final JuzLadder ladder;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final look = context.look;
+    final k = _scale(context);
     final p = progress;
     final digits = NumberFormatter(Localizations.localeOf(context));
+    final arabic = Localizations.localeOf(context).languageCode == 'ar';
     final share = p.memorized == 0 ? 0.0 : p.mastered / p.memorized;
-    return _TodayCard(
-      title: l.hifzJourney,
-      detail: journeyLine(context, p),
-      done: share,
-      percent: digits((share * 100).round()),
-      onTap: () => context.push('/hifz?tab=progress'),
+    final percent = digits((share * 100).round());
+    final memColor = look.accent;
+    final masColor = look.isHandasi ? look.accent2 : look.gold;
+    final empty = look.ink.withValues(alpha: .08);
+    void open() => context.push('/hifz?tab=progress');
+    Widget swatch(Color c) => Container(
+      width: 9,
+      height: 9,
+      decoration: BoxDecoration(
+        color: c,
+        borderRadius: BorderRadius.circular(2),
+      ),
+    );
+    final legend = TextStyle(fontSize: 12 * k, color: look.sub);
+    return Material(
+      color: look.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(look.radius),
+        side: BorderSide(color: look.line),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        key: const ValueKey('home-journey'),
+        onTap: open,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16 * k, 14 * k, 16 * k, 14 * k),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Semantics(
+                button: true,
+                label: '${l.hifzJourney}. ${journeyLine(context, p)}',
+                excludeSemantics: true,
+                onTap: open,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l.hifzJourney,
+                            style: TextStyle(
+                              fontSize: 16 * k,
+                              fontWeight: FontWeight.w600,
+                              color: look.ink,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            journeyLine(context, p),
+                            style: TextStyle(fontSize: 13 * k, color: look.sub),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      arabic ? '$percent٪' : '$percent%',
+                      style: TextStyle(
+                        fontSize: 26 * k,
+                        fontWeight: FontWeight.w800,
+                        color: memColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10 * k),
+              // One cell per juz, juz 1 at the start; each fills from the
+              // bottom: memorized, then mastered over it.
+              SizedBox(
+                height: 22 * k,
+                child: Row(
+                  children: [
+                    for (var j = 0; j < 30; j++) ...[
+                      if (j > 0) const SizedBox(width: 3),
+                      Expanded(
+                        child: Semantics(
+                          label: l.hifzLadderJuz(
+                            digits(j + 1),
+                            digits((ladder.memorized[j] * 100).round()),
+                            digits((ladder.mastered[j] * 100).round()),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(3),
+                            child: ColoredBox(
+                              color: empty,
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  FractionallySizedBox(
+                                    alignment: Alignment.bottomCenter,
+                                    heightFactor: ladder.memorized[j],
+                                    child: ColoredBox(color: memColor),
+                                  ),
+                                  FractionallySizedBox(
+                                    alignment: Alignment.bottomCenter,
+                                    heightFactor: ladder.mastered[j],
+                                    child: ColoredBox(color: masColor),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              SizedBox(height: 8 * k),
+              ExcludeSemantics(
+                child: Row(
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        swatch(memColor),
+                        const SizedBox(width: 5),
+                        Text(l.hifzLadderMemorized, style: legend),
+                      ],
+                    ),
+                    const SizedBox(width: 14),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        swatch(masColor),
+                        const SizedBox(width: 5),
+                        Text(l.hifzLadderMastered, style: legend),
+                      ],
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        l.hifzLadderRange,
+                        style: legend,
+                        textAlign: TextAlign.end,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

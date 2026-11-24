@@ -300,3 +300,44 @@ final journeyProvider = Provider<Journey>((ref) {
     mastered: latest.values.where((v) => isMastered(v.accuracy)).length,
   );
 });
+
+/// Every verse's `surah:ayah`, `ayah.id` and juz, read once.
+final verseJuzProvider = FutureProvider<List<(String, int, int)>>(
+  (ref) => ref.watch(hifzRepositoryProvider).verseJuz(),
+);
+
+/// Per juz (index 0 is juz 1): the share of its verses memorized and the
+/// share mastered, each 0 to 1. All zero until the verses load.
+typedef JuzLadder = ({List<double> memorized, List<double> mastered});
+
+JuzLadder juzLadder(
+  List<(String, int, int)> verses,
+  Set<String> memorized,
+  Set<int> mastered,
+) {
+  final total = List.filled(30, 0);
+  final mem = List.filled(30, 0);
+  final mas = List.filled(30, 0);
+  for (final (key, id, juz) in verses) {
+    final j = juz - 1;
+    if (j < 0 || j >= 30) continue;
+    total[j]++;
+    if (memorized.contains(key)) mem[j]++;
+    if (mastered.contains(id)) mas[j]++;
+  }
+  double share(int n, int t) => t == 0 ? 0 : n / t;
+  return (
+    memorized: [for (var j = 0; j < 30; j++) share(mem[j], total[j])],
+    mastered: [for (var j = 0; j < 30; j++) share(mas[j], total[j])],
+  );
+}
+
+final juzLadderProvider = Provider<JuzLadder>((ref) {
+  final verses = ref.watch(verseJuzProvider).value ?? const [];
+  final strengths = ref.watch(verseStrengthsProvider).value ?? const {};
+  final latest = ref.watch(verseLatestProvider).value ?? const {};
+  return juzLadder(verses, strengths.keys.toSet(), {
+    for (final e in latest.entries)
+      if (isMastered(e.value.accuracy)) e.key,
+  });
+});

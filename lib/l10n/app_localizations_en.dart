@@ -6612,4 +6612,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeContinueButton => 'Continue reading';
+
+  @override
+  String get hifzLadderMemorized => 'Memorized';
+
+  @override
+  String get hifzLadderMastered => 'Mastered';
+
+  @override
+  String get hifzLadderRange => 'Juz 1 to 30';
+
+  @override
+  String hifzLadderJuz(String juz, String memorized, String mastered) {
+    return 'Juz $juz: $memorized% memorized, $mastered% mastered';
+  }
 }

@@ -6672,4 +6672,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get homeContinueButton => 'تابع القراءة';
+
+  @override
+  String get hifzLadderMemorized => 'محفوظ';
+
+  @override
+  String get hifzLadderMastered => 'متقن';
+
+  @override
+  String get hifzLadderRange => 'من الجزء ١ إلى ٣٠';
+
+  @override
+  String hifzLadderJuz(String juz, String memorized, String mastered) {
+    return 'الجزء $juz: محفوظ $memorized٪، متقن $mastered٪';
+  }
 }
