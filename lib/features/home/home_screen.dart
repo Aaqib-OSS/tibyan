@@ -28,6 +28,7 @@ import '../mushaf/presentation/continue_snapshot.dart';
 import '../mushaf/presentation/mushaf_screen.dart';
 import '../mushaf/presentation/widgets/illuminated_frame.dart';
 import '../tasmee/presentation/tasmee_setup_screen.dart' show showTasmeeSetup;
+import 'next_prayer_card.dart';
 import 'whats_new.dart';
 import '../adhkar/presentation/adhkar_screen.dart' show adhkarLocation;
 import '../prayer/presentation/prayer_tracker_screen.dart'
@@ -207,7 +208,10 @@ class HomeScreen extends ConsumerWidget {
             ),
           )
         : null;
-    final journey = _JourneyCard(progress: ref.watch(journeyProvider));
+    final journey = _JourneyCard(
+      progress: ref.watch(journeyProvider),
+      ladder: ref.watch(juzLadderProvider),
+    );
 
     return LookScaffold(
       maxWidth: double.infinity,
@@ -249,6 +253,8 @@ class HomeScreen extends ConsumerWidget {
                                 ],
                                 const SizedBox(height: 16),
                                 journey,
+                                const SizedBox(height: 16),
+                                const NextPrayerCard(),
                               ],
                             ),
                           ),
@@ -276,6 +282,8 @@ class HomeScreen extends ConsumerWidget {
                     if (today != null) ...[const SizedBox(height: 16), today],
                     const SizedBox(height: 16),
                     journey,
+                    const SizedBox(height: 16),
+                    const NextPrayerCard(),
                     const SizedBox(height: 24),
                     grid,
                   ],
@@ -392,8 +400,8 @@ class _ContinueCard extends StatelessWidget {
     Color ink,
     Color sub, {
     bool center = false,
+    bool compact = false,
   }) {
-    final l = AppLocalizations.of(context);
     final look = context.look;
     final s = surahRow;
     final k = _scale(context);
@@ -404,17 +412,13 @@ class _ContinueCard extends StatelessWidget {
             : CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            l.homeContinueHint,
-            style: TextStyle(fontSize: 13 * k, color: sub),
-          ),
           if (s != null)
             SurahNameText(
               surah: s.id,
               name: s.nameAr,
-              size: (look.elderly ? 50 : 44) * k,
+              size: (compact ? 38 : (look.elderly ? 50 : 44)) * k,
               color: ink,
-              height: 1.7,
+              height: compact ? 1.5 : 1.7,
             ),
           if (detail != null)
             MetaText(
@@ -431,22 +435,51 @@ class _ContinueCard extends StatelessWidget {
     );
   }
 
-  Widget _button(BuildContext context, Color bg, Color fg, double radius) {
+  /// «تابع القراءة» as a cream capsule with a book icon and a small
+  /// circle whose arrow points the way the text reads.
+  Widget _capsule(BuildContext context, Color bg, Color fg) {
     final l = AppLocalizations.of(context);
     final k = _scale(context);
-    return FilledButton(
-      onPressed: onOpen,
-      style: FilledButton.styleFrom(
-        backgroundColor: bg,
-        foregroundColor: fg,
-        minimumSize: Size(160 * k, context.look.target * k),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radius),
+    return Material(
+      color: bg,
+      shape: const StadiumBorder(),
+      elevation: 3,
+      shadowColor: Colors.black38,
+      child: InkWell(
+        key: const ValueKey('home-continue-button'),
+        customBorder: const StadiumBorder(),
+        onTap: onOpen,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: context.look.target * k),
+          child: Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(14 * k, 6, 7 * k, 6),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.menu_book_rounded, size: 20 * k, color: fg),
+                SizedBox(width: 8 * k),
+                Flexible(
+                  child: Text(
+                    l.homeContinueButton,
+                    style: TextStyle(
+                      color: fg,
+                      fontSize: 15 * k,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8 * k),
+                Container(
+                  width: 30 * k,
+                  height: 30 * k,
+                  decoration: BoxDecoration(color: fg, shape: BoxShape.circle),
+                  child: Icon(Icons.arrow_forward, size: 18 * k, color: bg),
+                ),
+              ],
+            ),
+          ),
         ),
-        textStyle: Theme.of(context).textTheme.labelLarge
-            ?.copyWith(fontSize: 15 * k, fontWeight: FontWeight.w600),
       ),
-      child: Text(l.continueReading),
     );
   }
 
@@ -487,9 +520,12 @@ class _ContinueCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 14),
-            SizedBox(
-              width: double.infinity,
-              child: _button(context, look.control, look.onControl, 4),
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: _capsule(context, look.control, look.onControl),
+              ),
             ),
           ],
         ),
@@ -499,31 +535,39 @@ class _ContinueCard extends StatelessWidget {
 
   Widget _arch(BuildContext context) {
     final look = context.look;
-    // «هندسي»: the arch in teal with a star lattice; «ليلي ذهبي»: a night
-    // sky in blue and gold.
-    final layli = look.isLayli;
     final (:sky, :rim, :ink, :sub, :buttonBg, :buttonFg) = heroArchColors(look);
     final k = _scale(context);
-    return SizedBox(
-      // The texts and the button grow with the reader's text size.
-      height:
-          (look.elderly ? 340 : 300) * k +
-          MediaQuery.textScalerOf(context).scale(48) -
-          48,
+    // Wide and low: the surah and where the reader stopped at the start,
+    // the capsule at the end. Large text stacks them.
+    final stacked = MediaQuery.textScalerOf(context).scale(10) > 15;
+    final text = _text(context, ink, sub, compact: true, center: true);
+    final button = _capsule(context, buttonBg, buttonFg);
+    return ConstrainedBox(
+      constraints: BoxConstraints(minHeight: (look.elderly ? 192 : 170) * k),
       child: Stack(
         children: [
-          const Positioned.fill(child: HeroArch()),
-          Positioned.fill(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(20, 76 * k, 20, 20 * k),
-              child: Column(
-                children: [
-                  _text(context, ink, sub, center: true),
-                  const Spacer(),
-                  _button(context, buttonBg, buttonFg, layli ? 24 : 12),
-                ],
-              ),
-            ),
+          const Positioned.fill(child: HeroArch(spring: .3)),
+          Padding(
+            padding: EdgeInsets.fromLTRB(18, 62 * k, 18, 16 * k),
+            child: stacked
+                ? Column(children: [text, const SizedBox(height: 10), button])
+                : Row(
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: text,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 14),
+                          child: button,
+                        ),
+                      ),
+                    ],
+                  ),
           ),
         ],
       ),
@@ -546,22 +590,162 @@ String journeyLine(BuildContext context, Journey p) {
 /// «مسيرة الحفظ»: memorized and mastered verses, beside the khatma's card.
 /// A calm share, no streaks or levels.
 class _JourneyCard extends StatelessWidget {
-  const _JourneyCard({required this.progress});
+  const _JourneyCard({required this.progress, required this.ladder});
 
   final Journey progress;
+  final JuzLadder ladder;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final look = context.look;
+    final k = _scale(context);
     final p = progress;
     final digits = NumberFormatter(Localizations.localeOf(context));
+    final arabic = Localizations.localeOf(context).languageCode == 'ar';
     final share = p.memorized == 0 ? 0.0 : p.mastered / p.memorized;
-    return _TodayCard(
-      title: l.hifzJourney,
-      detail: journeyLine(context, p),
-      done: share,
-      percent: digits((share * 100).round()),
-      onTap: () => context.push('/hifz?tab=progress'),
+    final percent = digits((share * 100).round());
+    final memColor = look.accent;
+    final masColor = look.gold;
+    final empty = look.ink.withValues(alpha: .08);
+    void open() => context.push('/hifz?tab=progress');
+    Widget swatch(Color c) => Container(
+      width: 9,
+      height: 9,
+      decoration: BoxDecoration(
+        color: c,
+        borderRadius: BorderRadius.circular(2),
+      ),
+    );
+    final legend = TextStyle(fontSize: 12 * k, color: look.sub);
+    return Material(
+      color: look.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(look.radius),
+        side: BorderSide(color: look.line),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        key: const ValueKey('home-journey'),
+        onTap: open,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16 * k, 14 * k, 16 * k, 14 * k),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Semantics(
+                button: true,
+                label: '${l.hifzJourney}. ${journeyLine(context, p)}',
+                excludeSemantics: true,
+                onTap: open,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l.hifzJourney,
+                            style: TextStyle(
+                              fontSize: 16 * k,
+                              fontWeight: FontWeight.w600,
+                              color: look.ink,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            journeyLine(context, p),
+                            style: TextStyle(fontSize: 13 * k, color: look.sub),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      arabic ? '$percent٪' : '$percent%',
+                      style: TextStyle(
+                        fontSize: 26 * k,
+                        fontWeight: FontWeight.w800,
+                        color: memColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10 * k),
+              // One cell per juz, juz 1 at the start; each fills from the
+              // bottom: memorized, then mastered over it.
+              SizedBox(
+                height: 22 * k,
+                child: Row(
+                  children: [
+                    for (var j = 0; j < 30; j++) ...[
+                      if (j > 0) const SizedBox(width: 3),
+                      Expanded(
+                        child: Semantics(
+                          label: l.hifzLadderJuz(
+                            digits(j + 1),
+                            digits((ladder.memorized[j] * 100).round()),
+                            digits((ladder.mastered[j] * 100).round()),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(3),
+                            child: ColoredBox(
+                              color: empty,
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  FractionallySizedBox(
+                                    alignment: Alignment.bottomCenter,
+                                    heightFactor: ladder.memorized[j],
+                                    child: ColoredBox(color: memColor),
+                                  ),
+                                  FractionallySizedBox(
+                                    alignment: Alignment.bottomCenter,
+                                    heightFactor: ladder.mastered[j],
+                                    child: ColoredBox(color: masColor),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              SizedBox(height: 8 * k),
+              ExcludeSemantics(
+                child: Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  spacing: 12,
+                  runSpacing: 4,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        swatch(memColor),
+                        const SizedBox(width: 5),
+                        Text(l.hifzLadderMemorized, style: legend),
+                      ],
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        swatch(masColor),
+                        const SizedBox(width: 5),
+                        Text(l.hifzLadderMastered, style: legend),
+                      ],
+                    ),
+                    Text(l.hifzLadderRange, style: legend),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

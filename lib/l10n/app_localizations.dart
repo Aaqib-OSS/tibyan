@@ -11100,6 +11100,60 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'١٠٠: والتمام بالتهليل'**
   String get tasbihPostPrayer100;
+
+  /// Home next-prayer card
+  ///
+  /// In ar, this message translates to:
+  /// **'الصلاة القادمة'**
+  String get nextPrayerLabel;
+
+  /// Home next-prayer card: the adhan time of the next prayer
+  ///
+  /// In ar, this message translates to:
+  /// **'الأذان {time}'**
+  String nextPrayerAdhanAt(String time);
+
+  /// Home next-prayer card
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر مدينتك لتظهر الصلاة القادمة والوقت المتبقي على أذانها.'**
+  String get nextPrayerSetupBody;
+
+  /// Home next-prayer card
+  ///
+  /// In ar, this message translates to:
+  /// **'يفتح مواقيت الصلاة'**
+  String get nextPrayerOpenHint;
+
+  /// Home continue-reading arch: the capsule button's label
+  ///
+  /// In ar, this message translates to:
+  /// **'تابع القراءة'**
+  String get homeContinueButton;
+
+  /// Home hifz card: juz ladder
+  ///
+  /// In ar, this message translates to:
+  /// **'محفوظ'**
+  String get hifzLadderMemorized;
+
+  /// Home hifz card: juz ladder
+  ///
+  /// In ar, this message translates to:
+  /// **'متقن'**
+  String get hifzLadderMastered;
+
+  /// Home hifz card: juz ladder
+  ///
+  /// In ar, this message translates to:
+  /// **'من الجزء ١ إلى ٣٠'**
+  String get hifzLadderRange;
+
+  /// Home hifz card: juz ladder
+  ///
+  /// In ar, this message translates to:
+  /// **'الجزء {juz}: محفوظ {memorized}٪، متقن {mastered}٪'**
+  String hifzLadderJuz(String juz, String memorized, String mastered);
 }
 
 class _AppLocalizationsDelegate
