@@ -103,7 +103,7 @@ Future<bool?> showCrashConsent(
           children: [
             LookSheetHeader(
               title: l.crashConsentTitle,
-              icon: Icons.health_and_safety_outlined,
+              icon: Icons.volunteer_activism_outlined,
             ),
             const SizedBox(height: 12),
             Text(
