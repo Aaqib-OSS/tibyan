@@ -4659,5 +4659,8 @@
   "tafsirCoverageFull": "القرآن كاملًا",
   "tafsirOpenIndex": "فتح الفهرس للانتقال إلى سورة أو آية",
   "trackerMarkAll": "صلّيت الكل",
-  "trackerMarkAllHint": "يتاح بعد دخول وقت العشاء"
+  "trackerMarkAllHint": "يتاح بعد دخول وقت العشاء",
+  "tasbihPostPrayer": "تسبيح ختام الصلاة",
+  "tasbihPostPrayer99": "٩٩: ثلاث وثلاثون لكلٍّ",
+  "tasbihPostPrayer100": "١٠٠: والتمام بالتهليل"
 }

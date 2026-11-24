@@ -11082,6 +11082,24 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'يتاح بعد دخول وقت العشاء'**
   String get trackerMarkAllHint;
+
+  /// No description provided for @tasbihPostPrayer.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسبيح ختام الصلاة'**
+  String get tasbihPostPrayer;
+
+  /// No description provided for @tasbihPostPrayer99.
+  ///
+  /// In ar, this message translates to:
+  /// **'٩٩: ثلاث وثلاثون لكلٍّ'**
+  String get tasbihPostPrayer99;
+
+  /// No description provided for @tasbihPostPrayer100.
+  ///
+  /// In ar, this message translates to:
+  /// **'١٠٠: والتمام بالتهليل'**
+  String get tasbihPostPrayer100;
 }
 
 class _AppLocalizationsDelegate

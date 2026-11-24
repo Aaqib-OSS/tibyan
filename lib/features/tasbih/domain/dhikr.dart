@@ -124,3 +124,25 @@ class DhikrSource {
     ],
   );
 }
+
+/// «تسبيح ختام الصلاة», from the app's own staged dhikr (33, 33, 33, then
+/// the closing tahlil): the 99 alone, cut from the source text verbatim
+/// (its first three stages), and the full 100 as the source has it. Empty
+/// when the data has no such dhikr.
+({Dhikr ninetyNine, Dhikr hundred})? postPrayerTasbih(List<Dhikr> app) {
+  final full = app
+      .where((d) => !d.mine && listEquals(d.stageCounts, const [33, 33, 33, 1]))
+      .firstOrNull;
+  if (full == null) return null;
+  final three = full.stages.take(3).toList();
+  return (
+    ninetyNine: Dhikr(
+      key: '${full.key}.99',
+      text: full.text.substring(0, three.last.end),
+      reference: full.reference,
+      target: 99,
+      stages: three,
+    ),
+    hundred: full,
+  );
+}

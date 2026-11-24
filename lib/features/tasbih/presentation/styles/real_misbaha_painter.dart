@@ -20,7 +20,11 @@ class RealMisbahaPainter extends CustomPainter {
     required this.surface,
     this.program,
     this.blank = false,
-  }) : super(repaint: motion);
+    this.glow,
+  }) : super(repaint: Listenable.merge([motion, glow]));
+
+  /// The imam lit for the round's last count, 0..1.
+  final Animation<double>? glow;
 
   final MisbahaMotion motion;
   final BeadLook look;
@@ -403,6 +407,12 @@ class RealMisbahaPainter extends CustomPainter {
     for (final (_, draw) in pieces) {
       draw();
     }
+    final g = glow?.value ?? 0;
+    if (g > 0) {
+      final (x, y, z) = imam((dropFrom + dropTo) / 2);
+      final (c, k, _) = cam.project(x, y, z);
+      paintImamGlow(canvas, c, 2.6 * r * k, g);
+    }
     canvas.restore();
   }
 
@@ -530,4 +540,21 @@ class RealMisbahaPainter extends CustomPainter {
       old.program != program ||
       old.motion != motion ||
       old.blank != blank;
+}
+
+/// The imam lit for the round's last count: a warm halo that rises and
+/// fades as [t] goes 0..1.
+void paintImamGlow(Canvas canvas, Offset c, double radius, double t) {
+  final a = math.sin(math.pi * t.clamp(0.0, 1.0));
+  if (a <= 0 || radius <= 0) return;
+  canvas.drawCircle(
+    c,
+    radius,
+    Paint()
+      ..blendMode = BlendMode.plus
+      ..shader = ui.Gradient.radial(c, radius, [
+        const Color(0xFFFFE2A0).withValues(alpha: .8 * a),
+        const Color(0xFFFFE2A0).withValues(alpha: 0),
+      ]),
+  );
 }

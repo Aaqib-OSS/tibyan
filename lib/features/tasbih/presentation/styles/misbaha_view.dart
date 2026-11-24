@@ -63,7 +63,7 @@ class MisbahaView extends StatefulWidget {
 const misbahaCommitShare = .4;
 
 class _MisbahaViewState extends State<MisbahaView>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late MisbahaMotion _motion;
   late final Ticker _ticker = createTicker(_onTick);
   Duration _last = Duration.zero;
@@ -76,6 +76,31 @@ class _MisbahaViewState extends State<MisbahaView>
   bool _dragging = false;
 
   int get _modulus => widget.roundSize ?? (1 << 30);
+
+  /// The imam's glow: the round's last count when it is not a whole number
+  /// of laps (100 = 99 beads, then the imam).
+  late final AnimationController _glow = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 700),
+  );
+
+  /// Counts that landed on the imam (no bead moved) since [_count0].
+  int _onImam = 0;
+
+  /// Whether the count after [count] lands on the imam: the last of a
+  /// round whose target is not a whole number of laps, so the beads do not
+  /// run into the next lap and the next round starts where the lap does.
+  bool _imamCount(int count) {
+    final size = widget.roundSize;
+    return size != null &&
+        size % MisbahaTrack.beads != 0 &&
+        (count + 1) % size == 0;
+  }
+
+  void _toImam() {
+    _onImam++;
+    _glow.forward(from: 0);
+  }
 
   /// True 3D, unless the reader chose the suggested look or shaders do
   /// not work here.
@@ -105,6 +130,8 @@ class _MisbahaViewState extends State<MisbahaView>
 
   /// The string at rest where the count stands.
   void _newMotion() {
+    _rebase = false;
+    _onImam = 0;
     final old = _hasMotion ? _motion : null;
     _count0 = widget.count;
     _motion =
@@ -138,8 +165,16 @@ class _MisbahaViewState extends State<MisbahaView>
     final dt = (elapsed - _last).inMicroseconds / 1e6;
     _last = elapsed;
     _motion.tick(dt);
-    if (!_motion.moving) _ticker.stop();
+    if (!_motion.moving) {
+      _ticker.stop();
+      if (_rebase) setState(_newMotion);
+    }
   }
+
+  /// A round closed mid-lap (a target that is not a whole number of laps,
+  /// such as 100): once the string rests, the new round starts at the
+  /// lap's start, as the counter does at 0.
+  bool _rebase = false;
 
   @override
   void didUpdateWidget(MisbahaView old) {
@@ -152,12 +187,30 @@ class _MisbahaViewState extends State<MisbahaView>
     // Counts made elsewhere move the string; anything else (a reset, a
     // new dhikr or target) puts it where the count stands.
     final m = _modulus;
-    final expected = (_count0 + _motion.asked) % m;
+    final size = widget.roundSize;
+    if (size != null &&
+        size % MisbahaTrack.beads != 0 &&
+        widget.count == 0 &&
+        old.count != 0 &&
+        widget.roundSize == old.roundSize) {
+      _rebase = true;
+      // Counted elsewhere, or nothing left to move: start the lap now.
+      if (!_motion.moving ||
+          (widget.count - (_count0 + _motion.asked + _onImam)) % m != 0) {
+        _newMotion();
+        return;
+      }
+    }
+    final expected = (_count0 + _motion.asked + _onImam) % m;
     if (widget.count == expected) return;
     final ahead = (widget.count - expected) % m;
     if (widget.roundSize == old.roundSize && ahead > 0 && ahead <= 8) {
       for (var i = 0; i < ahead; i++) {
-        _motion.count();
+        if (_imamCount(expected + i)) {
+          _toImam();
+        } else {
+          _motion.count();
+        }
       }
     } else {
       _newMotion();
@@ -168,13 +221,18 @@ class _MisbahaViewState extends State<MisbahaView>
   void dispose() {
     BeadShader.available.removeListener(_shaderKnown);
     _ticker.dispose();
+    _glow.dispose();
     _motion.dispose();
     super.dispose();
   }
 
   /// One bead over, counted here (a tap or a pull).
   void _advance() {
-    _motion.count();
+    if (_imamCount((_count0 + _motion.asked + _onImam) % _modulus)) {
+      _toImam();
+    } else {
+      _motion.count();
+    }
     widget.onCount();
   }
 
@@ -243,8 +301,11 @@ class _MisbahaViewState extends State<MisbahaView>
         final scheme = Theme.of(context).colorScheme;
         final m = _modulus;
         // Bead `i` is counted as the round's last (the terminal bead).
+        // (A round that ends on the imam has no terminal bead.)
         bool terminal(int i) =>
-            widget.roundSize != null && (_count0 + i + 1) % m == 0;
+            widget.roundSize != null &&
+            m % MisbahaTrack.beads == 0 &&
+            (_count0 + i + 1) % m == 0;
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: _advance,
@@ -268,12 +329,14 @@ class _MisbahaViewState extends State<MisbahaView>
                       surface: scheme.onSurface,
                       program: BeadShader.program,
                       blank: BeadShader.available.value == null,
+                      glow: _glow,
                     )
                   : SuggestedMisbahaPainter(
                       motion: _motion,
                       look: look,
                       string: scheme.onSurfaceVariant,
                       terminal: terminal,
+                      glow: _glow,
                     ),
             ),
           ),
@@ -295,7 +358,11 @@ class SuggestedMisbahaPainter extends CustomPainter {
     required this.look,
     required this.string,
     required this.terminal,
-  }) : super(repaint: motion);
+    this.glow,
+  }) : super(repaint: Listenable.merge([motion, glow]));
+
+  /// The imam's glow, 0..1 (see [MisbahaView]), drawn at the gap.
+  final Animation<double>? glow;
 
   /// The string's place is its [MisbahaMotion.phase], in beads.
   final MisbahaMotion motion;
@@ -359,6 +426,11 @@ class SuggestedMisbahaPainter extends CustomPainter {
         end ? r * 1.22 : r,
         end ? BeadLook.terminalOf(look) : look,
       );
+    }
+    final g = glow?.value ?? 0;
+    if (g > 0) {
+      final y = yAt(size, .5);
+      paintImamGlow(canvas, Offset(_x(size, y), y), r * 2.2, g);
     }
   }
 

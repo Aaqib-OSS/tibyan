@@ -31,6 +31,7 @@ class DhikrSheet extends ConsumerWidget {
     final app = ref.watch(appAdhkarProvider).value;
     final mine = ref.watch(myAdhkarProvider).value ?? const [];
     final current = ref.watch(currentDhikrProvider)?.key;
+    final post = postPrayerTasbih(app?.adhkar ?? const []);
     void choose(Dhikr d) {
       final ctrl = ref.read(tasbihSettingsProvider.notifier);
       ctrl.setDhikr(d.key);
@@ -40,10 +41,12 @@ class DhikrSheet extends ConsumerWidget {
       }
     }
 
-    Widget tile(Dhikr d) => RadioListTile<String>(
+    Widget tile(Dhikr d, {String? note}) => RadioListTile<String>(
       value: d.key,
       title: Text(d.text, style: const TextStyle(height: 1.6)),
-      subtitle: d.mine
+      subtitle: note != null
+          ? Text(note, style: TextStyle(color: look.accent, fontSize: 12))
+          : d.mine
           ? Align(
               alignment: AlignmentDirectional.centerStart,
               child: MineBadge(label: l.tasbihMine),
@@ -76,7 +79,7 @@ class DhikrSheet extends ConsumerWidget {
         child: RadioGroup<String>(
           groupValue: current,
           onChanged: (key) {
-            final all = [...?app?.adhkar, ...mine];
+            final all = ref.read(adhkarProvider);
             final d = all.where((d) => d.key == key).firstOrNull;
             if (d != null) choose(d);
           },
@@ -85,9 +88,15 @@ class DhikrSheet extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 16),
             children: [
               LookSheetHeader(title: l.tasbihChooseDhikr),
+              if (post != null) ...[
+                _Head(l.tasbihPostPrayer),
+                tile(post.ninetyNine, note: l.tasbihPostPrayer99),
+                tile(post.hundred, note: l.tasbihPostPrayer100),
+              ],
               if (app != null && app.adhkar.isNotEmpty) ...[
                 _Head(l.tasbihAppAdhkar),
-                for (final d in app.adhkar) tile(d),
+                for (final d in app.adhkar)
+                  if (d.key != post?.hundred.key) tile(d),
               ],
               _Head(l.tasbihMyAdhkar),
               for (final d in mine) tile(d),

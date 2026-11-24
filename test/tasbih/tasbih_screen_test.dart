@@ -17,6 +17,7 @@ import 'package:tibyan/features/mushaf/mushaf_providers.dart';
 import 'package:tibyan/features/tasbih/domain/dhikr.dart';
 import 'package:tibyan/features/tasbih/domain/tasbih_counter.dart';
 import 'package:tibyan/features/tasbih/platform/tasbih_platform.dart';
+import 'package:tibyan/features/tasbih/presentation/dhikr_sheet.dart';
 import 'package:tibyan/features/tasbih/presentation/styles/counter_styles.dart';
 import 'package:tibyan/features/tasbih/presentation/styles/misbaha_view.dart';
 import 'package:tibyan/features/tasbih/presentation/tasbih_log_screen.dart';
@@ -169,6 +170,131 @@ void main() {
       await done(tester, db);
     });
   }
+
+  // The tap that reaches the target closes the round at once: the next
+  // round starts at 0, not at 1 (staged 33/33/33/1, and a plain target).
+  for (final style in TasbihStyle.values.where(
+    (s) => s != TasbihStyle.screen,
+  )) {
+    for (final (dhikr, taps) in [
+      ('app:muslimdata69', 100),
+      ('app:seen34', 3),
+    ]) {
+      testWidgets('${style.name}: tap $taps of $dhikr closes the round', (
+        tester,
+      ) async {
+        final (c, _, db) = await pump(
+          tester,
+          style,
+          prefs: {'settings.tasbih.dhikr': dhikr},
+        );
+        final target = style == TasbihStyle.lcd
+            ? find.byKey(lcdKey)
+            : counters[style]!;
+        for (var i = 0; i < taps; i++) {
+          await tester.tap(target, warnIfMissed: false);
+          await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 5)),
+          );
+          await tester.pump(const Duration(milliseconds: 60));
+          final k = c.read(tasbihCounterProvider);
+          expect(
+            (k.rounds, k.count),
+            i + 1 == taps ? (1, 0) : (0, i + 1),
+            reason: 'after tap ${i + 1}',
+          );
+        }
+        await settle(tester);
+        if (dhikr == 'app:muslimdata69') {
+          expect(findMeta('1/4 · 0/33'), findsOneWidget);
+        }
+        expect(tester.takeException(), isNull);
+        await done(tester, db);
+      });
+    }
+  }
+
+  // 100 is 99 beads (three whole laps) and the imam: the last count moves
+  // no bead, so the next round starts with the beads at the lap's start.
+  for (final render in ['real', 'suggested']) {
+    testWidgets('$render misbaha: a round of 100 ends on the imam', (
+      tester,
+    ) async {
+      final (c, _, db) = await pump(
+        tester,
+        TasbihStyle.misbaha,
+        prefs: {
+          'settings.tasbih.dhikr': 'app:muslimdata69',
+          'settings.tasbih.render': render,
+        },
+      );
+      MisbahaMotion motion() {
+        final p = tester
+            .widgetList<CustomPaint>(
+              find.descendant(
+                of: find.byType(MisbahaView),
+                matching: find.byType(CustomPaint),
+              ),
+            )
+            .map((w) => w.painter)
+            .firstWhere(
+              (p) => p is RealMisbahaPainter || p is SuggestedMisbahaPainter,
+            );
+        return p is RealMisbahaPainter
+            ? p.motion
+            : (p! as SuggestedMisbahaPainter).motion;
+      }
+
+      for (var i = 0; i < 100; i++) {
+        await tester.tap(find.byType(MisbahaView), warnIfMissed: false);
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 5)),
+        );
+        await tester.pump(const Duration(milliseconds: 60));
+        if (i == 98) {
+          await settle(tester);
+          // 99 beads over: the string is back at the lap's start.
+          expect(motion().asked, 99);
+        }
+      }
+      // The 100th count asked for no bead (the string may already have
+      // been put at the new round's start).
+      expect(motion().asked, anyOf(99, 0));
+      for (var i = 0; i < 6; i++) {
+        await settle(tester);
+      }
+      final k = c.read(tasbihCounterProvider);
+      expect((k.rounds, k.count, k.stage?.index), (1, 0, 0));
+      expect(findMeta('1/4 · 0/33'), findsOneWidget);
+      // The new round: the string at rest at the start, nothing owed.
+      final m = motion();
+      expect((m.asked, m.owed, m.phase), (0, 0, 0.0));
+      if (render == 'real') expect(m.step % misbahaItems, 0);
+      // The next tap moves the first bead.
+      await tester.tap(find.byType(MisbahaView), warnIfMissed: false);
+      await tester.pump(const Duration(milliseconds: 60));
+      expect(motion().asked, 1);
+      expect(c.read(tasbihCounterProvider).count, 1);
+      await done(tester, db);
+    });
+  }
+
+  testWidgets('a staged round kept at 99 reopens at 99 (not closed by the '
+      "settings' target)", (tester) async {
+    final (c, _, db) = await pump(
+      tester,
+      TasbihStyle.button,
+      prefs: {
+        'settings.tasbih.dhikr': 'app:muslimdata69',
+        'tasbih.countOf': 'app:muslimdata69',
+        'tasbih.count': 99,
+        'tasbih.rounds': 2,
+      },
+    );
+    final k = c.read(tasbihCounterProvider);
+    expect((k.rounds, k.count, k.target), (2, 99, 100));
+    await done(tester, db);
+  });
 
   testWidgets('true 3D misbaha draws and counts by a pull', (tester) async {
     final (c, _, db) = await pump(
@@ -341,6 +467,49 @@ void main() {
     await settle(tester);
     expect(find.text('Today'), findsOneWidget);
     expect(find.text('12'), findsOneWidget);
+    await done(tester, db);
+  });
+
+  test('after-prayer tasbih: the 99 is cut verbatim from the source', () {
+    final post = postPrayerTasbih(_adhkar.adhkar)!;
+    final full = post.hundred;
+    expect(full.stageCounts, [33, 33, 33, 1]);
+    expect(post.ninetyNine.stageCounts, [33, 33, 33]);
+    expect(post.ninetyNine.target, 99);
+    expect(full.text.startsWith(post.ninetyNine.text), isTrue);
+    expect(post.ninetyNine.text.length, full.stages[2].end);
+    expect(post.ninetyNine.reference, full.reference);
+  });
+
+  testWidgets('after-prayer tasbih heads the list; the 99 counts to 99', (
+    tester,
+  ) async {
+    final (c, _, db) = await pump(
+      tester,
+      TasbihStyle.button,
+      screen: const Scaffold(body: DhikrSheet()),
+    );
+    final post = postPrayerTasbih(_adhkar.adhkar)!;
+    expect(find.text('After-prayer tasbih'), findsOneWidget);
+    expect(find.text(post.ninetyNine.text), findsOneWidget);
+    expect(find.text(post.hundred.text), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text('After-prayer tasbih')).dy,
+      lessThan(tester.getTopLeft(find.text('From the source')).dy),
+    );
+    await tester.tap(find.text(post.ninetyNine.text));
+    await settle(tester);
+    expect(c.read(currentDhikrProvider)!.key, post.ninetyNine.key);
+    final ctrl = c.read(tasbihCounterProvider.notifier);
+    expect(c.read(tasbihCounterProvider).target, 99);
+    final events = <CountEvent>[];
+    for (var i = 0; i < 99; i++) {
+      events.add((await tester.runAsync(ctrl.tap))!);
+    }
+    expect(events.where((e) => e == CountEvent.stageChanged), hasLength(2));
+    expect(events.last, CountEvent.roundClosed);
+    final k = c.read(tasbihCounterProvider);
+    expect((k.rounds, k.count, k.stage?.index), (1, 0, 0));
     await done(tester, db);
   });
 
