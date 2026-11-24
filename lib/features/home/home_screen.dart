@@ -534,22 +534,30 @@ class _ContinueCard extends StatelessWidget {
     // Wide and low: the surah and where the reader stopped at the start,
     // the capsule at the end. Large text stacks them.
     final stacked = MediaQuery.textScalerOf(context).scale(10) > 15;
-    final text = _text(context, ink, sub, compact: true, center: stacked);
+    final text = _text(context, ink, sub, compact: true, center: true);
     final button = _capsule(context, buttonBg, buttonFg);
     return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: (look.elderly ? 170 : 150) * k),
+      constraints: BoxConstraints(minHeight: (look.elderly ? 192 : 170) * k),
       child: Stack(
         children: [
           const Positioned.fill(child: HeroArch(spring: .3)),
           Padding(
-            padding: EdgeInsets.fromLTRB(18, 46 * k, 18, 16 * k),
+            padding: EdgeInsets.fromLTRB(18, 62 * k, 18, 16 * k),
             child: stacked
                 ? Column(children: [text, const SizedBox(height: 10), button])
                 : Row(
                     children: [
-                      Expanded(child: text),
+                      Expanded(
+                        child: Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: text,
+                        ),
+                      ),
                       const SizedBox(width: 10),
-                      button,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 14),
+                        child: button,
+                      ),
                     ],
                   ),
           ),

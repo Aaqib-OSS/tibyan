@@ -136,9 +136,14 @@ class _NextPrayerCardState extends ConsumerState<NextPrayerCard> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
-                                  '${l.nextPrayerLabel} · ${l.nextPrayerAdhanAt(adhan)}',
-                                  style: small,
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: AlignmentDirectional.centerStart,
+                                  child: Text(
+                                    '${l.nextPrayerLabel} · ${l.nextPrayerAdhanAt(adhan)}',
+                                    style: small,
+                                    maxLines: 1,
+                                  ),
                                 ),
                                 Text(
                                   name,
@@ -153,7 +158,14 @@ class _NextPrayerCardState extends ConsumerState<NextPrayerCard> {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          Flexible(
+                          ConstrainedBox(
+                            // Room for the name at any text size.
+                            constraints: BoxConstraints(
+                              maxWidth: math.min(
+                                200,
+                                MediaQuery.sizeOf(context).width * .36,
+                              ),
+                            ),
                             child: Semantics(
                               label: '$name ${l.nextPrayerAdhanAt(adhan)}',
                               excludeSemantics: true,
