@@ -93,7 +93,10 @@ class _NextPrayerCardState extends ConsumerState<NextPrayerCard> {
     final digits = NumberFormatter(Localizations.localeOf(context));
     final arabic = l.localeName == 'ar';
     final name = prayerName(l, w.next);
-    final adhan = formatPrayerTime(l, w.nextAt, place);
+    // The time and its «ص/م» stay together (no-break space).
+    String time(DateTime t) =>
+        formatPrayerTime(l, t, place).replaceAll(' ', '\u00A0');
+    final adhan = time(w.nextAt);
     final left = w.nextAt.difference(now);
     final count = formatCountdown(left, digits.call);
     const white = TextStyle(color: Colors.white, shadows: _shadow);
@@ -205,7 +208,7 @@ class _NextPrayerCardState extends ConsumerState<NextPrayerCard> {
                         spacing: 12,
                         children: [
                           Text(
-                            '${prayerName(l, w.previous)} ${formatPrayerTime(l, w.previousAt, place)}',
+                            '${prayerName(l, w.previous)} ${time(w.previousAt)}',
                             style: small,
                           ),
                           Text('$name $adhan', style: small),

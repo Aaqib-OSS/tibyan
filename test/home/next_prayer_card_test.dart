@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tibyan/features/home/next_prayer_card.dart';
 import 'package:tibyan/features/prayer/domain/prayer_calc.dart';
 import 'package:tibyan/features/prayer/domain/prayer_settings.dart';
 import 'package:tibyan/features/prayer/domain/prayer_window.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tibyan/features/prayer/presentation/prayer_times_screen.dart'
+    show prayerTimesLocation;
 import 'package:tibyan/features/prayer/prayer_providers.dart';
+import 'package:tibyan/l10n/app_localizations.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -134,7 +139,7 @@ void main() {
   });
 
   for (final lang in ['ar', 'en']) {
-    for (final scale in [1.0, 2.0]) {
+    for (final scale in [1.0, 1.3, 2.0]) {
       testWidgets('sky card, $lang at ${scale}x text, no overflow', (
         tester,
       ) async {
@@ -153,4 +158,58 @@ void main() {
       });
     }
   }
+
+  testWidgets('tapping the strip opens prayer times and back returns', (
+    tester,
+  ) async {
+    tester.view
+      ..physicalSize = const Size(390, 900)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final container = await tasmeeContainer(
+      tester,
+      data,
+      prefs: {prayerSettingsKey: s.encode()},
+    );
+    final router = GoRouter(
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (_, _) => Scaffold(
+            body: ListView(
+              children: [NextPrayerCard(clock: () => at(24, 13, 0))],
+            ),
+          ),
+          routes: [
+            GoRoute(
+              path: 'prayer',
+              builder: (_, _) => const Scaffold(body: Text('PRAYER TIMES')),
+            ),
+          ],
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp.router(
+          routerConfig: router,
+          locale: const Locale('ar'),
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+        ),
+      ),
+    );
+    await tester.pump();
+    // A tap on the edge of the strip, not only its text.
+    final box = tester.getRect(find.byKey(const ValueKey('next-prayer-card')));
+    await tester.tapAt(box.bottomLeft + const Offset(6, -6));
+    await tester.pumpAndSettle();
+    expect(router.state.uri.path, prayerTimesLocation);
+    router.pop();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.byKey(const ValueKey('next-prayer-card')), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+  });
 }
