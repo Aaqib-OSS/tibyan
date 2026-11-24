@@ -61,14 +61,11 @@ iOS وmacOS:
 
 4. **التشغيل عند بدء الجهاز (مواقيت الصلاة):** حزمة المتجر فيها `startup_task` (`TibyanTray`، المعامل `--tray`) في `msix_config`. ويندوز يشغّل التطبيق عند الدخول، فيبدأ مخفيًا في شريط النظام إن كانت المواقيت وشريط النظام مفعّلين، ويطفئه المستخدم من «مدير المهام › تطبيقات بدء التشغيل».
 
-## أندرويد: شاشة الأذان الكاملة (اختياري)
+## أندرويد: شاشة الأذان الكاملة
 
-- **البناء الافتراضي** لا يعلن `USE_FULL_SCREEN_INTENT` (الإذن في `android/app/src/fullscreen/AndroidManifest.xml` ولا يُدمج إلا مع هذا الخيار). هذا ما يُرفع لجوجل بلاي ما لم يُقرَّر غير ذلك:
-  `flutter build appbundle --release`
-- **نسخة الشاشة الكاملة** تعلن الإذن وتعرض شاشة الأذان الكاملة نفسها من التطبيق (Flutter، بلغة التطبيق) فوق شاشة القفل عند الأذان:
-  `flutter build appbundle --release --dart-define=FULLSCREEN_ADHAN=true`
-  (ويمكن جمعها مع `--dart-define=TIBYAN_STORE=huawei`.) جوجل بلاي يقصر هذا الإذن على تطبيقات المنبّه والاتصال، فيلزم تصريح في Play Console قبل رفعها، وعلى أندرويد ١٤ فأحدث يمنحه المستخدم من الإعدادات.
-- للتحقق: `aapt dump permissions build/app/outputs/flutter-apk/app-release.apk | grep FULL_SCREEN` لا يُظهر شيئًا في البناء الافتراضي.
+- **حزمة جوجل بلاي** تعلن `USE_FULL_SCREEN_INTENT` تلقائيًا (الإذن في `android/app/src/fullscreen/AndroidManifest.xml`)، فتظهر شاشة الأذان الكاملة فوق شاشة القفل. يلزم إقرار Full-screen intent في Play Console (استخدام المنبّه: تنبيهات الأذان التي يفعّلها المستخدم)، وعلى أندرويد ١٤ فأحدث يمنحه المستخدم من الإعدادات.
+- **حزمة هواوي** لا تعلنه إلا مع `--dart-define=FULLSCREEN_ADHAN=true`.
+- للتحقق: `aapt dump permissions <apk> | grep FULL_SCREEN` يُظهره في حزمة بلاي، ولا يُظهر شيئًا في حزمة هواوي العادية.
 
 ## رموز الأعطال (GlitchTip)
 
