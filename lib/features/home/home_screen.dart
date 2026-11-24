@@ -601,7 +601,7 @@ class _JourneyCard extends StatelessWidget {
     final share = p.memorized == 0 ? 0.0 : p.mastered / p.memorized;
     final percent = digits((share * 100).round());
     final memColor = look.accent;
-    final masColor = look.isHandasi ? look.accent2 : look.gold;
+    final masColor = look.gold;
     final empty = look.ink.withValues(alpha: .08);
     void open() => context.push('/hifz?tab=progress');
     Widget swatch(Color c) => Container(
