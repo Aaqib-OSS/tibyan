@@ -97,12 +97,16 @@ class _NextPrayerCardState extends ConsumerState<NextPrayerCard> {
     final left = w.nextAt.difference(now);
     final count = formatCountdown(left, digits.call);
     const white = TextStyle(color: Colors.white, shadows: _shadow);
+    final small = TextStyle(
+      fontSize: 12,
+      color: Colors.white.withValues(alpha: .92),
+    );
     return Semantics(
       button: true,
       hint: l.nextPrayerOpenHint,
       child: ClipRRect(
         key: const ValueKey('next-prayer-card'),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(18),
         child: _Sky(
           prayer: w.next,
           child: Material(
@@ -110,79 +114,89 @@ class _NextPrayerCardState extends ConsumerState<NextPrayerCard> {
             child: InkWell(
               onTap: () => context.push(prayerTimesLocation),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+                padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
                 child: DefaultTextStyle.merge(
                   style: white,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Wrap(
-                        alignment: WrapAlignment.spaceBetween,
-                        spacing: 12,
+                      Row(
                         children: [
-                          Text(
-                            l.nextPrayerLabel,
-                            style: const TextStyle(fontSize: 14),
+                          ExcludeSemantics(
+                            child: SizedBox.square(
+                              dimension: 52,
+                              child: CustomPaint(
+                                painter: PrayerIconPainter(w.next),
+                              ),
+                            ),
                           ),
-                          Text(
-                            l.nextPrayerAdhanAt(adhan),
-                            style: const TextStyle(fontSize: 14),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '${l.nextPrayerLabel} · ${l.nextPrayerAdhanAt(adhan)}',
+                                  style: small,
+                                ),
+                                Text(
+                                  name,
+                                  style: TextStyle(
+                                    fontFamily: arabic ? 'ArefRuqaa' : null,
+                                    fontSize: 26,
+                                    height: 1.25,
+                                    fontWeight: arabic ? null : FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Flexible(
+                            child: Semantics(
+                              label: '$name ${l.nextPrayerAdhanAt(adhan)}',
+                              excludeSemantics: true,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  count,
+                                  key: const ValueKey('next-prayer-count'),
+                                  textDirection: TextDirection.ltr,
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w800,
+                                    height: 1.1,
+                                    fontFeatures: [
+                                      FontFeature.tabularFigures(),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 14),
-                      Text(
-                        name,
-                        style: TextStyle(
-                          fontFamily: arabic ? 'ArefRuqaa' : null,
-                          fontSize: 40,
-                          height: 1.25,
-                          fontWeight: arabic ? null : FontWeight.w700,
-                        ),
-                      ),
-                      Semantics(
-                        liveRegion: false,
-                        label: '$name ${l.nextPrayerAdhanAt(adhan)}',
-                        excludeSemantics: true,
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          alignment: AlignmentDirectional.centerStart,
-                          child: Text(
-                            count,
-                            key: const ValueKey('next-prayer-count'),
-                            textDirection: TextDirection.ltr,
-                            style: const TextStyle(
-                              fontSize: 38,
-                              fontWeight: FontWeight.w800,
-                              height: 1.1,
-                              fontFeatures: [FontFeature.tabularFigures()],
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 6),
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(4),
                         child: LinearProgressIndicator(
                           value: windowProgress(w, now),
-                          minHeight: 6,
+                          minHeight: 4,
                           color: Colors.white,
                           backgroundColor: Colors.white.withValues(alpha: .25),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 6),
                       Wrap(
                         alignment: WrapAlignment.spaceBetween,
                         spacing: 12,
                         children: [
                           Text(
                             '${prayerName(l, w.previous)} ${formatPrayerTime(l, w.previousAt, place)}',
-                            style: const TextStyle(fontSize: 13),
+                            style: small,
                           ),
-                          Text(
-                            '$name $adhan',
-                            style: const TextStyle(fontSize: 13),
-                          ),
+                          Text('$name $adhan', style: small),
                         ],
                       ),
                     ],
@@ -336,10 +350,7 @@ class _SkyState extends State<_Sky> with SingleTickerProviderStateMixin {
         still: reduceMotion(context),
         rtl: Directionality.of(context) == TextDirection.rtl,
       ),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 230),
-        child: widget.child,
-      ),
+      child: widget.child,
     );
   }
 }
@@ -362,6 +373,83 @@ final _stars = () {
   );
 }();
 
+/// The prayer's icon, drawn on the mockup's 64×64 grid.
+class PrayerIconPainter extends CustomPainter {
+  PrayerIconPainter(this.prayer);
+  final PrayerKind prayer;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.scale(size.width / 64);
+    void disc(double cx, double cy, double r, Color c) =>
+        canvas.drawCircle(Offset(cx, cy), r, Paint()..color = c);
+    void line(double x1, double y1, double x2, double y2, Color c, double sw) =>
+        canvas.drawLine(
+          Offset(x1, y1),
+          Offset(x2, y2),
+          Paint()
+            ..color = c
+            ..strokeWidth = sw
+            ..strokeCap = StrokeCap.round,
+        );
+    void rays(double cy, double r, Color c) {
+      for (var i = 0; i < 8; i++) {
+        final a = i * math.pi / 4;
+        line(
+          32 + math.cos(a) * (r + 4),
+          cy + math.sin(a) * (r + 4),
+          32 + math.cos(a) * (r + 10),
+          cy + math.sin(a) * (r + 10),
+          c,
+          3,
+        );
+      }
+    }
+
+    const white = Colors.white;
+    switch (prayer) {
+      case PrayerKind.fajr:
+        const c = Color(0xFFFFC18F);
+        canvas.save();
+        canvas.clipRect(const Rect.fromLTWH(0, 0, 64, 41));
+        disc(32, 42, 13, c);
+        rays(42, 13, c);
+        canvas.restore();
+        line(4, 42, 60, 42, white, 2.5);
+        disc(52, 11, 1.8, white);
+        disc(12, 16, 1.3, white.withValues(alpha: .8));
+      case PrayerKind.dhuhr:
+        const c = Color(0xFFFFD57A);
+        disc(32, 32, 13, c);
+        rays(32, 13, c);
+      case PrayerKind.asr:
+        const c = Color(0xFFFFCF6E);
+        disc(32, 28, 12, c);
+        rays(28, 12, c);
+        line(6, 56, 58, 56, white.withValues(alpha: .75), 2.5);
+      case PrayerKind.maghrib:
+        canvas.save();
+        canvas.clipRect(const Rect.fromLTWH(0, 0, 64, 44));
+        disc(32, 46, 17, const Color(0xFFFFAD62));
+        canvas.restore();
+        line(4, 45, 60, 45, white, 2.5);
+        line(14, 52, 50, 52, white.withValues(alpha: .6), 2);
+        line(22, 58, 42, 58, white.withValues(alpha: .4), 2);
+      default:
+        const crater = Color(0xFFE3D6B0);
+        disc(32, 32, 19, const Color(0xFFF6EDD2));
+        disc(25, 27, 3.4, crater);
+        disc(38, 38, 2.6, crater);
+        disc(36, 24, 1.6, crater);
+        disc(8, 10, 1.5, white);
+        disc(58, 16, 1.2, white);
+    }
+  }
+
+  @override
+  bool shouldRepaint(PrayerIconPainter old) => old.prayer != prayer;
+}
+
 /// Paints the sky of the approved «السماء الحية» mockup.
 class SkyPainter extends CustomPainter {
   SkyPainter({
@@ -380,72 +468,45 @@ class SkyPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final rect = Offset.zero & size;
     final c = skyColors(prayer);
+    // CSS «linear-gradient(160deg, …)»: down and a little to the left.
     canvas.drawRect(
       rect,
       Paint()
         ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+          begin: const Alignment(.36, -1),
+          end: const Alignment(-.36, 1),
           colors: c,
-          stops: const [0, .62, 1],
+          stops: const [0, .6, 1],
         ).createShader(rect),
     );
     final w = size.width, h = size.height;
-    final night = prayer == PrayerKind.isha || prayer == PrayerKind.fajr;
-    if (night) {
-      // The mockup's sin(t / 700 ms), over a 44 s loop.
-      final t = twinkle.value * 44000 / 700;
+    if (prayer == PrayerKind.isha || prayer == PrayerKind.fajr) {
+      // The mockup's sin(t / 650 ms), over a 44 s loop.
+      final t = twinkle.value * 44000 / 650;
       final star = Paint();
       for (final s in _stars) {
-        var a = still ? .7 : .35 + .45 * math.sin(t + s.phase);
-        if (prayer == PrayerKind.fajr) a *= .5;
+        var a = still ? .6 : .3 + .45 * math.sin(t + s.phase);
+        if (prayer == PrayerKind.fajr) a *= .45;
         star.color = Colors.white.withValues(alpha: a.clamp(0, 1));
-        canvas.drawCircle(Offset(s.x * w, s.y * h), s.r, star);
+        canvas.drawCircle(Offset(s.x * w, s.y / .7 * h * .8), s.r, star);
       }
     }
-    final pos = switch (prayer) {
-      PrayerKind.fajr => const Offset(.18, .98),
-      PrayerKind.dhuhr => const Offset(.22, .2),
-      PrayerKind.asr => const Offset(.16, .42),
-      PrayerKind.maghrib => const Offset(.2, .9),
-      _ => const Offset(.2, .24),
+    // A soft glow behind the icon at the inline start.
+    final glow = switch (prayer) {
+      PrayerKind.fajr => const Color(0xFFFFAA82),
+      PrayerKind.dhuhr => const Color(0xFFFFE196),
+      PrayerKind.asr => const Color(0xFFFFCD78),
+      PrayerKind.maghrib => const Color(0xFFFF965A),
+      _ => const Color(0xFFF6EDD2),
     };
-    // The sky body sits opposite the text's start.
-    final x = (rtl ? pos.dx : 1 - pos.dx) * w;
-    final center = Offset(x, pos.dy * h);
-    if (prayer == PrayerKind.isha) {
-      const moon = Color(0xFFF6EDD2);
-      canvas.drawRect(
-        rect,
-        Paint()
-          ..shader = RadialGradient(
-            colors: [moon.withValues(alpha: .35), moon.withValues(alpha: 0)],
-          ).createShader(Rect.fromCircle(center: center, radius: 70)),
-      );
-      canvas.drawCircle(center, 22, Paint()..color = moon);
-      final crater = Paint()..color = const Color(0xFFE3D6B0);
-      canvas.drawCircle(center + const Offset(-6, -5), 4, crater);
-      canvas.drawCircle(center + const Offset(7, 6), 3, crater);
-    } else {
-      final sun = switch (prayer) {
-        PrayerKind.maghrib => const Color(0xFFFFA05A),
-        PrayerKind.fajr => const Color(0xFFFFB48C),
-        _ => const Color(0xFFFFDE8C),
-      };
-      final r = switch (prayer) {
-        PrayerKind.dhuhr => 26.0,
-        PrayerKind.asr => 24.0,
-        _ => 30.0,
-      };
-      canvas.drawRect(
-        rect,
-        Paint()
-          ..shader = RadialGradient(
-            colors: [sun.withValues(alpha: .55), sun.withValues(alpha: 0)],
-          ).createShader(Rect.fromCircle(center: center, radius: r * 4)),
-      );
-      canvas.drawCircle(center, r, Paint()..color = sun);
-    }
+    final center = Offset(rtl ? w - 40 : 40, 34);
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = RadialGradient(
+          colors: [glow.withValues(alpha: .45), glow.withValues(alpha: 0)],
+        ).createShader(Rect.fromCircle(center: center, radius: 90)),
+    );
   }
 
   @override

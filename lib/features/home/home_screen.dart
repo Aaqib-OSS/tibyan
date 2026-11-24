@@ -413,7 +413,7 @@ class _ContinueCard extends StatelessWidget {
             SurahNameText(
               surah: s.id,
               name: s.nameAr,
-              size: (compact ? 32 : (look.elderly ? 50 : 44)) * k,
+              size: (compact ? 38 : (look.elderly ? 50 : 44)) * k,
               color: ink,
               height: compact ? 1.5 : 1.7,
             ),
