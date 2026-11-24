@@ -6609,4 +6609,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nextPrayerOpenHint => 'Opens prayer times';
+
+  @override
+  String get homeContinueButton => 'Continue reading';
 }

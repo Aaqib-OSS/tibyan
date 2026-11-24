@@ -6669,4 +6669,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get nextPrayerOpenHint => 'يفتح مواقيت الصلاة';
+
+  @override
+  String get homeContinueButton => 'تابع القراءة';
 }

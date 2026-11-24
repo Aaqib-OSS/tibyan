@@ -397,8 +397,8 @@ class _ContinueCard extends StatelessWidget {
     Color ink,
     Color sub, {
     bool center = false,
+    bool compact = false,
   }) {
-    final l = AppLocalizations.of(context);
     final look = context.look;
     final s = surahRow;
     final k = _scale(context);
@@ -409,17 +409,13 @@ class _ContinueCard extends StatelessWidget {
             : CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            l.homeContinueHint,
-            style: TextStyle(fontSize: 13 * k, color: sub),
-          ),
           if (s != null)
             SurahNameText(
               surah: s.id,
               name: s.nameAr,
-              size: (look.elderly ? 50 : 44) * k,
+              size: (compact ? 32 : (look.elderly ? 50 : 44)) * k,
               color: ink,
-              height: 1.7,
+              height: compact ? 1.5 : 1.7,
             ),
           if (detail != null)
             MetaText(
@@ -436,22 +432,51 @@ class _ContinueCard extends StatelessWidget {
     );
   }
 
-  Widget _button(BuildContext context, Color bg, Color fg, double radius) {
+  /// «تابع القراءة» as a cream capsule with a book icon and a small
+  /// circle whose arrow points the way the text reads.
+  Widget _capsule(BuildContext context, Color bg, Color fg) {
     final l = AppLocalizations.of(context);
     final k = _scale(context);
-    return FilledButton(
-      onPressed: onOpen,
-      style: FilledButton.styleFrom(
-        backgroundColor: bg,
-        foregroundColor: fg,
-        minimumSize: Size(160 * k, context.look.target * k),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radius),
+    return Material(
+      color: bg,
+      shape: const StadiumBorder(),
+      elevation: 3,
+      shadowColor: Colors.black38,
+      child: InkWell(
+        key: const ValueKey('home-continue-button'),
+        customBorder: const StadiumBorder(),
+        onTap: onOpen,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: context.look.target * k),
+          child: Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(14 * k, 6, 7 * k, 6),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.menu_book_rounded, size: 20 * k, color: fg),
+                SizedBox(width: 8 * k),
+                Flexible(
+                  child: Text(
+                    l.homeContinueButton,
+                    style: TextStyle(
+                      color: fg,
+                      fontSize: 15 * k,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8 * k),
+                Container(
+                  width: 30 * k,
+                  height: 30 * k,
+                  decoration: BoxDecoration(color: fg, shape: BoxShape.circle),
+                  child: Icon(Icons.arrow_forward, size: 18 * k, color: bg),
+                ),
+              ],
+            ),
+          ),
         ),
-        textStyle: Theme.of(context).textTheme.labelLarge
-            ?.copyWith(fontSize: 15 * k, fontWeight: FontWeight.w600),
       ),
-      child: Text(l.continueReading),
     );
   }
 
@@ -492,9 +517,9 @@ class _ContinueCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 14),
-            SizedBox(
-              width: double.infinity,
-              child: _button(context, look.control, look.onControl, 4),
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: _capsule(context, look.control, look.onControl),
             ),
           ],
         ),
@@ -504,31 +529,29 @@ class _ContinueCard extends StatelessWidget {
 
   Widget _arch(BuildContext context) {
     final look = context.look;
-    // «هندسي»: the arch in teal with a star lattice; «ليلي ذهبي»: a night
-    // sky in blue and gold.
-    final layli = look.isLayli;
     final (:sky, :rim, :ink, :sub, :buttonBg, :buttonFg) = heroArchColors(look);
     final k = _scale(context);
-    return SizedBox(
-      // The texts and the button grow with the reader's text size.
-      height:
-          (look.elderly ? 340 : 300) * k +
-          MediaQuery.textScalerOf(context).scale(48) -
-          48,
+    // Wide and low: the surah and where the reader stopped at the start,
+    // the capsule at the end. Large text stacks them.
+    final stacked = MediaQuery.textScalerOf(context).scale(10) > 15;
+    final text = _text(context, ink, sub, compact: true, center: stacked);
+    final button = _capsule(context, buttonBg, buttonFg);
+    return ConstrainedBox(
+      constraints: BoxConstraints(minHeight: (look.elderly ? 170 : 150) * k),
       child: Stack(
         children: [
-          const Positioned.fill(child: HeroArch()),
-          Positioned.fill(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(20, 76 * k, 20, 20 * k),
-              child: Column(
-                children: [
-                  _text(context, ink, sub, center: true),
-                  const Spacer(),
-                  _button(context, buttonBg, buttonFg, layli ? 24 : 12),
-                ],
-              ),
-            ),
+          const Positioned.fill(child: HeroArch(spring: .3)),
+          Padding(
+            padding: EdgeInsets.fromLTRB(18, 46 * k, 18, 16 * k),
+            child: stacked
+                ? Column(children: [text, const SizedBox(height: 10), button])
+                : Row(
+                    children: [
+                      Expanded(child: text),
+                      const SizedBox(width: 10),
+                      button,
+                    ],
+                  ),
           ),
         ],
       ),

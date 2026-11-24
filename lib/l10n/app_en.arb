@@ -2604,5 +2604,6 @@
   "nextPrayerLabel": "Next prayer",
   "nextPrayerAdhanAt": "Adhan {time}",
   "nextPrayerSetupBody": "Choose your city to see the next prayer and the time left until its adhan.",
-  "nextPrayerOpenHint": "Opens prayer times"
+  "nextPrayerOpenHint": "Opens prayer times",
+  "homeContinueButton": "Continue reading"
 }

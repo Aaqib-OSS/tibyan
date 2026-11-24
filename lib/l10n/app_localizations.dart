@@ -11124,6 +11124,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'يفتح مواقيت الصلاة'**
   String get nextPrayerOpenHint;
+
+  /// Home continue-reading arch: the capsule button's label
+  ///
+  /// In ar, this message translates to:
+  /// **'تابع القراءة'**
+  String get homeContinueButton;
 }
 
 class _AppLocalizationsDelegate

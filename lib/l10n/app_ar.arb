@@ -4683,5 +4683,9 @@
   "nextPrayerOpenHint": "يفتح مواقيت الصلاة",
   "@nextPrayerOpenHint": {
     "description": "Home next-prayer card"
+  },
+  "homeContinueButton": "تابع القراءة",
+  "@homeContinueButton": {
+    "description": "Home continue-reading arch: the capsule button's label"
   }
 }
