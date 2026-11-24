@@ -18,6 +18,8 @@ class MainFlutterWindow: NSWindow {
     VideoEncoderChannel.attach(flutterViewController.engine.binaryMessenger)
     // «مواقيت الصلاة»: one coarse position, the full adhan, the login item.
     PrayerChannel.attach(flutterViewController.engine.binaryMessenger)
+    // «المسبحة»: the bead sounds (no volume keys, widget or watch here).
+    TasbihSoundChannel.attach(flutterViewController.engine.binaryMessenger)
 
     super.awakeFromNib()
   }
@@ -287,5 +289,66 @@ final class PrayerChannel: NSObject, CLLocationManagerDelegate {
     } catch {
       return false
     }
+  }
+}
+
+/// «المسبحة»'s sounds on the Mac (`app.tibyan/tasbih`): the bundled bead
+/// knocks and the click, as on iOS. AVAudioPlayer on macOS has no shared
+/// audio session, so the recitation is never interrupted.
+final class TasbihSoundChannel {
+  private static var shared: TasbihSoundChannel?
+  /// A few players of each sound, by its asset, so quick counts overlap.
+  private var players: [String: [AVAudioPlayer]] = [:]
+  private var next = 0
+  private static let clickAsset = "assets/tasbih/click.wav"
+
+  static func attach(_ messenger: FlutterBinaryMessenger) {
+    let c = FlutterMethodChannel(name: "app.tibyan/tasbih", binaryMessenger: messenger)
+    let me = TasbihSoundChannel()
+    c.setMethodCallHandler { call, result in me.handle(call, result) }
+    shared = me
+  }
+
+  private func handle(_ call: FlutterMethodCall, _ result: FlutterResult) {
+    switch call.method {
+    case "click":
+      play(TasbihSoundChannel.clickAsset)
+      result(nil)
+    case "play":
+      if let asset = call.arguments as? String { play(asset) }
+      result(nil)
+    case "preload":
+      for asset in (call.arguments as? [String]) ?? [] { _ = load(asset) }
+      result(nil)
+    default:
+      result(FlutterMethodNotImplemented)
+    }
+  }
+
+  /// The players of a bundled sound, made (and readied) on first use.
+  private func load(_ asset: String) -> [AVAudioPlayer] {
+    if let ready = players[asset] { return ready }
+    guard asset.hasPrefix("assets/tasbih/"), !asset.contains(".."),
+      let frameworks = Bundle.main.privateFrameworksURL
+    else { return [] }
+    let url = frameworks.appendingPathComponent("App.framework/Resources/flutter_assets/\(asset)")
+    let made = (0..<(asset == TasbihSoundChannel.clickAsset ? 3 : 2)).compactMap { _ in
+      try? AVAudioPlayer(contentsOf: url)
+    }
+    made.forEach { $0.prepareToPlay() }
+    players[asset] = made
+    return made
+  }
+
+  private func play(_ asset: String) {
+    let ready = load(asset)
+    guard !ready.isEmpty else { return }
+    let p = ready[next % ready.count]
+    next += 1
+    p.currentTime = 0
+    p.play()
+    #if DEBUG
+      NSLog("TibyanTasbih: played %@", asset)
+    #endif
   }
 }
