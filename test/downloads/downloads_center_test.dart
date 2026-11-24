@@ -74,6 +74,7 @@ void main() {
         backgroundDownloadsProvider.overrideWithValue(downloads),
         backgroundModelDownloadProvider.overrideWithValue(model),
         backgroundRecitationsProvider.overrideWithValue(recitations),
+        recitersProvider.overrideWith((ref) async => [_reciter]),
       ],
     );
     final nav = GlobalKey<NavigatorState>();
@@ -102,7 +103,14 @@ void main() {
     expect(fake.enqueued, hasLength(1));
     expect(find.text('المصاحف'), findsOneWidget);
     expect(find.text('القراءات الصوتية'), findsOneWidget);
+    // The running reciter is listed in its section, and the hub shows
+    // the running downloads' banner.
+    expect(find.byKey(const ValueKey('downloads-active-banner')), findsOne);
+    await tester.tap(find.byKey(const ValueKey('downloads-tile-recitations')));
+    await settle(tester);
     expect(find.byKey(const ValueKey('downloads-reciter-7')), findsOneWidget);
+    nav.currentState!.pop();
+    await settle(tester);
 
     // Leaving it: the download goes on, and the reader is told so.
     nav.currentState!.pop();

@@ -163,8 +163,14 @@ final appRouterProvider = Provider<GoRouter>(
     routes: [
       GoRoute(
         path: '/downloads',
-        builder: (context, state) =>
-            const LookTheme(child: DownloadsCenterScreen()),
+        // `?section=adhan` opens that section directly.
+        builder: (context, state) => LookTheme(
+          child: DownloadsCenterScreen(
+            section: DownloadsCenterScreen.sectionNamed(
+              state.uri.queryParameters['section'],
+            ),
+          ),
+        ),
       ),
       GoRoute(
         path: '/splash',

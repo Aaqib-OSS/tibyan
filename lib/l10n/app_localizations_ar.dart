@@ -6686,4 +6686,64 @@ class AppLocalizationsAr extends AppLocalizations {
   String hifzLadderJuz(String juz, String memorized, String mastered) {
     return 'الجزء $juz: محفوظ $memorized٪، متقن $mastered٪';
   }
+
+  @override
+  String get downloadsStorageTitle => 'المساحة المستخدمة';
+
+  @override
+  String downloadsStorageTotal(String size) {
+    return '$size على جهازك';
+  }
+
+  @override
+  String get downloadsStorageOther => 'أخرى';
+
+  @override
+  String downloadsSizeGb(String gb) {
+    return '$gb جيجا';
+  }
+
+  @override
+  String get downloadsSearchAll => 'ابحث في كل التحميلات…';
+
+  @override
+  String get downloadsSearchSection => 'ابحث في هذا القسم…';
+
+  @override
+  String downloadsActiveBanner(String count, String percent) {
+    return '$count قيد التحميل · $percent';
+  }
+
+  @override
+  String get downloadsActiveShow => 'عرض';
+
+  @override
+  String get downloadsActiveTitle => 'التحميلات الجارية';
+
+  @override
+  String get downloadsActiveNone => 'لا تحميلات جارية الآن';
+
+  @override
+  String downloadsTileOnDevice(String count, String size) {
+    return '$count على جهازك · $size';
+  }
+
+  @override
+  String downloadsTileNone(String count) {
+    return '$count متاح للتنزيل';
+  }
+
+  @override
+  String downloadsCountOf(String count, String total) {
+    return '$count من $total';
+  }
+
+  @override
+  String get downloadsHeaderOnDevice => 'على جهازك';
+
+  @override
+  String get downloadsHeaderAvailable => 'متاح للتنزيل';
+
+  @override
+  String get downloadsFilterOnDevice => 'على جهازي';
 }

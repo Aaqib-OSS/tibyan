@@ -6626,4 +6626,64 @@ class AppLocalizationsEn extends AppLocalizations {
   String hifzLadderJuz(String juz, String memorized, String mastered) {
     return 'Juz $juz: $memorized% memorized, $mastered% mastered';
   }
+
+  @override
+  String get downloadsStorageTitle => 'Storage used';
+
+  @override
+  String downloadsStorageTotal(String size) {
+    return '$size on your device';
+  }
+
+  @override
+  String get downloadsStorageOther => 'Other';
+
+  @override
+  String downloadsSizeGb(String gb) {
+    return '$gb GB';
+  }
+
+  @override
+  String get downloadsSearchAll => 'Search all downloads…';
+
+  @override
+  String get downloadsSearchSection => 'Search this section…';
+
+  @override
+  String downloadsActiveBanner(String count, String percent) {
+    return '$count downloading · $percent';
+  }
+
+  @override
+  String get downloadsActiveShow => 'View';
+
+  @override
+  String get downloadsActiveTitle => 'Running downloads';
+
+  @override
+  String get downloadsActiveNone => 'Nothing is downloading now';
+
+  @override
+  String downloadsTileOnDevice(String count, String size) {
+    return '$count on your device · $size';
+  }
+
+  @override
+  String downloadsTileNone(String count) {
+    return '$count available';
+  }
+
+  @override
+  String downloadsCountOf(String count, String total) {
+    return '$count of $total';
+  }
+
+  @override
+  String get downloadsHeaderOnDevice => 'On your device';
+
+  @override
+  String get downloadsHeaderAvailable => 'Available to download';
+
+  @override
+  String get downloadsFilterOnDevice => 'On my device';
 }
