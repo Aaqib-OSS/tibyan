@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:just_audio/just_audio.dart';
 
 import '../../../core/platform/watch_bridge.dart';
 
@@ -117,8 +118,94 @@ class NoTasbihPlatform implements TasbihPlatform {
   };
 }
 
+/// Where the misbaha's sounds play on this platform.
+enum TasbihSoundRoute {
+  /// The native channel: Android, iOS and macOS.
+  native,
+
+  /// just_audio in Dart (libmpv through just_audio_media_kit): Windows and
+  /// Linux, which have no native side for the misbaha.
+  dart,
+
+  /// Nowhere (the web).
+  none,
+}
+
+TasbihSoundRoute tasbihSoundRoute(
+  TargetPlatform platform, {
+  bool web = kIsWeb,
+}) {
+  if (web) return TasbihSoundRoute.none;
+  return switch (platform) {
+    TargetPlatform.android ||
+    TargetPlatform.iOS ||
+    TargetPlatform.macOS => TasbihSoundRoute.native,
+    TargetPlatform.windows || TargetPlatform.linux => TasbihSoundRoute.dart,
+    _ => TasbihSoundRoute.none,
+  };
+}
+
+/// Plays bundled assets on Windows and Linux.
+abstract interface class TasbihSoundPlayer {
+  Future<void> play(String asset);
+  Future<void> preload(List<String> assets);
+}
+
+/// A small pool of just_audio players per sound, readied ahead, taken in
+/// turn so quick taps overlap. Each player is separate from the
+/// recitation's (libmpv allows several), so the recitation goes on.
+class JustAudioTasbihSoundPlayer implements TasbihSoundPlayer {
+  static const clickAsset = 'assets/tasbih/click.wav';
+
+  final _pools = <String, Future<List<AudioPlayer>>>{};
+  var _next = 0;
+
+  Future<List<AudioPlayer>> _load(String asset) {
+    if (!asset.startsWith('assets/tasbih/') || asset.contains('..')) {
+      return Future.value(const []);
+    }
+    return _pools[asset] ??= () async {
+      final made = <AudioPlayer>[];
+      for (var i = 0; i < (asset == clickAsset ? 3 : 2); i++) {
+        final p = AudioPlayer(handleAudioSessionActivation: false);
+        try {
+          await p.setAsset(asset);
+          made.add(p);
+        } catch (_) {
+          await p.dispose();
+        }
+      }
+      return made;
+    }();
+  }
+
+  @override
+  Future<void> preload(List<String> assets) async {
+    await Future.wait(assets.map(_load));
+  }
+
+  @override
+  Future<void> play(String asset) async {
+    final ready = await _load(asset);
+    if (ready.isEmpty) return;
+    final p = ready[_next++ % ready.length];
+    await p.seek(Duration.zero);
+    if (!p.playing) unawaited(p.play());
+  }
+}
+
 class ChannelTasbihPlatform implements TasbihPlatform {
-  ChannelTasbihPlatform() {
+  ChannelTasbihPlatform({
+    TargetPlatform? platform,
+    bool? web,
+    TasbihSoundPlayer? desktopSounds,
+  }) : _platform = platform ?? defaultTargetPlatform,
+       _web = web ?? kIsWeb,
+       _route = tasbihSoundRoute(
+         platform ?? defaultTargetPlatform,
+         web: web ?? kIsWeb,
+       ),
+       _injected = desktopSounds {
     _channel.setMethodCallHandler((call) async {
       if (call.method == 'volumeKey') _keys.add(null);
       if (call.method == 'pendingAdded') _pending.add(null);
@@ -134,6 +221,14 @@ class ChannelTasbihPlatform implements TasbihPlatform {
 
   final _keys = StreamController<void>.broadcast();
   final _pending = StreamController<void>.broadcast();
+  final TargetPlatform _platform;
+  final bool _web;
+  final TasbihSoundRoute _route;
+  late TasbihSoundPlayer? _desktopSounds = _injected;
+  final TasbihSoundPlayer? _injected;
+
+  TasbihSoundPlayer get _dartSounds =>
+      _desktopSounds ??= JustAudioTasbihSoundPlayer();
 
   @override
   Stream<void> get pendingAdded => _pending.stream;
@@ -144,10 +239,10 @@ class ChannelTasbihPlatform implements TasbihPlatform {
     }
   }
 
+  /// Volume keys, the widget and the watch: mobile only.
   bool get _mobile =>
-      !kIsWeb &&
-      (defaultTargetPlatform == TargetPlatform.android ||
-          defaultTargetPlatform == TargetPlatform.iOS);
+      !_web &&
+      (_platform == TargetPlatform.android || _platform == TargetPlatform.iOS);
 
   Future<void> _call(String method, [Object? args]) async {
     if (!_mobile) return;
@@ -158,14 +253,39 @@ class ChannelTasbihPlatform implements TasbihPlatform {
     }
   }
 
-  @override
-  Future<void> click() => _call('click');
+  /// The sounds: natively on mobile and macOS, in Dart on Windows/Linux.
+  Future<void> _sound(String method, Object? args) async {
+    switch (_route) {
+      case TasbihSoundRoute.native:
+        try {
+          await _channel.invokeMethod<void>(method, args);
+        } catch (_) {
+          // No sound; counting goes on.
+        }
+      case TasbihSoundRoute.dart:
+        try {
+          if (method == 'preload') {
+            await _dartSounds.preload((args as List).cast<String>());
+          } else {
+            await _dartSounds.play(args as String);
+          }
+        } catch (_) {
+          // No sound; counting goes on.
+        }
+      case TasbihSoundRoute.none:
+    }
+  }
 
   @override
-  Future<void> play(String asset) => _call('play', asset);
+  Future<void> click() => _route == TasbihSoundRoute.native
+      ? _sound('click', null)
+      : _sound('play', JustAudioTasbihSoundPlayer.clickAsset);
 
   @override
-  Future<void> preload(List<String> assets) => _call('preload', assets);
+  Future<void> play(String asset) => _sound('play', asset);
+
+  @override
+  Future<void> preload(List<String> assets) => _sound('preload', assets);
 
   @override
   Future<void> setVolumeKeys(bool on) => _call('setVolumeKeys', on);
