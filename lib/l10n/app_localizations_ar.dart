@@ -6654,4 +6654,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tasbihPostPrayer100 => '١٠٠: والتمام بالتهليل';
+
+  @override
+  String get nextPrayerLabel => 'الصلاة القادمة';
+
+  @override
+  String nextPrayerAdhanAt(String time) {
+    return 'الأذان $time';
+  }
+
+  @override
+  String get nextPrayerSetupBody =>
+      'اختر مدينتك لتظهر الصلاة القادمة والوقت المتبقي على أذانها.';
+
+  @override
+  String get nextPrayerOpenHint => 'يفتح مواقيت الصلاة';
 }

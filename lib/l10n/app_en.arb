@@ -2600,5 +2600,9 @@
   "tasbihPostPrayer100": "100: completed with the tahlil",
   "@tasbihPostPrayer": {
     "description": "Misbaha dhikr list: the section of the tasbih said after the obligatory prayer"
-  }
+  },
+  "nextPrayerLabel": "Next prayer",
+  "nextPrayerAdhanAt": "Adhan {time}",
+  "nextPrayerSetupBody": "Choose your city to see the next prayer and the time left until its adhan.",
+  "nextPrayerOpenHint": "Opens prayer times"
 }

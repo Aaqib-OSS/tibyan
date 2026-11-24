@@ -11100,6 +11100,30 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'١٠٠: والتمام بالتهليل'**
   String get tasbihPostPrayer100;
+
+  /// Home next-prayer card
+  ///
+  /// In ar, this message translates to:
+  /// **'الصلاة القادمة'**
+  String get nextPrayerLabel;
+
+  /// Home next-prayer card: the adhan time of the next prayer
+  ///
+  /// In ar, this message translates to:
+  /// **'الأذان {time}'**
+  String nextPrayerAdhanAt(String time);
+
+  /// Home next-prayer card
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر مدينتك لتظهر الصلاة القادمة والوقت المتبقي على أذانها.'**
+  String get nextPrayerSetupBody;
+
+  /// Home next-prayer card
+  ///
+  /// In ar, this message translates to:
+  /// **'يفتح مواقيت الصلاة'**
+  String get nextPrayerOpenHint;
 }
 
 class _AppLocalizationsDelegate

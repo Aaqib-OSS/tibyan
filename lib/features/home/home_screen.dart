@@ -28,6 +28,7 @@ import '../mushaf/presentation/continue_snapshot.dart';
 import '../mushaf/presentation/mushaf_screen.dart';
 import '../mushaf/presentation/widgets/illuminated_frame.dart';
 import '../tasmee/presentation/tasmee_setup_screen.dart' show showTasmeeSetup;
+import 'next_prayer_card.dart';
 import 'whats_new.dart';
 import '../adhkar/presentation/adhkar_screen.dart' show adhkarLocation;
 import '../prayer/presentation/prayer_tracker_screen.dart'
@@ -249,6 +250,8 @@ class HomeScreen extends ConsumerWidget {
                                 ],
                                 const SizedBox(height: 16),
                                 journey,
+                                const SizedBox(height: 16),
+                                const NextPrayerCard(),
                               ],
                             ),
                           ),
@@ -276,6 +279,8 @@ class HomeScreen extends ConsumerWidget {
                     if (today != null) ...[const SizedBox(height: 16), today],
                     const SizedBox(height: 16),
                     journey,
+                    const SizedBox(height: 16),
+                    const NextPrayerCard(),
                     const SizedBox(height: 24),
                     grid,
                   ],

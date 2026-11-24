@@ -4662,5 +4662,26 @@
   "trackerMarkAllHint": "يتاح بعد دخول وقت العشاء",
   "tasbihPostPrayer": "تسبيح ختام الصلاة",
   "tasbihPostPrayer99": "٩٩: ثلاث وثلاثون لكلٍّ",
-  "tasbihPostPrayer100": "١٠٠: والتمام بالتهليل"
+  "tasbihPostPrayer100": "١٠٠: والتمام بالتهليل",
+  "nextPrayerLabel": "الصلاة القادمة",
+  "@nextPrayerLabel": {
+    "description": "Home next-prayer card"
+  },
+  "nextPrayerAdhanAt": "الأذان {time}",
+  "@nextPrayerAdhanAt": {
+    "description": "Home next-prayer card: the adhan time of the next prayer",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "nextPrayerSetupBody": "اختر مدينتك لتظهر الصلاة القادمة والوقت المتبقي على أذانها.",
+  "@nextPrayerSetupBody": {
+    "description": "Home next-prayer card"
+  },
+  "nextPrayerOpenHint": "يفتح مواقيت الصلاة",
+  "@nextPrayerOpenHint": {
+    "description": "Home next-prayer card"
+  }
 }
