@@ -6645,4 +6645,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trackerMarkAllHint => 'يتاح بعد دخول وقت العشاء';
+
+  @override
+  String get tasbihPostPrayer => 'تسبيح ختام الصلاة';
+
+  @override
+  String get tasbihPostPrayer99 => '٩٩: ثلاث وثلاثون لكلٍّ';
+
+  @override
+  String get tasbihPostPrayer100 => '١٠٠: والتمام بالتهليل';
 }

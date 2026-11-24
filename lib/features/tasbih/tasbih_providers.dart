@@ -36,12 +36,15 @@ final myAdhkarProvider = StreamProvider<List<Dhikr>>(
 );
 
 /// Every dhikr the misbaha offers: the app's, then the reader's.
-final adhkarProvider = Provider<List<Dhikr>>(
-  (ref) => [
-    ...?ref.watch(appAdhkarProvider).value?.adhkar,
+final adhkarProvider = Provider<List<Dhikr>>((ref) {
+  final app = ref.watch(appAdhkarProvider).value?.adhkar ?? const <Dhikr>[];
+  return [
+    ...app,
+    // «تسبيح ختام الصلاة» without the closing tahlil (99).
+    ?postPrayerTasbih(app)?.ninetyNine,
     ...?ref.watch(myAdhkarProvider).value,
-  ],
-);
+  ];
+});
 
 /// The dhikr being counted: the one chosen, else the first.
 final currentDhikrProvider = Provider<Dhikr?>((ref) {
@@ -103,10 +106,13 @@ class TasbihController extends Notifier<TasbihCounter> {
     if (dhikr == null || p.getString(_of) != dhikr) {
       return TasbihCounter(target: target).withStages(stages);
     }
-    return TasbihCounter(
+    final saved = TasbihCounter(
       count: p.getInt(_count) ?? 0,
       rounds: p.getInt(_rounds) ?? 0,
-    ).withTarget(target).withStages(stages);
+    );
+    // A dhikr in stages has its own target: the settings' target must not
+    // close (and empty) its round first.
+    return stages == null ? saved.withTarget(target) : saved.withStages(stages);
   }
 
   TasbihSettings get _settings => ref.read(tasbihSettingsProvider);
@@ -159,7 +165,7 @@ class TasbihController extends Notifier<TasbihCounter> {
     if (s.haptics && !justClosed) {
       unawaited(HapticFeedback.heavyImpact().catchError((_) {}));
     }
-    if (s.sound && _beads(s)) {
+    if (s.sound && _beads(s) && !justClosed) {
       unawaited(
         ref
             .read(tasbihPlatformProvider)
@@ -185,7 +191,12 @@ class TasbihController extends Notifier<TasbihCounter> {
       final platform = ref.read(tasbihPlatformProvider);
       unawaited(
         (_beads(s)
-                ? platform.play(_sounds.count(s.material))
+                // The round's close knocks as a lap's end does.
+                ? platform.play(
+                    event == CountEvent.roundClosed
+                        ? _sounds.end(s.material)
+                        : _sounds.count(s.material),
+                  )
                 : platform.click())
             .catchError((_) {}),
       );

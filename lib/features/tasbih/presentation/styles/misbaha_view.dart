@@ -105,6 +105,7 @@ class _MisbahaViewState extends State<MisbahaView>
 
   /// The string at rest where the count stands.
   void _newMotion() {
+    _rebase = false;
     final old = _hasMotion ? _motion : null;
     _count0 = widget.count;
     _motion =
@@ -138,8 +139,16 @@ class _MisbahaViewState extends State<MisbahaView>
     final dt = (elapsed - _last).inMicroseconds / 1e6;
     _last = elapsed;
     _motion.tick(dt);
-    if (!_motion.moving) _ticker.stop();
+    if (!_motion.moving) {
+      _ticker.stop();
+      if (_rebase) setState(_newMotion);
+    }
   }
+
+  /// A round closed mid-lap (a target that is not a whole number of laps,
+  /// such as 100): once the string rests, the new round starts at the
+  /// lap's start, as the counter does at 0.
+  bool _rebase = false;
 
   @override
   void didUpdateWidget(MisbahaView old) {
@@ -152,6 +161,20 @@ class _MisbahaViewState extends State<MisbahaView>
     // Counts made elsewhere move the string; anything else (a reset, a
     // new dhikr or target) puts it where the count stands.
     final m = _modulus;
+    final size = widget.roundSize;
+    if (size != null &&
+        size % MisbahaTrack.beads != 0 &&
+        widget.count == 0 &&
+        old.count != 0 &&
+        widget.roundSize == old.roundSize) {
+      _rebase = true;
+      // Counted elsewhere, or nothing left to move: start the lap now.
+      if (!_motion.moving ||
+          (widget.count - (_count0 + _motion.asked)) % m != 0) {
+        _newMotion();
+        return;
+      }
+    }
     final expected = (_count0 + _motion.asked) % m;
     if (widget.count == expected) return;
     final ahead = (widget.count - expected) % m;

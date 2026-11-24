@@ -2594,5 +2594,11 @@
   "tafsirCoverageFull": "The whole Quran",
   "tafsirOpenIndex": "Open the index to go to a surah or verse",
   "trackerMarkAll": "I prayed them all",
-  "trackerMarkAllHint": "Available after isha time begins"
+  "trackerMarkAllHint": "Available after isha time begins",
+  "tasbihPostPrayer": "After-prayer tasbih",
+  "tasbihPostPrayer99": "99: thirty-three each",
+  "tasbihPostPrayer100": "100: completed with the tahlil",
+  "@tasbihPostPrayer": {
+    "description": "Misbaha dhikr list: the section of the tasbih said after the obligatory prayer"
+  }
 }

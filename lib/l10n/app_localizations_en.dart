@@ -6585,4 +6585,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trackerMarkAllHint => 'Available after isha time begins';
+
+  @override
+  String get tasbihPostPrayer => 'After-prayer tasbih';
+
+  @override
+  String get tasbihPostPrayer99 => '99: thirty-three each';
+
+  @override
+  String get tasbihPostPrayer100 => '100: completed with the tahlil';
 }
