@@ -14,7 +14,10 @@ All notable changes to Tibyan are recorded here. The format follows
 ### Changed
 - Misbaha: the true 3D rendering is the default where fragment shaders work; a reader's own choice is kept, and the suggested look is used automatically elsewhere. Nothing is repainted while nothing moves.
 
-## [1.0.0] (build 58) - 2026-11-23
+## [1.0.0] (build 59) - 2026-11-24
+
+### Removed
+- Android Auto support removed.
 
 ### Added
 - Prayer times computed on the device, with per-prayer alerts, an adhan library (13 muezzins), per-prayer adhan sound, muezzin, length and volume, and a summary under each prayer row.
