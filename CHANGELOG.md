@@ -14,12 +14,14 @@ All notable changes to Tibyan are recorded here. The format follows
 ### Changed
 - Misbaha: the true 3D rendering is the default where fragment shaders work; a reader's own choice is kept, and the suggested look is used automatically elsewhere. Nothing is repainted while nothing moves.
 
-## [1.0.0] (build 59) - 2026-11-24
+## [1.0.0] (build 61) - 2026-11-24
 
 ### Removed
 - Android Auto support removed.
 
 ### Added
+- Home: a next-prayer card in the living-sky style, with the next prayer, its time and a countdown.
+- Home: the redesigned «مسيرة الحفظ» memorization card with a juz ladder.
 - Prayer times computed on the device, with per-prayer alerts, an adhan library (13 muezzins), per-prayer adhan sound, muezzin, length and volume, and a summary under each prayer row.
 - A full-screen adhan scene with gentle motion for each prayer and the moon of the Hijri day.
 - Qibla: a big compass with the Kaaba on its ring, an optional camera view (only on tap) and a map on desktop.
@@ -42,6 +44,8 @@ All notable changes to Tibyan are recorded here. The format follows
 - Misbaha: a «تسبيح ختام الصلاة» section (99 or 100).
 
 ### Changed
+- Home: a compact arch with a «تابع القراءة» capsule button.
+- Android: no hardware is required (camera, GPS and microphone are optional), so every device can install the app.
 - Home: search in row 2; prayer times, qibla, my prayers and adhkar in row 3; no tile subtitles.
 - Adhan notifications follow the app language; the adhan test opens the full-screen scene and stays silent during a call.
 - Android: the launcher finds the app by both «تبيان» and Tibyan.
