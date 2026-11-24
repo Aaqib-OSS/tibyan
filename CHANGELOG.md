@@ -38,6 +38,8 @@ All notable changes to Tibyan are recorded here. The format follows
 - Misbaha: a new 3D misbaha with six materials and new bead sounds.
 - Tafsir: the tafsir title opens the index.
 - Prayer times: «صلّيت الكل» marks every prayer that has come.
+- Misbaha: bead sounds on desktop too.
+- Misbaha: a «تسبيح ختام الصلاة» section (99 or 100).
 
 ### Changed
 - Home: search in row 2; prayer times, qibla, my prayers and adhkar in row 3; no tile subtitles.
@@ -51,6 +53,8 @@ All notable changes to Tibyan are recorded here. The format follows
 - Tafsir: a clear settings icon; during a standalone tafsir the player sheet keeps only speed, sleep and the player's look.
 - Browsing a reciter no longer switches the playing recitation.
 - Volume keys adjust the adhan on Android; a stopped adhan stays stopped.
+- Misbaha: when a round's target is not whole laps of 33, its last count lands on the imam, so the beads stay in sync.
+- Misbaha: a restored staged round no longer closes early.
 
 ## [0.8.7] (build 56) - 2026-11-16
 
