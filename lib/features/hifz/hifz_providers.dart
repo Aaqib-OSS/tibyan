@@ -333,9 +333,14 @@ JuzLadder juzLadder(
 }
 
 final juzLadderProvider = Provider<JuzLadder>((ref) {
-  final verses = ref.watch(verseJuzProvider).value ?? const [];
   final strengths = ref.watch(verseStrengthsProvider).value ?? const {};
   final latest = ref.watch(verseLatestProvider).value ?? const {};
+  // Nothing memorized or recited: an empty ladder, without reading the
+  // verse list at all.
+  if (strengths.isEmpty && latest.isEmpty) {
+    return (memorized: List.filled(30, 0.0), mastered: List.filled(30, 0.0));
+  }
+  final verses = ref.watch(verseJuzProvider).value ?? const [];
   return juzLadder(verses, strengths.keys.toSet(), {
     for (final e in latest.entries)
       if (isMastered(e.value.accuracy)) e.key,

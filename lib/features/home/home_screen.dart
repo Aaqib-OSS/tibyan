@@ -522,7 +522,10 @@ class _ContinueCard extends StatelessWidget {
             const SizedBox(height: 14),
             Align(
               alignment: AlignmentDirectional.centerEnd,
-              child: _capsule(context, look.control, look.onControl),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: _capsule(context, look.control, look.onControl),
+              ),
             ),
           ],
         ),
@@ -557,9 +560,11 @@ class _ContinueCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 14),
-                        child: button,
+                      Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 14),
+                          child: button,
+                        ),
                       ),
                     ],
                   ),
@@ -712,7 +717,10 @@ class _JourneyCard extends StatelessWidget {
               ),
               SizedBox(height: 8 * k),
               ExcludeSemantics(
-                child: Row(
+                child: Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  spacing: 12,
+                  runSpacing: 4,
                   children: [
                     Row(
                       mainAxisSize: MainAxisSize.min,
@@ -722,7 +730,6 @@ class _JourneyCard extends StatelessWidget {
                         Text(l.hifzLadderMemorized, style: legend),
                       ],
                     ),
-                    const SizedBox(width: 14),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -731,14 +738,7 @@ class _JourneyCard extends StatelessWidget {
                         Text(l.hifzLadderMastered, style: legend),
                       ],
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        l.hifzLadderRange,
-                        style: legend,
-                        textAlign: TextAlign.end,
-                      ),
-                    ),
+                    Text(l.hifzLadderRange, style: legend),
                   ],
                 ),
               ),
