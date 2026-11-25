@@ -30,6 +30,7 @@ import '../mushaf/presentation/continue_snapshot.dart';
 import '../mushaf/presentation/mushaf_screen.dart';
 import '../mushaf/presentation/widgets/illuminated_frame.dart';
 import '../tasmee/presentation/tasmee_setup_screen.dart' show showTasmeeSetup;
+import 'back_twice_to_exit.dart';
 import 'next_prayer_card.dart';
 import 'whats_new.dart';
 import '../adhkar/presentation/adhkar_screen.dart' show adhkarLocation;
@@ -57,7 +58,10 @@ class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) =>
+      BackTwiceToExit(child: _home(context, ref));
+
+  Widget _home(BuildContext context, WidgetRef ref) {
     // The store's privacy notice comes first; the other sheets wait for a
     // later launch.
     if (storePrivacyPending(ref)) {

@@ -4782,6 +4782,16 @@
   "downloadsHeaderOnDevice": "على جهازك",
   "downloadsHeaderAvailable": "متاح للتنزيل",
   "downloadsFilterOnDevice": "على جهازي",
+  "adhanSettingsCard": "إعدادات الأذان",
+  "searchScopeTooltip": "النطاق: {scope}",
+  "backAgainToExit": "اضغط رجوع مرة أخرى للخروج",
+  "@searchScopeTooltip": {
+    "placeholders": {
+      "scope": {
+        "type": "String"
+      }
+    }
+  },
   "homeStartButton": "ابدأ القراءة",
   "@homeStartButton": {
     "description": "Home arch before any reading: the capsule button's label; opens the mushaf at Al-Fatiha"

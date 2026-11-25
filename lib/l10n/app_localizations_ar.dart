@@ -6748,6 +6748,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get downloadsFilterOnDevice => 'على جهازي';
 
   @override
+  String get adhanSettingsCard => 'إعدادات الأذان';
+
+  @override
+  String searchScopeTooltip(String scope) {
+    return 'النطاق: $scope';
+  }
+
+  @override
+  String get backAgainToExit => 'اضغط رجوع مرة أخرى للخروج';
+
+  @override
   String get homeStartButton => 'ابدأ القراءة';
 
   @override

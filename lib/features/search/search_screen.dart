@@ -279,6 +279,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 },
               ),
               actions: [
+                // Words only: the meaning search ranks the whole mushaf.
+                if (!meaning)
+                  _ScopeButton(
+                    label: l.searchScopeTooltip(_scopeLabel(l, surahs, digits)),
+                    narrowed: _scope is! WholeMushaf,
+                    onPressed: () => _pickScope(surahs),
+                  ),
                 if (_field.text.isNotEmpty)
                   IconButton(
                     tooltip: l.clearSearch,
@@ -291,9 +298,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               ],
             ),
             PreferredSize(
-              preferredSize: Size.fromHeight(
-                (context.tokens.elderly ? 72 : 56) + (meaning ? 0 : 48),
-              ),
+              preferredSize: Size.fromHeight(context.tokens.elderly ? 72 : 56),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                 child: Column(
@@ -324,25 +329,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         onSelectionChanged: (s) => _setMode(s.single),
                       ),
                     ),
-                    // Words only: the meaning search ranks the whole mushaf.
-                    if (!meaning)
-                      Align(
-                        alignment: AlignmentDirectional.centerStart,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 6),
-                          child: InputChip(
-                            avatar: const Icon(Icons.filter_list, size: 18),
-                            label: Text(_scopeLabel(l, surahs, digits)),
-                            onPressed: () => _pickScope(surahs),
-                            onDeleted: _scope is WholeMushaf
-                                ? null
-                                : () => setState(
-                                    () => _scope = const WholeMushaf(),
-                                  ),
-                            deleteButtonTooltipMessage: l.searchScopeAll,
-                          ),
-                        ),
-                      ),
                   ],
                 ),
               ),
@@ -582,6 +568,44 @@ class _History extends StatelessWidget {
             onTap: () => onPick(q),
           ),
       ],
+    );
+  }
+}
+
+/// The scope filter beside the field: an icon, with a dot when the search
+/// is narrowed to a juz or a surah.
+class _ScopeButton extends StatelessWidget {
+  const _ScopeButton({
+    required this.label,
+    required this.narrowed,
+    required this.onPressed,
+  });
+
+  final String label;
+  final bool narrowed;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tokens.colors;
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: IconButton(
+        key: const ValueKey('search-scope'),
+        tooltip: label,
+        onPressed: onPressed,
+        icon: Badge(
+          isLabelVisible: narrowed,
+          smallSize: 8,
+          backgroundColor: t.goldText,
+          child: Icon(
+            narrowed ? Icons.filter_alt : Icons.filter_alt_outlined,
+            color: narrowed ? t.goldText : null,
+          ),
+        ),
+      ),
     );
   }
 }

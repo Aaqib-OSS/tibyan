@@ -56,49 +56,50 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   constraints: const BoxConstraints(
                     maxWidth: ContentWidth.wide,
                   ),
-                  child: CustomScrollView(
-                    slivers: [
-                      SliverPadding(
+                  // The search stays pinned; only what is under it scrolls.
+                  child: Column(
+                    children: [
+                      Padding(
                         padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-                        sliver: SliverToBoxAdapter(
-                          child: TextField(
-                            key: const ValueKey('settings-search'),
-                            controller: _query,
-                            textInputAction: TextInputAction.search,
-                            decoration: InputDecoration(
-                              hintText: l.settingsSearchHint,
-                              prefixIcon: const Icon(Icons.search),
-                              suffixIcon: query.isEmpty
-                                  ? null
-                                  : IconButton(
-                                      tooltip: MaterialLocalizations.of(context)
-                                          .deleteButtonTooltip,
-                                      icon: const Icon(Icons.close),
-                                      onPressed: _query.clear,
-                                    ),
-                              filled: true,
-                              fillColor: look.surface,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  look.radius,
-                                ),
-                                borderSide: BorderSide(color: look.line),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  look.radius,
-                                ),
-                                borderSide: BorderSide(color: look.line),
-                              ),
+                        child: TextField(
+                          key: const ValueKey('settings-search'),
+                          controller: _query,
+                          textInputAction: TextInputAction.search,
+                          decoration: InputDecoration(
+                            hintText: l.settingsSearchHint,
+                            prefixIcon: const Icon(Icons.search),
+                            suffixIcon: query.isEmpty
+                                ? null
+                                : IconButton(
+                                    tooltip: MaterialLocalizations.of(context)
+                                        .deleteButtonTooltip,
+                                    icon: const Icon(Icons.close),
+                                    onPressed: _query.clear,
+                                  ),
+                            filled: true,
+                            fillColor: look.surface,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(look.radius),
+                              borderSide: BorderSide(color: look.line),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(look.radius),
+                              borderSide: BorderSide(color: look.line),
                             ),
                           ),
                         ),
                       ),
-                      if (query.isEmpty) ...[
-                        const _DownloadsCard(),
-                        const _Grid(),
-                      ] else
-                        _Results(query: query),
+                      Expanded(
+                        child: CustomScrollView(
+                          slivers: [
+                            if (query.isEmpty) ...[
+                              const _DownloadsCard(),
+                              const _Grid(),
+                            ] else
+                              _Results(query: query),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),

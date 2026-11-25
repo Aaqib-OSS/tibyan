@@ -225,14 +225,14 @@ void main() {
       await tester.scrollUntilVisible(
         tile,
         200,
-        scrollable: find.byType(Scrollable).first,
+        scrollable: find.byType(Scrollable).last,
       );
       expect(tile, findsOneWidget, reason: s.name);
     }
     await tester.scrollUntilVisible(
       card,
       -400,
-      scrollable: find.byType(Scrollable).first,
+      scrollable: find.byType(Scrollable).last,
     );
     final a = tester.getRect(
       find.byKey(const ValueKey('settings-tile.appearance')),
@@ -282,6 +282,17 @@ void main() {
       tester.widget<Text>(find.text('المظهر')).style!.fontSize,
       greaterThan(normalFont),
     );
+  });
+
+  testWidgets('the search stays pinned while the grid scrolls', (tester) async {
+    await pump(tester, size: const Size(420, 600));
+    final field = find.byKey(const ValueKey('settings-search'));
+    final before = tester.getTopLeft(field);
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+    await tester.pump();
+    expect(field, findsOneWidget);
+    expect(tester.getTopLeft(field), before);
+    expect(field.hitTestable(), findsOneWidget);
   });
 
   testWidgets('a tile opens its section', (tester) async {

@@ -11251,6 +11251,24 @@ abstract class AppLocalizations {
   /// **'على جهازي'**
   String get downloadsFilterOnDevice;
 
+  /// No description provided for @adhanSettingsCard.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعدادات الأذان'**
+  String get adhanSettingsCard;
+
+  /// No description provided for @searchScopeTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'النطاق: {scope}'**
+  String searchScopeTooltip(String scope);
+
+  /// No description provided for @backAgainToExit.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط رجوع مرة أخرى للخروج'**
+  String get backAgainToExit;
+
   /// Home arch before any reading: the capsule button's label; opens the mushaf at Al-Fatiha
   ///
   /// In ar, this message translates to:

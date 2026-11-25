@@ -6688,6 +6688,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get downloadsFilterOnDevice => 'On my device';
 
   @override
+  String get adhanSettingsCard => 'Adhan settings';
+
+  @override
+  String searchScopeTooltip(String scope) {
+    return 'Scope: $scope';
+  }
+
+  @override
+  String get backAgainToExit => 'Press back again to exit';
+
+  @override
   String get homeStartButton => 'Start reading';
 
   @override

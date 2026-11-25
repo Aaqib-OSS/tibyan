@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/interface_style.dart';
 import '../../../core/ui/look_kit.dart';
 import '../../../core/ui/responsive.dart';
 import '../../../l10n/app_localizations.dart';
@@ -151,7 +152,61 @@ class _PrayerTimesScreenState extends ConsumerState<PrayerTimesScreen> {
                 ],
               ),
             ),
+            // Pinned under the list, so the list never hides behind it.
+            const _AdhanSettingsCard(),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// The way into the adhan settings, pinned at the bottom of the screen.
+class _AdhanSettingsCard extends StatelessWidget {
+  const _AdhanSettingsCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final look = context.look;
+    final radius = BorderRadius.circular(look.radius);
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+        child: Material(
+          color: look.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: radius,
+            side: BorderSide(color: look.line),
+          ),
+          child: InkWell(
+            key: const ValueKey('prayer-adhan-settings-card'),
+            borderRadius: radius,
+            onTap: () => context.push('$prayerTimesLocation/settings'),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.notifications_active_outlined,
+                    color: look.goldText,
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      l.adhanSettingsCard,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  Icon(Icons.chevron_right, color: look.sub),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
