@@ -11131,6 +11131,12 @@ abstract class AppLocalizations {
   /// **'تابع القراءة'**
   String get homeContinueButton;
 
+  /// Home arch before any reading: the capsule button's label; opens the mushaf at Al-Fatiha
+  ///
+  /// In ar, this message translates to:
+  /// **'ابدأ القراءة'**
+  String get homeStartButton;
+
   /// Home hifz card: juz ladder
   ///
   /// In ar, this message translates to:

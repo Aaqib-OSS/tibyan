@@ -111,6 +111,61 @@ class UiLook extends ThemeExtension<UiLook> {
   /// Smallest touch target.
   double get target => elderly ? 56 : 48;
 
+  /// Soft static depth for home cards and tiles. Light: two warm, faint
+  /// layers; night: darker and tighter.
+  List<BoxShadow> get cardShadows => night
+      ? const [
+          BoxShadow(
+            color: Color(0x4D000000),
+            offset: Offset(0, 1),
+            blurRadius: 2,
+          ),
+          BoxShadow(
+            color: Color(0x4D000000),
+            offset: Offset(0, 3),
+            blurRadius: 8,
+          ),
+        ]
+      : const [
+          BoxShadow(
+            color: Color(0x0F282012),
+            offset: Offset(0, 1),
+            blurRadius: 2,
+          ),
+          BoxShadow(
+            color: Color(0x12282012),
+            offset: Offset(0, 4),
+            blurRadius: 12,
+          ),
+        ];
+
+  /// The hero arch's drop shadow, tinted with the look's main colour in
+  /// the light palette.
+  BoxShadow get archShadow => night
+      ? const BoxShadow(
+          color: Color(0x73000000),
+          offset: Offset(0, 4),
+          blurRadius: 12,
+        )
+      : BoxShadow(
+          color: Color.lerp(accent, Colors.black, .3)!.withValues(alpha: .22),
+          offset: const Offset(0, 6),
+          blurRadius: 18,
+        );
+
+  /// The arch's capsule button.
+  List<BoxShadow> get buttonShadows => [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: night ? .4 : .25),
+      offset: const Offset(0, 2),
+      blurRadius: night ? 4 : 6,
+    ),
+  ];
+
+  /// Shadowed cards drop their hairline in the light palette; night and
+  /// elderly (high contrast) keep it.
+  bool get cardBorder => night || elderly;
+
   /// The look of [style]; [night] for the night and black modes ([black]
   /// picks the OLED black variant of the night palette), [white]
   /// for «أبيض زاهي» (pure white grounds instead of the cream paper).

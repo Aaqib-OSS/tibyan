@@ -4688,6 +4688,10 @@
   "@homeContinueButton": {
     "description": "Home continue-reading arch: the capsule button's label"
   },
+  "homeStartButton": "ابدأ القراءة",
+  "@homeStartButton": {
+    "description": "Home arch before any reading: the capsule button's label; opens the mushaf at Al-Fatiha"
+  },
   "hifzLadderMemorized": "محفوظ",
   "@hifzLadderMemorized": {
     "description": "Home hifz card: juz ladder"

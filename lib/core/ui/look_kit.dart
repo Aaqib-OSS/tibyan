@@ -228,40 +228,68 @@ class HeroArch extends StatelessWidget {
   Widget build(BuildContext context) {
     final look = context.look;
     final c = heroArchColors(look);
+    // Static, so drawn once into its own layer: nothing animates here.
     return ExcludeSemantics(
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: ClipPath(
-              clipper: ArchClipper(spring: spring),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: c.sky,
+      child: RepaintBoundary(
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned.fill(
+              child: CustomPaint(
+                painter: _ArchShadow(look.archShadow, spring: spring),
+              ),
+            ),
+            Positioned.fill(
+              child: ClipPath(
+                clipper: ArchClipper(spring: spring),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: c.sky,
+                    ),
                   ),
-                ),
-                child: CustomPaint(
-                  painter: look.isLayli
-                      ? SkyPainter(const Color(0xFFE6C47A))
-                      : GirihPainter(
-                          Colors.white.withValues(alpha: .10),
-                          cell: 46,
-                        ),
+                  child: CustomPaint(
+                    painter: look.isLayli
+                        ? SkyPainter(const Color(0xFFE6C47A))
+                        : GirihPainter(
+                            Colors.white.withValues(alpha: .10),
+                            cell: 46,
+                          ),
+                  ),
                 ),
               ),
             ),
-          ),
-          Positioned.fill(
-            child: CustomPaint(
-              painter: ArchBorder(c.rim, spring: spring, inset: inset),
+            Positioned.fill(
+              child: CustomPaint(
+                painter: ArchBorder(c.rim, spring: spring, inset: inset),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+}
+
+/// The arch's drop shadow: its own outline, offset and blurred once.
+class _ArchShadow extends CustomPainter {
+  const _ArchShadow(this.shadow, {required this.spring});
+
+  final BoxShadow shadow;
+  final double spring;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawPath(
+      archPath(size, spring: spring).shift(shadow.offset),
+      shadow.toPaint(),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_ArchShadow o) => o.shadow != shadow || o.spring != spring;
 }
 
 /// A home section's icon in the look: a star medallion (مخطوطة), a tile

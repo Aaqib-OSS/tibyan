@@ -6674,6 +6674,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeContinueButton => 'تابع القراءة';
 
   @override
+  String get homeStartButton => 'ابدأ القراءة';
+
+  @override
   String get hifzLadderMemorized => 'محفوظ';
 
   @override
