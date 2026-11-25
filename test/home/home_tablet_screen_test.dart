@@ -15,6 +15,7 @@ import 'package:tibyan/core/theme/theme_registry.dart';
 import 'package:tibyan/core/theme/theme_tokens.dart';
 import 'package:tibyan/features/hifz/hifz_providers.dart';
 import 'package:tibyan/core/ui/look_kit.dart';
+import 'package:tibyan/core/ui/surah_name.dart';
 import 'package:tibyan/features/home/home_screen.dart';
 import 'package:tibyan/features/home/next_prayer_card.dart';
 import 'package:tibyan/features/khatma/khatma_providers.dart';
@@ -194,6 +195,22 @@ void main() {
               (arch.top - grid.top).abs(),
               lessThan(1),
               reason: '${style.name} $tag top',
+            );
+            // The button under the surah, both centred in the arch.
+            final button = tester.getRect(
+              find.byKey(const ValueKey('home-continue-button')),
+            );
+            final name = tester.getRect(find.byType(SurahNameText).first);
+            expect(button.top, greaterThan(name.bottom), reason: style.name);
+            expect(
+              (button.center.dx - arch.center.dx).abs(),
+              lessThan(2),
+              reason: '${style.name} button centred',
+            );
+            expect(
+              (name.center.dx - arch.center.dx).abs(),
+              lessThan(2),
+              reason: '${style.name} surah centred',
             );
           }
         }

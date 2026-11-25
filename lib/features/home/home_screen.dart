@@ -664,7 +664,10 @@ class _ContinueCard extends StatelessWidget {
     final k = _scale(context);
     // Wide and low: the surah and where the reader stopped at the start,
     // the capsule at the end. Large text stacks them.
-    final stacked = MediaQuery.textScalerOf(context).scale(10) > 15;
+    // Grown beside the sections ([fill]): centred, the button under the
+    // surah and its detail.
+    final stacked =
+        fill != null || MediaQuery.textScalerOf(context).scale(10) > 15;
     final text = _text(context, ink, sub, compact: true, center: true);
     final button = _capsule(context, buttonBg, buttonFg);
     return ConstrainedBox(
@@ -682,7 +685,14 @@ class _ContinueCard extends StatelessWidget {
           Padding(
             padding: EdgeInsets.fromLTRB(18, 62 * k, 18, 16 * k),
             child: stacked
-                ? Column(children: [text, const SizedBox(height: 10), button])
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      text,
+                      SizedBox(height: 14 * k),
+                      button,
+                    ],
+                  )
                 : Row(
                     children: [
                       Expanded(
