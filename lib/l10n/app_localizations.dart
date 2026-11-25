@@ -11131,12 +11131,6 @@ abstract class AppLocalizations {
   /// **'تابع القراءة'**
   String get homeContinueButton;
 
-  /// Home arch before any reading: the capsule button's label; opens the mushaf at Al-Fatiha
-  ///
-  /// In ar, this message translates to:
-  /// **'ابدأ القراءة'**
-  String get homeStartButton;
-
   /// Home hifz card: juz ladder
   ///
   /// In ar, this message translates to:
@@ -11160,6 +11154,108 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'الجزء {juz}: محفوظ {memorized}٪، متقن {mastered}٪'**
   String hifzLadderJuz(String juz, String memorized, String mastered);
+
+  /// No description provided for @downloadsStorageTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المساحة المستخدمة'**
+  String get downloadsStorageTitle;
+
+  /// No description provided for @downloadsStorageTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'{size} على جهازك'**
+  String downloadsStorageTotal(String size);
+
+  /// No description provided for @downloadsStorageOther.
+  ///
+  /// In ar, this message translates to:
+  /// **'أخرى'**
+  String get downloadsStorageOther;
+
+  /// No description provided for @downloadsSizeGb.
+  ///
+  /// In ar, this message translates to:
+  /// **'{gb} جيجا'**
+  String downloadsSizeGb(String gb);
+
+  /// No description provided for @downloadsSearchAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث في كل التحميلات…'**
+  String get downloadsSearchAll;
+
+  /// No description provided for @downloadsSearchSection.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث في هذا القسم…'**
+  String get downloadsSearchSection;
+
+  /// No description provided for @downloadsActiveBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} قيد التحميل · {percent}'**
+  String downloadsActiveBanner(String count, String percent);
+
+  /// No description provided for @downloadsActiveShow.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض'**
+  String get downloadsActiveShow;
+
+  /// No description provided for @downloadsActiveTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'التحميلات الجارية'**
+  String get downloadsActiveTitle;
+
+  /// No description provided for @downloadsActiveNone.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا تحميلات جارية الآن'**
+  String get downloadsActiveNone;
+
+  /// No description provided for @downloadsTileOnDevice.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} على جهازك · {size}'**
+  String downloadsTileOnDevice(String count, String size);
+
+  /// No description provided for @downloadsTileNone.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} متاح للتنزيل'**
+  String downloadsTileNone(String count);
+
+  /// No description provided for @downloadsCountOf.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} من {total}'**
+  String downloadsCountOf(String count, String total);
+
+  /// No description provided for @downloadsHeaderOnDevice.
+  ///
+  /// In ar, this message translates to:
+  /// **'على جهازك'**
+  String get downloadsHeaderOnDevice;
+
+  /// No description provided for @downloadsHeaderAvailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'متاح للتنزيل'**
+  String get downloadsHeaderAvailable;
+
+  /// No description provided for @downloadsFilterOnDevice.
+  ///
+  /// In ar, this message translates to:
+  /// **'على جهازي'**
+  String get downloadsFilterOnDevice;
+
+  /// Home arch before any reading: the capsule button's label; opens the mushaf at Al-Fatiha
+  ///
+  /// In ar, this message translates to:
+  /// **'ابدأ القراءة'**
+  String get homeStartButton;
 
   /// No description provided for @adhanPreviewMissing.
   ///

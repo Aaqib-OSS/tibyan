@@ -4688,10 +4688,6 @@
   "@homeContinueButton": {
     "description": "Home continue-reading arch: the capsule button's label"
   },
-  "homeStartButton": "ابدأ القراءة",
-  "@homeStartButton": {
-    "description": "Home arch before any reading: the capsule button's label; opens the mushaf at Al-Fatiha"
-  },
   "hifzLadderMemorized": "محفوظ",
   "@hifzLadderMemorized": {
     "description": "Home hifz card: juz ladder"
@@ -4718,6 +4714,77 @@
         "type": "String"
       }
     }
+  },
+  "downloadsStorageTitle": "المساحة المستخدمة",
+  "downloadsStorageTotal": "{size} على جهازك",
+  "@downloadsStorageTotal": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadsStorageOther": "أخرى",
+  "downloadsSizeGb": "{gb} جيجا",
+  "@downloadsSizeGb": {
+    "placeholders": {
+      "gb": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadsSearchAll": "ابحث في كل التحميلات…",
+  "downloadsSearchSection": "ابحث في هذا القسم…",
+  "downloadsActiveBanner": "{count} قيد التحميل · {percent}",
+  "@downloadsActiveBanner": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadsActiveShow": "عرض",
+  "downloadsActiveTitle": "التحميلات الجارية",
+  "downloadsActiveNone": "لا تحميلات جارية الآن",
+  "downloadsTileOnDevice": "{count} على جهازك · {size}",
+  "@downloadsTileOnDevice": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadsTileNone": "{count} متاح للتنزيل",
+  "@downloadsTileNone": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadsCountOf": "{count} من {total}",
+  "@downloadsCountOf": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadsHeaderOnDevice": "على جهازك",
+  "downloadsHeaderAvailable": "متاح للتنزيل",
+  "downloadsFilterOnDevice": "على جهازي",
+  "homeStartButton": "ابدأ القراءة",
+  "@homeStartButton": {
+    "description": "Home arch before any reading: the capsule button's label; opens the mushaf at Al-Fatiha"
   },
   "adhanPreviewMissing": "صوت المؤذن المختار غير محمّل على الجهاز. حمّله من مكتبة الأذان أولًا."
 }

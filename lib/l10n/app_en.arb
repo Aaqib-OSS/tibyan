@@ -2606,10 +2606,77 @@
   "nextPrayerSetupBody": "Choose your city to see the next prayer and the time left until its adhan.",
   "nextPrayerOpenHint": "Opens prayer times",
   "homeContinueButton": "Continue reading",
-  "homeStartButton": "Start reading",
   "hifzLadderMemorized": "Memorized",
   "hifzLadderMastered": "Mastered",
   "hifzLadderRange": "Juz 1 to 30",
   "hifzLadderJuz": "Juz {juz}: {memorized}% memorized, {mastered}% mastered",
+  "downloadsStorageTitle": "Storage used",
+  "downloadsStorageTotal": "{size} on your device",
+  "@downloadsStorageTotal": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadsStorageOther": "Other",
+  "downloadsSizeGb": "{gb} GB",
+  "@downloadsSizeGb": {
+    "placeholders": {
+      "gb": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadsSearchAll": "Search all downloads…",
+  "downloadsSearchSection": "Search this section…",
+  "downloadsActiveBanner": "{count} downloading · {percent}",
+  "@downloadsActiveBanner": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadsActiveShow": "View",
+  "downloadsActiveTitle": "Running downloads",
+  "downloadsActiveNone": "Nothing is downloading now",
+  "downloadsTileOnDevice": "{count} on your device · {size}",
+  "@downloadsTileOnDevice": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadsTileNone": "{count} available",
+  "@downloadsTileNone": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadsCountOf": "{count} of {total}",
+  "@downloadsCountOf": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadsHeaderOnDevice": "On your device",
+  "downloadsHeaderAvailable": "Available to download",
+  "downloadsFilterOnDevice": "On my device",
+  "homeStartButton": "Start reading",
   "adhanPreviewMissing": "The chosen muezzin's recording isn't on this device yet. Download it from the adhan library first."
 }

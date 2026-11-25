@@ -209,13 +209,31 @@ void main() {
 
   testWidgets('the grid: eight tiles, two columns on a phone', (tester) async {
     await pump(tester);
+    // «مركز التحميلات» first, across the width, under the search.
+    final card = find.byKey(const ValueKey('settings-downloads-card'));
+    expect(card, findsOneWidget);
+    expect(
+      tester.getRect(card).bottom,
+      lessThanOrEqualTo(
+        tester
+            .getRect(find.byKey(const ValueKey('settings-tile.appearance')))
+            .top,
+      ),
+    );
     for (final s in SettingsSection.values) {
-      expect(
-        find.byKey(ValueKey('settings-tile.${s.name}')),
-        findsOneWidget,
-        reason: s.name,
+      final tile = find.byKey(ValueKey('settings-tile.${s.name}'));
+      await tester.scrollUntilVisible(
+        tile,
+        200,
+        scrollable: find.byType(Scrollable).first,
       );
+      expect(tile, findsOneWidget, reason: s.name);
     }
+    await tester.scrollUntilVisible(
+      card,
+      -400,
+      scrollable: find.byType(Scrollable).first,
+    );
     final a = tester.getRect(
       find.byKey(const ValueKey('settings-tile.appearance')),
     );

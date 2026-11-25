@@ -192,9 +192,13 @@ bool tafsirItemMatches(
 /// cancel or delete. One widget for the downloads center and the
 /// library page ([library]: with search, filter and show/hide switches).
 class TafsirDownloadsSection extends ConsumerStatefulWidget {
-  const TafsirDownloadsSection({super.key, this.library = false});
+  const TafsirDownloadsSection({super.key, this.library = false, this.where});
 
   final bool library;
+
+  /// Only the items it accepts (the downloads center's search, its
+  /// «on device» / «available» lists and its running downloads).
+  final bool Function(TafsirDownloadItem item)? where;
 
   @override
   ConsumerState<TafsirDownloadsSection> createState() =>
@@ -379,7 +383,9 @@ class _TafsirDownloadsSectionState
     final all = ref.watch(tafsirDownloadItemsProvider);
     final shown = [
       for (final i in all)
-        if (!widget.library || tafsirItemMatches(i, _query, _filter)) i,
+        if ((!widget.library || tafsirItemMatches(i, _query, _filter)) &&
+            (widget.where?.call(i) ?? true))
+          i,
     ];
     List<TafsirDownloadItem> of(TafsirDownloadGroup g) => [
       for (final i in shown)
