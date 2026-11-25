@@ -322,12 +322,7 @@ class TafsirLibrarySheet extends ConsumerWidget {
             ),
             // The same list as «التفاسير ومعاني القرآن» in the downloads
             // center, with search, filter and the show/hide switches.
-            const Flexible(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-                child: TafsirDownloadsSection(library: true),
-              ),
-            ),
+            const Flexible(child: TafsirDownloadsSection(library: true)),
           ],
         ),
       ),

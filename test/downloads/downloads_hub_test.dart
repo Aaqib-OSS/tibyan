@@ -98,10 +98,7 @@ void main() {
     for (final s in DownloadsSection.values) {
       final tile = find.byKey(ValueKey('downloads-tile-${s.name}'));
       expect(tile, findsOneWidget, reason: s.name);
-      expect(
-        tester.getTopLeft(card).dy,
-        lessThan(tester.getTopLeft(tile).dy),
-      );
+      expect(tester.getTopLeft(card).dy, lessThan(tester.getTopLeft(tile).dy));
     }
     await tester.pumpWidget(const SizedBox());
   });
@@ -123,7 +120,10 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('downloads-filter-on-device')));
     await settle(tester, rounds: 4);
     expect(find.byKey(const ValueKey('downloads-reciter-7-idle')), findsOne);
-    expect(find.byKey(const ValueKey('downloads-reciter-9-idle')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('downloads-reciter-9-idle')),
+      findsNothing,
+    );
     await tester.pumpWidget(const SizedBox());
   });
 
@@ -140,7 +140,10 @@ void main() {
     await tester.tap(hit);
     await settle(tester);
     expect(find.byKey(const ValueKey('downloads-reciter-9-idle')), findsOne);
-    expect(find.byKey(const ValueKey('downloads-reciter-7-idle')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('downloads-reciter-7-idle')),
+      findsNothing,
+    );
     await tester.pumpWidget(const SizedBox());
   });
 
@@ -164,4 +167,56 @@ void main() {
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
   });
+
+  Future<void> expectPinned(
+    WidgetTester tester,
+    String fieldKey,
+    Finder scrollable,
+  ) async {
+    final field = find.byKey(ValueKey(fieldKey));
+    final y = tester.getTopLeft(field).dy;
+    await tester.drag(scrollable, const Offset(0, -300));
+    await tester.pump();
+    expect(field, findsOneWidget);
+    expect(tester.getTopLeft(field).dy, y);
+    await tester.drag(scrollable, const Offset(0, 300));
+    await tester.pump();
+  }
+
+  for (final scale in [1.0, 2.0]) {
+    testWidgets('text scale $scale: the hub search stays pinned', (
+      tester,
+    ) async {
+      await pumpCenter(tester, textScale: scale);
+      final list = find.byKey(const ValueKey('downloads-hub-list'));
+      final card = find.byKey(const ValueKey('downloads-storage-card'));
+      final cardY = tester.getTopLeft(card).dy;
+      await expectPinned(tester, 'downloads-search', list);
+      // The content itself did scroll under the field.
+      await tester.drag(list, const Offset(0, -300));
+      await tester.pump();
+      expect(
+        card.evaluate().isEmpty || tester.getTopLeft(card).dy < cardY,
+        isTrue,
+      );
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    for (final section in DownloadsSection.values) {
+      testWidgets(
+        'text scale $scale: the ${section.name} search stays pinned',
+        (tester) async {
+          await pumpCenter(tester, textScale: scale, section: section);
+          await expectPinned(
+            tester,
+            'downloads-section-search',
+            find.byKey(ValueKey('downloads-section-${section.name}')),
+          );
+          expect(tester.takeException(), isNull);
+          await tester.pumpWidget(const SizedBox());
+        },
+      );
+    }
+  }
 }
