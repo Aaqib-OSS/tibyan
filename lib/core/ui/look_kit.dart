@@ -295,10 +295,14 @@ class _ArchShadow extends CustomPainter {
 /// A home section's icon in the look: a star medallion (مخطوطة), a tile
 /// (هندسي) or an arch (ليلي ذهبي). [k] scales it (62 wide at 1).
 class SectionIcon extends StatelessWidget {
-  const SectionIcon(this.icon, {super.key, this.k = 1});
+  const SectionIcon(this.icon, {super.key, this.k = 1, this.inCard = false});
 
   final IconData icon;
   final double k;
+
+  /// Inside a card that has its own shadow (wide windows): the tile's
+  /// rounded frame casts none; the star medallion casts a soft one.
+  final bool inCard;
 
   @override
   Widget build(BuildContext context) {
@@ -324,15 +328,25 @@ class SectionIcon extends StatelessWidget {
         decoration: BoxDecoration(
           color: look.surface,
           borderRadius: BorderRadius.circular(16),
-          border: look.cardBorder ? Border.all(color: look.line) : null,
-          boxShadow: look.cardShadows,
+          border: look.cardBorder || inCard
+              ? Border.all(color: look.line)
+              : null,
+          boxShadow: inCard ? null : look.cardShadows,
         ),
         child: CustomPaint(
-          painter: StarPainter(
-            look.accent.withValues(alpha: .10),
-            Colors.transparent,
+          painter: inCard
+              ? _ShapeShadow(
+                  look.iconShadows,
+                  (s) => starPath(s.center(Offset.zero), s.shortestSide / 2),
+                )
+              : null,
+          child: CustomPaint(
+            painter: StarPainter(
+              look.accent.withValues(alpha: .10),
+              Colors.transparent,
+            ),
+            child: Icon(icon, color: look.accent, size: glyph),
           ),
-          child: Icon(icon, color: look.accent, size: glyph),
         ),
       ),
       InterfaceStyle.layli => SizedBox(

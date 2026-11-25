@@ -196,6 +196,13 @@ void main() {
               lessThan(1),
               reason: '${style.name} $tag top',
             );
+            // The arch keeps the column's full width.
+            final strip = tester.getRect(find.byType(NextPrayerCard));
+            expect(
+              (arch.width - strip.width).abs(),
+              lessThan(1),
+              reason: '${style.name} arch full width',
+            );
             // The button under the surah, both centred in the arch.
             final button = tester.getRect(
               find.byKey(const ValueKey('home-continue-button')),

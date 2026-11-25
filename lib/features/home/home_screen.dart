@@ -685,13 +685,18 @@ class _ContinueCard extends StatelessWidget {
           Padding(
             padding: EdgeInsets.fromLTRB(18, 62 * k, 18, 16 * k),
             child: stacked
-                ? Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      text,
-                      SizedBox(height: 14 * k),
-                      button,
-                    ],
+                // Full width, as the arch always is: only its content
+                // is centred.
+                ? SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        text,
+                        SizedBox(height: 14 * k),
+                        button,
+                      ],
+                    ),
                   )
                 : Row(
                     children: [
@@ -1081,7 +1086,7 @@ class _SectionTile extends StatelessWidget {
     final look = context.look;
     final card = context.isExpanded;
     final k = _scale(context);
-    final Widget icon = SectionIcon(s.icon, k: k);
+    final Widget icon = SectionIcon(s.icon, k: k, inCard: card);
     final content = Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: card
