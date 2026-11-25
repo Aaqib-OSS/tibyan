@@ -63,9 +63,10 @@ iOS وmacOS:
 
 ## أندرويد: شاشة الأذان الكاملة
 
-- **حزمة جوجل بلاي** تعلن `USE_FULL_SCREEN_INTENT` تلقائيًا (الإذن في `android/app/src/fullscreen/AndroidManifest.xml`)، فتظهر شاشة الأذان الكاملة فوق شاشة القفل. يلزم إقرار Full-screen intent في Play Console (استخدام المنبّه: تنبيهات الأذان التي يفعّلها المستخدم)، وعلى أندرويد ١٤ فأحدث يمنحه المستخدم من الإعدادات.
-- **حزمة هواوي** لا تعلنه إلا مع `--dart-define=FULLSCREEN_ADHAN=true`.
-- للتحقق: `aapt dump permissions <apk> | grep FULL_SCREEN` يُظهره في حزمة بلاي، ولا يُظهر شيئًا في حزمة هواوي العادية.
+- **كل حزم أندرويد** (جوجل بلاي وهواوي) تعلن `USE_FULL_SCREEN_INTENT` (الإذن في `android/app/src/fullscreen/AndroidManifest.xml`)، فتظهر شاشة الأذان الكاملة فوق شاشة القفل.
+- جوجل بلاي: إقرار Full-screen intent في Play Console (استخدام المنبّه: تنبيهات الأذان التي يفعّلها المستخدم) مُقدَّم منذ 1.0.1 (62). وعلى أندرويد ١٤ فأحدث يمنحه المستخدم من الإعدادات.
+- لم يعد للخيار `--dart-define=FULLSCREEN_ADHAN=true` أي أثر، فالإذن مُعلَن دائمًا.
+- للتحقق: `aapt dump permissions <apk> | grep FULL_SCREEN` يُظهره في حزمتي بلاي وهواوي.
 
 ## رموز الأعطال (GlitchTip)
 
