@@ -152,6 +152,30 @@ void main() {
     expect(container.read(prayerSettingsProvider).length, AdhanLength.short);
   });
 
+  testWidgets('while the adhan sounds, its play buttons become «stop»', (
+    tester,
+  ) async {
+    final (container, _) = await setUpScreen(
+      tester,
+      const PrayerSettingsScreen(),
+    );
+    final native = container.read(prayerNativeProvider);
+    final preview = find.byKey(const ValueKey('prayer-volume-preview'));
+    await tester.scrollUntilVisible(preview, 200);
+    expect(find.byKey(const ValueKey('prayer-test-adhan')), findsOneWidget);
+    expect(find.byIcon(Icons.volume_up_outlined), findsOneWidget);
+
+    native.playing.value = true;
+    await tester.pump();
+    expect(find.byIcon(Icons.stop_circle_outlined), findsWidgets);
+    expect(find.byKey(const ValueKey('prayer-stop-adhan')), findsOneWidget);
+    expect(find.byKey(const ValueKey('prayer-test-adhan')), findsNothing);
+
+    native.playing.value = false;
+    await tester.pump();
+    expect(find.byKey(const ValueKey('prayer-test-adhan')), findsOneWidget);
+  });
+
   testWidgets('the library: every muezzin with its licence; download and '
       'choose', (tester) async {
     final (container, fake) = await setUpScreen(

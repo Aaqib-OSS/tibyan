@@ -6686,4 +6686,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String hifzLadderJuz(String juz, String memorized, String mastered) {
     return 'الجزء $juz: محفوظ $memorized٪، متقن $mastered٪';
   }
+
+  @override
+  String get adhanPreviewMissing =>
+      'صوت المؤذن المختار غير محمّل على الجهاز. حمّله من مكتبة الأذان أولًا.';
 }

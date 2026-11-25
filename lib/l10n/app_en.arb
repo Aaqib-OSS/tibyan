@@ -2609,5 +2609,6 @@
   "hifzLadderMemorized": "Memorized",
   "hifzLadderMastered": "Mastered",
   "hifzLadderRange": "Juz 1 to 30",
-  "hifzLadderJuz": "Juz {juz}: {memorized}% memorized, {mastered}% mastered"
+  "hifzLadderJuz": "Juz {juz}: {memorized}% memorized, {mastered}% mastered",
+  "adhanPreviewMissing": "The chosen muezzin's recording isn't on this device yet. Download it from the adhan library first."
 }

@@ -11154,6 +11154,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'الجزء {juz}: محفوظ {memorized}٪، متقن {mastered}٪'**
   String hifzLadderJuz(String juz, String memorized, String mastered);
+
+  /// No description provided for @adhanPreviewMissing.
+  ///
+  /// In ar, this message translates to:
+  /// **'صوت المؤذن المختار غير محمّل على الجهاز. حمّله من مكتبة الأذان أولًا.'**
+  String get adhanPreviewMissing;
 }
 
 class _AppLocalizationsDelegate
