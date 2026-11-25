@@ -404,8 +404,12 @@ class AdhanService : Service() {
         screenOff = null
         session?.release()
         session = null
+        // Only a sound that really played reports «stopped»: a stop sent
+        // to an idle service (the library's preview stops it first) must
+        // not turn the app's fresh «playing» back off.
+        val was = playing
         playing = false
-        onPlaying?.invoke(false)
+        if (was) onPlaying?.invoke(false)
         onFinished?.invoke()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             stopForeground(STOP_FOREGROUND_REMOVE)

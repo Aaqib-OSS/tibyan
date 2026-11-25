@@ -6626,4 +6626,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String hifzLadderJuz(String juz, String memorized, String mastered) {
     return 'Juz $juz: $memorized% memorized, $mastered% mastered';
   }
+
+  @override
+  String get adhanPreviewMissing =>
+      'The chosen muezzin\'s recording isn\'t on this device yet. Download it from the adhan library first.';
 }
