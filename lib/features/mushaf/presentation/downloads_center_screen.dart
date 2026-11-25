@@ -26,6 +26,7 @@ import '../../onboarding/background_downloads.dart';
 import '../../prayer/data/adhan_catalog.dart';
 import '../../prayer/data/adhan_downloads.dart';
 import '../../prayer/presentation/adhan_library_screen.dart' show MuezzinAvatar;
+import '../../prayer/services/prayer_runtime.dart' show prayerNativeProvider;
 import '../../search/semantic/meaning_providers.dart';
 import '../../tasmee/data/background_model_download.dart';
 import '../../tasmee/data/tasmee_backend.dart';
@@ -1348,10 +1349,67 @@ _Item _adhanItem(
         fraction: st.progress,
         done:
             st.phase != AdhanPhase.downloading && st.phase != AdhanPhase.paused,
-        actions: [SizedBox(width: 48, child: Center(child: action))],
+        actions: [
+          if (muezzin != null && st.phase == AdhanPhase.installed)
+            SizedBox(
+              width: 48,
+              child: Center(
+                child: _AdhanPlayButton(muezzin: muezzin, name: name),
+              ),
+            ),
+          SizedBox(width: 48, child: Center(child: action)),
+        ],
       );
     },
   );
+}
+
+/// The muezzin whose recording the downloads center is playing.
+final _adhanPlaying = ValueNotifier<String?>(null);
+
+/// Play / stop for a downloaded muezzin, as in the adhan library: the
+/// same button stops the adhan while it sounds.
+class _AdhanPlayButton extends ConsumerWidget {
+  const _AdhanPlayButton({required this.muezzin, required this.name});
+
+  final Muezzin muezzin;
+  final String name;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final native = ref.watch(prayerNativeProvider);
+    final adhan = ref.watch(adhanDownloadsProvider);
+    return ListenableBuilder(
+      listenable: Listenable.merge([native.playing, _adhanPlaying]),
+      builder: (context, _) {
+        final playing =
+            native.playing.value && _adhanPlaying.value == muezzin.slug;
+        return IconButton(
+          key: ValueKey('downloads-adhan-play-${muezzin.slug}'),
+          tooltip: playing ? l.adhanStop : l.adhanPreview(name),
+          onPressed: () async {
+            if (playing) {
+              _adhanPlaying.value = null;
+              await native.stop();
+              return;
+            }
+            final file = await adhan.fileOf(muezzin.slug, 'full.m4a');
+            if (native.playing.value) await native.stop();
+            _adhanPlaying.value = muezzin.slug;
+            await native.play(
+              [file.path],
+              title: l.adhanPreview(name),
+              preview: true,
+            );
+          },
+          icon: Icon(
+            playing ? Icons.stop_circle_outlined : Icons.play_circle_outline,
+          ),
+        );
+      },
+    );
+  }
 }
 
 String _mb(BuildContext context, int bytes) =>
