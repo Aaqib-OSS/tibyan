@@ -791,24 +791,37 @@ class _Rail extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // The logo and «الرئيسية» stay pinned at the top.
+                Padding(
+                  key: const ValueKey('rail-header'),
+                  padding: compact
+                      ? const EdgeInsets.fromLTRB(12, 20, 12, 0)
+                      : const EdgeInsets.fromLTRB(16, 24, 16, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Center(
+                        child: TibyanWordmark(
+                          color: l.onFrame,
+                          height: compact ? 32 : 56,
+                        ),
+                      ),
+                      SizedBox(height: compact ? 16 : 20),
+                      tile(RailItem.home),
+                    ],
+                  ),
+                ),
                 // A short window has less height than every destination:
-                // the list scrolls, settings stay pinned below it.
+                // the rest scrolls, settings stay pinned below it.
                 Expanded(
                   child: SingleChildScrollView(
+                    key: const ValueKey('rail-list'),
                     padding: compact
-                        ? const EdgeInsets.fromLTRB(12, 20, 12, 8)
-                        : const EdgeInsets.fromLTRB(16, 24, 16, 8),
+                        ? const EdgeInsets.fromLTRB(12, 0, 12, 8)
+                        : const EdgeInsets.fromLTRB(16, 0, 16, 8),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Center(
-                          child: TibyanWordmark(
-                            color: l.onFrame,
-                            height: compact ? 32 : 56,
-                          ),
-                        ),
-                        SizedBox(height: compact ? 16 : 20),
-                        tile(RailItem.home),
                         for (final (title, items) in groups) ...[
                           heading(title),
                           for (final item in items) tile(item),
