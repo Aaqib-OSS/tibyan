@@ -308,8 +308,14 @@ class SectionIcon extends StatelessWidget {
       InterfaceStyle.makhtuta => SizedBox.square(
         dimension: 62 * k,
         child: CustomPaint(
-          painter: StarPainter(look.surface, look.gold),
-          child: Icon(icon, color: look.accent, size: glyph),
+          painter: _ShapeShadow(
+            look.cardShadows,
+            (s) => starPath(s.center(Offset.zero), s.shortestSide / 2),
+          ),
+          child: CustomPaint(
+            painter: StarPainter(look.surface, look.gold),
+            child: Icon(icon, color: look.accent, size: glyph),
+          ),
         ),
       ),
       InterfaceStyle.handasi => Container(
@@ -318,7 +324,8 @@ class SectionIcon extends StatelessWidget {
         decoration: BoxDecoration(
           color: look.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: look.line),
+          border: look.cardBorder ? Border.all(color: look.line) : null,
+          boxShadow: look.cardShadows,
         ),
         child: CustomPaint(
           painter: StarPainter(
@@ -333,6 +340,14 @@ class SectionIcon extends StatelessWidget {
         height: 78 * k,
         child: Stack(
           children: [
+            Positioned.fill(
+              child: CustomPaint(
+                painter: _ShapeShadow(
+                  look.cardShadows,
+                  (s) => archPath(s, spring: .5),
+                ),
+              ),
+            ),
             Positioned.fill(
               child: ClipPath(
                 clipper: const ArchClipper(spring: .5),
@@ -1228,4 +1243,24 @@ class LookTheme extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       Theme(data: LookTheme.of(Theme.of(context)), child: child);
+}
+
+/// Static shadows under a shape (a star, an arch): each [BoxShadow] drawn
+/// once along the shape's outline, no layer and no blur of the background.
+class _ShapeShadow extends CustomPainter {
+  const _ShapeShadow(this.shadows, this.shape);
+
+  final List<BoxShadow> shadows;
+  final Path Function(Size) shape;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = shape(size);
+    for (final s in shadows) {
+      canvas.drawPath(path.shift(s.offset), s.toPaint());
+    }
+  }
+
+  @override
+  bool shouldRepaint(_ShapeShadow o) => o.shadows != shadows;
 }
