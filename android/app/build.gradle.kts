@@ -29,15 +29,10 @@ val tibyanStore: String = (project.findProperty("dart-defines") as String?)
     ?: "play"
 val huaweiBuild = tibyanStore == "huawei"
 
-// The full-screen adhan over the lock screen (USE_FULL_SCREEN_INTENT).
-// The Play build declares it (Play Console: Full-screen intent declaration,
-// alarm use); `--dart-define=FULLSCREEN_ADHAN=true` also turns it on for
-// other stores, e.g. phone test builds (docs/RELEASE.md).
-val fullScreenAdhan: Boolean = !huaweiBuild || ((project.findProperty("dart-defines") as String?)
-    ?.split(",")
-    ?.mapNotNull { runCatching { String(Base64.getDecoder().decode(it)) }.getOrNull() }
-    ?.any { it == "FULLSCREEN_ADHAN=true" }
-    ?: false)
+// The full-screen adhan over the lock screen (USE_FULL_SCREEN_INTENT), in
+// every Android build: Play (declared in Play Console: Full-screen intent,
+// alarm use) and Huawei alike (docs/RELEASE.md).
+val fullScreenAdhan: Boolean = true
 
 android {
     namespace = "app.tibyan.tibyan"
@@ -85,7 +80,7 @@ android {
     }
 
     // FULLSCREEN_ADHAN=true: src/fullscreen's manifest (the permission) is
-    // merged into every build type of the Play build (or with the define).
+    // merged into every build type of every build.
     if (fullScreenAdhan) {
         for (type in listOf("debug", "profile", "release")) {
             sourceSets.maybeCreate(type).manifest.srcFile("src/fullscreen/AndroidManifest.xml")
