@@ -6614,6 +6614,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeContinueButton => 'Continue reading';
 
   @override
+  String get homeStartButton => 'Start reading';
+
+  @override
   String get hifzLadderMemorized => 'Memorized';
 
   @override

@@ -228,40 +228,68 @@ class HeroArch extends StatelessWidget {
   Widget build(BuildContext context) {
     final look = context.look;
     final c = heroArchColors(look);
+    // Static, so drawn once into its own layer: nothing animates here.
     return ExcludeSemantics(
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: ClipPath(
-              clipper: ArchClipper(spring: spring),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: c.sky,
+      child: RepaintBoundary(
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned.fill(
+              child: CustomPaint(
+                painter: _ArchShadow(look.archShadow, spring: spring),
+              ),
+            ),
+            Positioned.fill(
+              child: ClipPath(
+                clipper: ArchClipper(spring: spring),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: c.sky,
+                    ),
                   ),
-                ),
-                child: CustomPaint(
-                  painter: look.isLayli
-                      ? SkyPainter(const Color(0xFFE6C47A))
-                      : GirihPainter(
-                          Colors.white.withValues(alpha: .10),
-                          cell: 46,
-                        ),
+                  child: CustomPaint(
+                    painter: look.isLayli
+                        ? SkyPainter(const Color(0xFFE6C47A))
+                        : GirihPainter(
+                            Colors.white.withValues(alpha: .10),
+                            cell: 46,
+                          ),
+                  ),
                 ),
               ),
             ),
-          ),
-          Positioned.fill(
-            child: CustomPaint(
-              painter: ArchBorder(c.rim, spring: spring, inset: inset),
+            Positioned.fill(
+              child: CustomPaint(
+                painter: ArchBorder(c.rim, spring: spring, inset: inset),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+}
+
+/// The arch's drop shadow: its own outline, offset and blurred once.
+class _ArchShadow extends CustomPainter {
+  const _ArchShadow(this.shadow, {required this.spring});
+
+  final BoxShadow shadow;
+  final double spring;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawPath(
+      archPath(size, spring: spring).shift(shadow.offset),
+      shadow.toPaint(),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_ArchShadow o) => o.shadow != shadow || o.spring != spring;
 }
 
 /// A home section's icon in the look: a star medallion (مخطوطة), a tile
@@ -280,8 +308,14 @@ class SectionIcon extends StatelessWidget {
       InterfaceStyle.makhtuta => SizedBox.square(
         dimension: 62 * k,
         child: CustomPaint(
-          painter: StarPainter(look.surface, look.gold),
-          child: Icon(icon, color: look.accent, size: glyph),
+          painter: _ShapeShadow(
+            look.cardShadows,
+            (s) => starPath(s.center(Offset.zero), s.shortestSide / 2),
+          ),
+          child: CustomPaint(
+            painter: StarPainter(look.surface, look.gold),
+            child: Icon(icon, color: look.accent, size: glyph),
+          ),
         ),
       ),
       InterfaceStyle.handasi => Container(
@@ -290,7 +324,8 @@ class SectionIcon extends StatelessWidget {
         decoration: BoxDecoration(
           color: look.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: look.line),
+          border: look.cardBorder ? Border.all(color: look.line) : null,
+          boxShadow: look.cardShadows,
         ),
         child: CustomPaint(
           painter: StarPainter(
@@ -305,6 +340,14 @@ class SectionIcon extends StatelessWidget {
         height: 78 * k,
         child: Stack(
           children: [
+            Positioned.fill(
+              child: CustomPaint(
+                painter: _ShapeShadow(
+                  look.cardShadows,
+                  (s) => archPath(s, spring: .5),
+                ),
+              ),
+            ),
             Positioned.fill(
               child: ClipPath(
                 clipper: const ArchClipper(spring: .5),
@@ -1200,4 +1243,24 @@ class LookTheme extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       Theme(data: LookTheme.of(Theme.of(context)), child: child);
+}
+
+/// Static shadows under a shape (a star, an arch): each [BoxShadow] drawn
+/// once along the shape's outline, no layer and no blur of the background.
+class _ShapeShadow extends CustomPainter {
+  const _ShapeShadow(this.shadows, this.shape);
+
+  final List<BoxShadow> shadows;
+  final Path Function(Size) shape;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = shape(size);
+    for (final s in shadows) {
+      canvas.drawPath(path.shift(s.offset), s.toPaint());
+    }
+  }
+
+  @override
+  bool shouldRepaint(_ShapeShadow o) => o.shadows != shadows;
 }
