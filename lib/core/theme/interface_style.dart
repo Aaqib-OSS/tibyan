@@ -121,21 +121,21 @@ class UiLook extends ThemeExtension<UiLook> {
             blurRadius: 2,
           ),
           BoxShadow(
-            color: Color(0x4D000000),
-            offset: Offset(0, 3),
-            blurRadius: 8,
+            color: Color(0x66000000),
+            offset: Offset(0, 6),
+            blurRadius: 16,
           ),
         ]
       : const [
           BoxShadow(
-            color: Color(0x0F282012),
-            offset: Offset(0, 1),
-            blurRadius: 2,
+            color: Color(0x1A282012),
+            offset: Offset(0, 2),
+            blurRadius: 6,
           ),
           BoxShadow(
-            color: Color(0x12282012),
-            offset: Offset(0, 4),
-            blurRadius: 12,
+            color: Color(0x29282012),
+            offset: Offset(0, 10),
+            blurRadius: 24,
           ),
         ];
 
@@ -143,22 +143,22 @@ class UiLook extends ThemeExtension<UiLook> {
   /// the light palette.
   BoxShadow get archShadow => night
       ? const BoxShadow(
-          color: Color(0x73000000),
-          offset: Offset(0, 4),
-          blurRadius: 12,
+          color: Color(0x8C000000),
+          offset: Offset(0, 8),
+          blurRadius: 20,
         )
       : BoxShadow(
-          color: Color.lerp(accent, Colors.black, .3)!.withValues(alpha: .22),
-          offset: const Offset(0, 6),
-          blurRadius: 18,
+          color: Color.lerp(accent, Colors.black, .3)!.withValues(alpha: .40),
+          offset: const Offset(0, 10),
+          blurRadius: 26,
         );
 
   /// The arch's capsule button.
   List<BoxShadow> get buttonShadows => [
     BoxShadow(
-      color: Colors.black.withValues(alpha: night ? .4 : .25),
-      offset: const Offset(0, 2),
-      blurRadius: night ? 4 : 6,
+      color: Colors.black.withValues(alpha: night ? .5 : .30),
+      offset: const Offset(0, 4),
+      blurRadius: night ? 8 : 10,
     ),
   ];
 
