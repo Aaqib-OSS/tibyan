@@ -374,6 +374,28 @@ void main() {
     );
   });
 
+  testWidgets('«جرّب» in the per-prayer sheet becomes «stop» while the '
+      'adhan sounds', (tester) async {
+    final (container, _) = await setUpScreen(
+      tester,
+      const PrayerSettingsScreen(),
+    );
+    final row = find.byKey(const ValueKey('prayer-adhan-row-maghrib'));
+    await tester.scrollUntilVisible(row, 200);
+    await tester.tap(row);
+    await settle(tester);
+    await tester.tap(find.byKey(const ValueKey('prayer-mode-custom')));
+    await settle(tester);
+    expect(find.byKey(const ValueKey('prayer-own-try')), findsOneWidget);
+    container.read(prayerNativeProvider).playing.value = true;
+    await tester.pump();
+    expect(find.byKey(const ValueKey('prayer-own-try')), findsNothing);
+    expect(find.byKey(const ValueKey('prayer-own-stop')), findsOneWidget);
+    container.read(prayerNativeProvider).playing.value = false;
+    await tester.pump();
+    expect(find.byKey(const ValueKey('prayer-own-try')), findsOneWidget);
+  });
+
   testWidgets('«جرّب» in the per-prayer sheet shows the toast', (tester) async {
     final alarms = _FakeAlarms();
     await setUpScreen(

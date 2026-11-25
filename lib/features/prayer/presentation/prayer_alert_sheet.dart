@@ -309,34 +309,51 @@ class PrayerAlertSheet extends ConsumerWidget {
               ],
               if (sound == AlertSound.adhan) ...[
                 const SizedBox(height: 10),
-                OutlinedButton.icon(
-                  key: const ValueKey('prayer-own-try'),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(48),
-                  ),
-                  icon: const Icon(Icons.play_circle_outline),
-                  label: Text(l.prayerTryOwn),
-                  onPressed: () async {
-                    // The sheet closes first, so the toast shows on the
-                    // screen beneath it, like «جرّب الأذان» in the settings.
-                    final messenger = ScaffoldMessenger.maybeOf(context);
-                    final router = GoRouter.maybeOf(context);
-                    final alarms = ref.read(prayerAlarmsProvider);
-                    Navigator.of(context).pop();
-                    await alarms.testAdhan(
-                      s,
-                      l,
-                      prayer: prayer,
-                      showScene: router == null
-                          ? null
-                          : (loc) => unawaited(router.push(loc)),
-                      playInApp: () async =>
-                          PrayerRuntime.instance?.playAdhan(prayer),
-                    );
-                    messenger?.showSnackBar(
-                      appToast(content: Text(l.adhanTestScheduled)),
-                    );
-                  },
+                // While the adhan sounds, «جرّب» becomes «إيقاف الأذان».
+                ValueListenableBuilder<bool>(
+                  valueListenable: ref.watch(prayerNativeProvider).playing,
+                  builder: (context, playing, _) => playing
+                      ? OutlinedButton.icon(
+                          key: const ValueKey('prayer-own-stop'),
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(48),
+                          ),
+                          icon: const Icon(Icons.stop_circle_outlined),
+                          label: Text(l.adhanStop),
+                          onPressed: () =>
+                              ref.read(prayerNativeProvider).stop(),
+                        )
+                      : OutlinedButton.icon(
+                          key: const ValueKey('prayer-own-try'),
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(48),
+                          ),
+                          icon: const Icon(Icons.play_circle_outline),
+                          label: Text(l.prayerTryOwn),
+                          onPressed: () async {
+                            // The sheet closes first, so the toast shows on the
+                            // screen beneath it, like «جرّب الأذان» in the settings.
+                            final messenger = ScaffoldMessenger.maybeOf(
+                              context,
+                            );
+                            final router = GoRouter.maybeOf(context);
+                            final alarms = ref.read(prayerAlarmsProvider);
+                            Navigator.of(context).pop();
+                            await alarms.testAdhan(
+                              s,
+                              l,
+                              prayer: prayer,
+                              showScene: router == null
+                                  ? null
+                                  : (loc) => unawaited(router.push(loc)),
+                              playInApp: () async =>
+                                  PrayerRuntime.instance?.playAdhan(prayer),
+                            );
+                            messenger?.showSnackBar(
+                              appToast(content: Text(l.adhanTestScheduled)),
+                            );
+                          },
+                        ),
                 ),
               ],
               const SizedBox(height: 16),
