@@ -141,15 +141,6 @@ class UiLook extends ThemeExtension<UiLook> {
 
   /// The hero arch's drop shadow, tinted with the look's main colour in
   /// the light palette.
-  /// A small shape's soft shadow (the section star inside a card).
-  List<BoxShadow> get iconShadows => [
-    BoxShadow(
-      color: Colors.black.withValues(alpha: night ? .35 : .14),
-      offset: const Offset(0, 2),
-      blurRadius: 5,
-    ),
-  ];
-
   BoxShadow get archShadow => night
       ? const BoxShadow(
           color: Color(0x8C000000),

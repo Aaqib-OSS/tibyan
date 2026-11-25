@@ -300,8 +300,8 @@ class SectionIcon extends StatelessWidget {
   final IconData icon;
   final double k;
 
-  /// Inside a card that has its own shadow (wide windows): the tile's
-  /// rounded frame casts none; the star medallion casts a soft one.
+  /// Inside a card that has its own shadow (wide windows): the tile keeps
+  /// its plain frame, with no shadow of its own.
   final bool inCard;
 
   @override
@@ -334,19 +334,11 @@ class SectionIcon extends StatelessWidget {
           boxShadow: inCard ? null : look.cardShadows,
         ),
         child: CustomPaint(
-          painter: inCard
-              ? _ShapeShadow(
-                  look.iconShadows,
-                  (s) => starPath(s.center(Offset.zero), s.shortestSide / 2),
-                )
-              : null,
-          child: CustomPaint(
-            painter: StarPainter(
-              look.accent.withValues(alpha: .10),
-              Colors.transparent,
-            ),
-            child: Icon(icon, color: look.accent, size: glyph),
+          painter: StarPainter(
+            look.accent.withValues(alpha: .10),
+            Colors.transparent,
           ),
+          child: Icon(icon, color: look.accent, size: glyph),
         ),
       ),
       InterfaceStyle.layli => SizedBox(
