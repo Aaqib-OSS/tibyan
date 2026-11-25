@@ -16,6 +16,7 @@ import '../domain/prayer_settings.dart';
 import '../prayer_providers.dart';
 import '../services/prayer_alarms.dart';
 import '../services/prayer_runtime.dart';
+import 'adhan_library_screen.dart' show MuezzinAvatar;
 import 'prayer_widgets.dart';
 
 /// One prayer's alert: its sound, the muezzin, a reminder before it, and
@@ -154,35 +155,32 @@ class PrayerAlertSheet extends ConsumerWidget {
                 const SizedBox(height: 14),
                 Text(l.prayerMuezzin, style: label),
                 const SizedBox(height: 4),
-                DropdownButtonFormField<String?>(
+                // Faces, like the adhan library: «as the general one»
+                // first, then every muezzin.
+                SizedBox(
                   key: const ValueKey('prayer-own-muezzin'),
-                  initialValue: own.muezzin,
-                  isExpanded: true,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 14,
-                    ),
-                  ),
-                  items: [
-                    DropdownMenuItem<String?>(
-                      value: null,
-                      child: Text(
-                        '${l.prayerSameAsGeneral} (${general.name(l.localeName == 'ar')})',
-                        overflow: TextOverflow.ellipsis,
+                  height: 118,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      _MuezzinChoice(
+                        key: const ValueKey('prayer-own-muezzin-general'),
+                        muezzin: general,
+                        label: l.prayerSameAsGeneral,
+                        selected: own.muezzin == null,
+                        onTap: () => setOwn(own.copyWith(muezzin: () => null)),
                       ),
-                    ),
-                    for (final x in muezzins)
-                      DropdownMenuItem<String?>(
-                        value: x.slug,
-                        child: Text(
-                          x.name(l.localeName == 'ar'),
-                          overflow: TextOverflow.ellipsis,
+                      for (final x in muezzins)
+                        _MuezzinChoice(
+                          key: ValueKey('prayer-own-muezzin-${x.slug}'),
+                          muezzin: x,
+                          label: x.name(l.localeName == 'ar'),
+                          selected: own.muezzin == x.slug,
+                          onTap: () =>
+                              setOwn(own.copyWith(muezzin: () => x.slug)),
                         ),
-                      ),
-                  ],
-                  onChanged: (v) => setOwn(own.copyWith(muezzin: () => v)),
+                    ],
+                  ),
                 ),
                 if (!installed) ...[
                   const SizedBox(height: 8),
@@ -507,6 +505,75 @@ class PrayerAdhanRow extends ConsumerWidget {
         subtitle: Text(summary),
         trailing: const Icon(Icons.chevron_right),
         onTap: () => showPrayerAlertSheet(context, prayer),
+      ),
+    );
+  }
+}
+
+/// One muezzin to pick for a prayer: his photo (as in the adhan library)
+/// and name; the chosen one is ringed.
+class _MuezzinChoice extends StatelessWidget {
+  const _MuezzinChoice({
+    super.key,
+    required this.muezzin,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final Muezzin muezzin;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tokens.colors;
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: label,
+      excludeSemantics: true,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: SizedBox(
+          width: 84,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+            child: Column(
+              children: [
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: selected ? t.control : Colors.transparent,
+                      width: 3,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(2),
+                    child: MuezzinAvatar(muezzin: muezzin, size: 56),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Expanded(
+                  child: Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      height: 1.3,
+                      fontWeight: selected ? FontWeight.w700 : null,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

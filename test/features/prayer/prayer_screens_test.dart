@@ -299,9 +299,9 @@ void main() {
     await settle(tester);
     await tester.tap(find.byKey(const ValueKey('prayer-mode-custom')));
     await settle(tester);
-    await tester.tap(find.byKey(const ValueKey('prayer-own-muezzin')));
-    await settle(tester);
-    await tester.tap(find.text('محمد صديق المنشاوي').last);
+    final minshawi = find.byKey(const ValueKey('prayer-own-muezzin-minshawi'));
+    await tester.ensureVisible(minshawi);
+    await tester.tap(minshawi);
     await settle(tester);
     await tester.tap(find.byKey(const ValueKey('prayer-own-length-short')));
     await settle(tester);
