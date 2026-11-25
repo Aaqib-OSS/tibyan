@@ -408,11 +408,15 @@ class PrayerAlarms {
       return;
     }
     if (_apple) {
+      // macOS plays the adhan in the app (as the real one does from the
+      // runtime's check); the notice comes silent. iOS: the notification's
+      // own sound.
+      final mac = Platform.isMacOS;
       final fln = await plugin();
-      final sound = await _appleSound(slugNow);
+      final sound = mac ? null : await _appleSound(slugNow);
       final darwin = DarwinNotificationDetails(
         sound: sound,
-        presentSound: true,
+        presentSound: !mac,
       );
       await fln?.zonedSchedule(
         id: prayerTestId,
@@ -423,6 +427,7 @@ class PrayerAlarms {
         body: body,
         payload: payload,
       );
+      if (mac) Timer(testDelay, () => unawaited(playInApp()));
       return;
     }
     Timer(testDelay, () => unawaited(playInApp()));

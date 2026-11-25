@@ -20,7 +20,16 @@ class AppDelegate: FlutterAppDelegate {
       ?? "group.app.tibyan.tibyan"
   }
 
+  /// Keeps macOS App Nap from freezing the app's timers while its window
+  /// is hidden or behind others: the adhan is started by a 15-second check
+  /// in Dart, and with App Nap it only sounded once the alert was clicked.
+  /// The system may still sleep when idle.
+  private var noNap: NSObjectProtocol?
+
   override func applicationDidFinishLaunching(_ notification: Notification) {
+    noNap = ProcessInfo.processInfo.beginActivity(
+      options: [.userInitiatedAllowingIdleSystemSleep],
+      reason: "Prayer times: the adhan plays at its time")
     BackupExclusion.apply()
     if let controller = NSApplication.shared.windows
       .compactMap({ $0.contentViewController as? FlutterViewController }).first

@@ -151,7 +151,7 @@ Future<void> main([List<String> args = const []]) async {
   // Pack downloads run in the background; finish any that ended while the
   // app was closed. Notifications speak the interface language.
   final l = lookupAppLocalizations(
-    container.read(settingsProvider).locale ?? const Locale('ar'),
+    container.read(settingsProvider).resolvedLocale,
   );
   BackgroundPacks.texts = (
     running: l.notifDownloading,
@@ -332,7 +332,7 @@ void _startKhatma(ProviderContainer container) {
     try {
       await WidgetsBinding.instance.endOfFrame;
       final settings = container.read(settingsProvider);
-      final l = lookupAppLocalizations(settings.locale ?? const Locale('ar'));
+      final l = lookupAppLocalizations(settings.resolvedLocale);
       final prefs = container.read(sharedPreferencesProvider);
       final today = Day.today();
       if (!verseOfDayStale(
@@ -529,7 +529,7 @@ void _startCarBrowsing(ProviderContainer container) {
   final android = defaultTargetPlatform == TargetPlatform.android;
   if (!android && defaultTargetPlatform != TargetPlatform.iOS) return;
   final text = lookupAppLocalizations(
-    container.read(settingsProvider).locale ?? const Locale('ar'),
+    container.read(settingsProvider).resolvedLocale,
   );
   final browser = CarBrowser(
     reciters: () => container.read(recitersProvider.future),
@@ -579,7 +579,7 @@ void _startLiveActivity(ProviderContainer container) {
   Future<RecitationActivityContent?> contentOf(RecitationState s) async {
     if (!s.active) return null;
     final l = lookupAppLocalizations(
-      container.read(settingsProvider).locale ?? const Locale('ar'),
+      container.read(settingsProvider).resolvedLocale,
     );
     final ar = l.localeName == 'ar';
     String? surah, reciter;

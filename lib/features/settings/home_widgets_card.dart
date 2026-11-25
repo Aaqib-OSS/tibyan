@@ -42,7 +42,7 @@ Future<void> refreshHomeWidgets(WidgetRef ref) async {
         await verseOfDayEntries(
           ayahById: ref.read(mushafRepositoryProvider).ayahById,
           surahs: await ref.read(surahsProvider.future),
-          l: lookupAppLocalizations(settings.locale ?? const Locale('ar')),
+          l: lookupAppLocalizations(settings.resolvedLocale),
           from: Day.today(),
         ),
       );

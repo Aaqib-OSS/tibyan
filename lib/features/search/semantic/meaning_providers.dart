@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:isolate';
 
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/settings/settings_controller.dart';
@@ -90,7 +89,7 @@ class SemanticDownloadController extends Notifier<PackProgress> {
 
   Future<void> start() async {
     final l = lookupAppLocalizations(
-      ref.read(settingsProvider).locale ?? const Locale('ar'),
+      ref.read(settingsProvider).resolvedLocale,
     );
     state = PackProgress(
       PackPhase.downloading,
