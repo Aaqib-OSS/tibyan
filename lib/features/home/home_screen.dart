@@ -1,6 +1,8 @@
+import 'dart:math' as math;
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderProxyBox;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -154,9 +156,10 @@ class HomeScreen extends ConsumerWidget {
     ];
 
     // The page grows from this card (see [ContinueTransition]).
-    final hero = Builder(
+    Widget hero({double? fill}) => Builder(
       // Before any reading: Al-Fatiha, its first verse and page 1.
       builder: (card) => _ContinueCard(
+        fill: fill,
         start: position == null,
         surahRow: surahs == null ? null : surahs[(position?.surah ?? 1) - 1],
         detail: surahs == null
@@ -228,6 +231,7 @@ class HomeScreen extends ConsumerWidget {
             // by side, so the window is used instead of a lone column.
             final twoColumns = box.maxWidth >= 760;
             final grid = _SectionsGrid(
+              key: const ValueKey('home-sections'),
               sections: sections,
               columns: twoColumns ? 4 : 4,
             );
@@ -243,31 +247,21 @@ class HomeScreen extends ConsumerWidget {
                     children: [
                       const _TopBar(),
                       const SizedBox(height: 16),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 5,
-                            child: Column(
-                              children: [
-                                hero,
-                                if (today != null) ...[
-                                  const SizedBox(height: 16),
-                                  today,
-                                ],
-                                const SizedBox(height: 16),
-                                journey,
-                                const SizedBox(height: 16),
-                                const _Depth(
-                                  radius: 18,
-                                  child: NextPrayerCard(),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 32),
-                          Expanded(flex: 6, child: grid),
-                        ],
+                      _WideColumns(
+                        hero: hero,
+                        rest: Column(
+                          children: [
+                            if (today != null) ...[
+                              const SizedBox(height: 16),
+                              today,
+                            ],
+                            const SizedBox(height: 16),
+                            journey,
+                            const SizedBox(height: 16),
+                            const _Depth(radius: 18, child: NextPrayerCard()),
+                          ],
+                        ),
+                        grid: grid,
                       ),
                     ],
                   ),
@@ -285,7 +279,7 @@ class HomeScreen extends ConsumerWidget {
                   children: [
                     const _TopBar(),
                     const SizedBox(height: 12),
-                    hero,
+                    hero(),
                     if (today != null) ...[const SizedBox(height: 16), today],
                     const SizedBox(height: 16),
                     journey,
@@ -301,6 +295,103 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+/// Wide windows: the reading column ([hero] over [rest]) beside the
+/// sections [grid]. Both are measured after layout and the hero grows so
+/// the two columns end level; it never shrinks below its own content and
+/// is capped so a very tall grid cannot make it absurd.
+class _WideColumns extends StatefulWidget {
+  const _WideColumns({
+    required this.hero,
+    required this.rest,
+    required this.grid,
+  });
+
+  final Widget Function({double? fill}) hero;
+  final Widget rest;
+  final Widget grid;
+
+  @override
+  State<_WideColumns> createState() => _WideColumnsState();
+}
+
+class _WideColumnsState extends State<_WideColumns> {
+  double? _grid;
+  double? _rest;
+
+  void _set({double? grid, double? rest}) {
+    if ((grid ?? _grid) == _grid && (rest ?? _rest) == _rest) return;
+    setState(() {
+      _grid = grid ?? _grid;
+      _rest = rest ?? _rest;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final k = _scale(context);
+    final g = _grid, r = _rest;
+    final fill = g == null || r == null ? null : (g - r).clamp(0.0, 640.0 * k);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 5,
+          child: Column(
+            children: [
+              widget.hero(fill: fill),
+              _Measured(
+                onHeight: (h) => _set(rest: h),
+                child: widget.rest,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 32),
+        Expanded(
+          flex: 6,
+          child: _Measured(
+            onHeight: (h) => _set(grid: h),
+            child: widget.grid,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Reports its child's laid-out height after the frame.
+class _Measured extends SingleChildRenderObjectWidget {
+  const _Measured({required this.onHeight, required super.child});
+
+  final ValueChanged<double> onHeight;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenderMeasured(onHeight);
+
+  @override
+  void updateRenderObject(BuildContext context, _RenderMeasured r) =>
+      r.onHeight = onHeight;
+}
+
+class _RenderMeasured extends RenderProxyBox {
+  _RenderMeasured(this.onHeight);
+
+  ValueChanged<double> onHeight;
+  double? _last;
+
+  @override
+  void performLayout() {
+    super.performLayout();
+    final h = size.height;
+    if (h == _last) return;
+    _last = h;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (attached) onHeight(h);
+    });
   }
 }
 
@@ -380,6 +471,7 @@ class _TopBar extends StatelessWidget {
 /// pointed arch in «هندسي» and «ليلي ذهبي».
 class _ContinueCard extends StatelessWidget {
   const _ContinueCard({
+    this.fill,
     this.start = false,
     required this.surahRow,
     required this.detail,
@@ -388,6 +480,10 @@ class _ContinueCard extends StatelessWidget {
 
   /// No reading yet: the arch offers Al-Fatiha with «ابدأ القراءة».
   final bool start;
+
+  /// Wide windows: the height the card grows to (at least its content),
+  /// so the reading column ends level with the sections grid.
+  final double? fill;
   final SurahRow? surahRow;
   final String? detail;
   final VoidCallback onOpen;
@@ -521,7 +617,13 @@ class _ContinueCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(3),
         ),
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+        constraints: fill == null
+            ? null
+            : BoxConstraints(minHeight: (fill! - 10).clamp(0, double.infinity)),
         child: Column(
+          mainAxisAlignment: fill == null
+              ? MainAxisAlignment.start
+              : MainAxisAlignment.spaceBetween,
           children: [
             const ExcludeSemantics(child: TazhibBand()),
             const SizedBox(height: 12),
@@ -562,19 +664,40 @@ class _ContinueCard extends StatelessWidget {
     final k = _scale(context);
     // Wide and low: the surah and where the reader stopped at the start,
     // the capsule at the end. Large text stacks them.
-    final stacked = MediaQuery.textScalerOf(context).scale(10) > 15;
+    // Grown beside the sections ([fill]): centred, the button under the
+    // surah and its detail.
+    final stacked =
+        fill != null || MediaQuery.textScalerOf(context).scale(10) > 15;
     final text = _text(context, ink, sub, compact: true, center: true);
     final button = _capsule(context, buttonBg, buttonFg);
     return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: (look.elderly ? 192 : 170) * k),
+      constraints: BoxConstraints(
+        minHeight: math.max((look.elderly ? 192 : 170) * k, fill ?? 0),
+      ),
       child: Stack(
+        // Grown to [fill]: the surah and the button sit centred in it.
+        alignment: fill == null
+            ? AlignmentDirectional.topStart
+            : AlignmentDirectional.center,
         clipBehavior: Clip.none,
         children: [
           const Positioned.fill(child: HeroArch(spring: .3)),
           Padding(
             padding: EdgeInsets.fromLTRB(18, 62 * k, 18, 16 * k),
             child: stacked
-                ? Column(children: [text, const SizedBox(height: 10), button])
+                // Full width, as the arch always is: only its content
+                // is centred.
+                ? SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        text,
+                        SizedBox(height: 14 * k),
+                        button,
+                      ],
+                    ),
+                  )
                 : Row(
                     children: [
                       Expanded(
@@ -883,7 +1006,11 @@ class _TodayCard extends StatelessWidget {
 
 /// The sections as medallions (مخطوطة), tiles (هندسي) or arches (ليلي).
 class _SectionsGrid extends StatelessWidget {
-  const _SectionsGrid({required this.sections, required this.columns});
+  const _SectionsGrid({
+    super.key,
+    required this.sections,
+    required this.columns,
+  });
 
   final List<_Section> sections;
   final int columns;
@@ -959,7 +1086,7 @@ class _SectionTile extends StatelessWidget {
     final look = context.look;
     final card = context.isExpanded;
     final k = _scale(context);
-    final Widget icon = SectionIcon(s.icon, k: k);
+    final Widget icon = SectionIcon(s.icon, k: k, inCard: card);
     final content = Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: card

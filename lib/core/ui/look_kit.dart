@@ -295,10 +295,14 @@ class _ArchShadow extends CustomPainter {
 /// A home section's icon in the look: a star medallion (مخطوطة), a tile
 /// (هندسي) or an arch (ليلي ذهبي). [k] scales it (62 wide at 1).
 class SectionIcon extends StatelessWidget {
-  const SectionIcon(this.icon, {super.key, this.k = 1});
+  const SectionIcon(this.icon, {super.key, this.k = 1, this.inCard = false});
 
   final IconData icon;
   final double k;
+
+  /// Inside a card that has its own shadow (wide windows): the tile keeps
+  /// its plain frame, with no shadow of its own.
+  final bool inCard;
 
   @override
   Widget build(BuildContext context) {
@@ -324,8 +328,10 @@ class SectionIcon extends StatelessWidget {
         decoration: BoxDecoration(
           color: look.surface,
           borderRadius: BorderRadius.circular(16),
-          border: look.cardBorder ? Border.all(color: look.line) : null,
-          boxShadow: look.cardShadows,
+          border: look.cardBorder || inCard
+              ? Border.all(color: look.line)
+              : null,
+          boxShadow: inCard ? null : look.cardShadows,
         ),
         child: CustomPaint(
           painter: StarPainter(
@@ -791,24 +797,37 @@ class _Rail extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // The logo and «الرئيسية» stay pinned at the top.
+                Padding(
+                  key: const ValueKey('rail-header'),
+                  padding: compact
+                      ? const EdgeInsets.fromLTRB(12, 20, 12, 0)
+                      : const EdgeInsets.fromLTRB(16, 24, 16, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Center(
+                        child: TibyanWordmark(
+                          color: l.onFrame,
+                          height: compact ? 32 : 56,
+                        ),
+                      ),
+                      SizedBox(height: compact ? 16 : 20),
+                      tile(RailItem.home),
+                    ],
+                  ),
+                ),
                 // A short window has less height than every destination:
-                // the list scrolls, settings stay pinned below it.
+                // the rest scrolls, settings stay pinned below it.
                 Expanded(
                   child: SingleChildScrollView(
+                    key: const ValueKey('rail-list'),
                     padding: compact
-                        ? const EdgeInsets.fromLTRB(12, 20, 12, 8)
-                        : const EdgeInsets.fromLTRB(16, 24, 16, 8),
+                        ? const EdgeInsets.fromLTRB(12, 0, 12, 8)
+                        : const EdgeInsets.fromLTRB(16, 0, 16, 8),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Center(
-                          child: TibyanWordmark(
-                            color: l.onFrame,
-                            height: compact ? 32 : 56,
-                          ),
-                        ),
-                        SizedBox(height: compact ? 16 : 20),
-                        tile(RailItem.home),
                         for (final (title, items) in groups) ...[
                           heading(title),
                           for (final item in items) tile(item),
