@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -168,6 +170,22 @@ Future<void> _queued(FakeDownloader fake, [int n = 1]) async {
 }
 
 void main() {
+  test('Android without notifications: a user-initiated task is not run '
+      'as a user-initiated job (it would hang the app)', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.android;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+    final fake = FakeDownloader();
+    final downloads = BackgroundDownloads(downloader: fake);
+    await downloads.enqueue(
+      DownloadTask(
+        url: 'https://example.com/model.onnx',
+        filename: 'model.onnx',
+        transferHints: {TransferHint.userInitiated},
+      ),
+    );
+    expect(fake.enqueued.single.priority, isNot(0));
+  });
+
   late Directory tmp;
   late FakeDownloader fake;
   late BackgroundDownloads downloads;

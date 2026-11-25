@@ -114,9 +114,31 @@ class BackgroundDownloads {
     notices.completedWhileAway(away);
   }
 
+  /// Android 14+: a top-priority task (userInitiated) runs as a
+  /// user-initiated job, which must show its notification within seconds.
+  /// background_downloader skips that notification while notifications
+  /// aren't allowed, so Android declared the app not responding (seen in
+  /// onboarding, before the permission is answered). Without the
+  /// permission the task runs at the next priority, through WorkManager.
+  Future<DownloadTask> _safePriority(DownloadTask task) async {
+    if (task.priority != 0 ||
+        kIsWeb ||
+        defaultTargetPlatform != TargetPlatform.android) {
+      return task;
+    }
+    try {
+      final status = await dl.permissions.status(PermissionType.notifications);
+      if (status == PermissionStatus.granted) return task;
+    } catch (_) {
+      // Unknown: the safe side.
+    }
+    return task.copyWith(priority: 1);
+  }
+
   /// Queues [task] (its handler takes over when it ends) and asks for
   /// notifications without holding the download on the answer.
   Future<bool> enqueue(DownloadTask task) async {
+    task = await _safePriority(task);
     final ok = await dl.enqueue(task);
     if (ok) {
       _set(TaskRecord(task, TaskStatus.enqueued, 0, -1));
