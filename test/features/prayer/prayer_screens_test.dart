@@ -176,6 +176,56 @@ void main() {
     expect(find.byKey(const ValueKey('prayer-test-adhan')), findsOneWidget);
   });
 
+  Future<ProviderContainer> openAdhanScene(WidgetTester tester) async {
+    final (container, _) = await setUpScreen(
+      tester,
+      Builder(
+        builder: (context) => Center(
+          child: TextButton(
+            key: const ValueKey('open-scene'),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const AdhanScreen(prayer: PrayerKind.maghrib),
+              ),
+            ),
+            child: const Text('open'),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.byKey(const ValueKey('open-scene')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.byType(AdhanScreen), findsOneWidget);
+    return container;
+  }
+
+  testWidgets('the adhan scene closes itself when the adhan ends', (
+    tester,
+  ) async {
+    final container = await openAdhanScene(tester);
+    final native = container.read(prayerNativeProvider);
+    native.playing.value = true;
+    await tester.pump();
+    expect(find.byType(AdhanScreen), findsOneWidget);
+    native.playing.value = false;
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(seconds: 1));
+    }
+    expect(find.byType(AdhanScreen), findsNothing);
+  });
+
+  testWidgets('the adhan scene never stays more than three minutes', (
+    tester,
+  ) async {
+    await openAdhanScene(tester);
+    await tester.pump(const Duration(minutes: 2, seconds: 59));
+    expect(find.byType(AdhanScreen), findsOneWidget);
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.byType(AdhanScreen), findsNothing);
+  });
+
   testWidgets('the library: every muezzin with its licence; download and '
       'choose', (tester) async {
     final (container, fake) = await setUpScreen(
