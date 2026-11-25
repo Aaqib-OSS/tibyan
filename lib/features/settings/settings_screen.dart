@@ -94,9 +94,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           ),
                         ),
                       ),
-                      if (query.isEmpty)
-                        const _Grid()
-                      else
+                      if (query.isEmpty) ...[
+                        const _DownloadsCard(),
+                        const _Grid(),
+                      ] else
                         _Results(query: query),
                     ],
                   ),
@@ -347,6 +348,76 @@ class _Tile extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// «مركز التحميلات» first, across the whole width: a shortcut only (the
+/// same entry stays in «التخزين والنسخ الاحتياطي»).
+class _DownloadsCard extends StatelessWidget {
+  const _DownloadsCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final look = context.look;
+    final radius = BorderRadius.circular(look.radius);
+    return SliverPadding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      sliver: SliverToBoxAdapter(
+        child: Material(
+          color: look.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: radius,
+            side: BorderSide(color: look.line),
+          ),
+          child: InkWell(
+            key: const ValueKey('settings-downloads-card'),
+            borderRadius: radius,
+            onTap: () => context.push('/downloads'),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: look.accent,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(
+                      Icons.download_for_offline_outlined,
+                      color: look.onControl,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l.downloadsOpen,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          l.downloadsOpenHint,
+                          style: TextStyle(color: look.sub, height: 1.4),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right, color: look.sub),
+                ],
+              ),
+            ),
           ),
         ),
       ),
