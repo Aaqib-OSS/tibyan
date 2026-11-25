@@ -14,6 +14,25 @@ All notable changes to Tibyan are recorded here. The format follows
 ### Changed
 - Misbaha: the true 3D rendering is the default where fragment shaders work; a reader's own choice is kept, and the suggested look is used automatically elsewhere. Nothing is repainted while nothing moves.
 
+## [1.0.1] (build 62) - 2026-11-25
+
+### Added
+- Adhan: play and stop buttons for each muezzin, and a muezzin picker with photos.
+- Android: the full-screen adhan shows over the lock screen.
+- Home: a first-use «ابدأ القراءة» arch before any reading.
+- Settings: an «إعدادات الأذان» card.
+- Android: press back twice to exit.
+
+### Changed
+- A redesigned downloads center.
+- The adhan scene closes by itself after the adhan, or after 3 minutes.
+- Soft shadows; the wide-screen layout is aligned; search fields stay pinned.
+- Notifications follow the app language.
+
+### Fixed
+- The app no longer hangs during onboarding.
+- macOS: the adhan plays while the app is in the background.
+
 ## [1.0.0] (build 61) - 2026-11-24
 
 ### Removed
