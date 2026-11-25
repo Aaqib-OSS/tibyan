@@ -45,7 +45,7 @@ final prayerAlarmsProvider = Provider<PrayerAlarms>((ref) {
         s,
         ref.read(prayerSettingsProvider),
         lookupAppLocalizations(
-          ref.read(settingsProvider).locale ?? const Locale('ar'),
+          ref.read(settingsProvider).resolvedLocale,
         ),
         audio,
       );
@@ -91,7 +91,7 @@ class PrayerRuntime {
   final _played = <int>{};
 
   AppLocalizations get _l => lookupAppLocalizations(
-    _c.read(settingsProvider).locale ?? const Locale('ar'),
+    _c.read(settingsProvider).resolvedLocale,
   );
 
   /// The running one (screens play the adhan through it).

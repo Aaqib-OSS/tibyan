@@ -1,4 +1,3 @@
-import 'dart:ui' show Locale;
 
 import '../../../core/settings/app_settings.dart';
 import '../../../l10n/app_localizations.dart';
@@ -26,7 +25,7 @@ Future<void> syncWeeklyReminder(
     await scheduler.cancelOnce(weeklyReminderIdBase + i);
   }
   if (!settings.weeklyReminder) return;
-  final l = lookupAppLocalizations(settings.locale ?? const Locale('ar'));
+  final l = lookupAppLocalizations(settings.resolvedLocale);
   final times = nextWeeklyTimes(
     now ?? DateTime.now(),
     weekday: settings.weeklyReminderWeekday,
