@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:ui' show Locale, Rect;
+import 'dart:ui' show Rect;
 
 import 'package:flutter/services.dart' show ByteData, FontLoader;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -312,7 +312,7 @@ class PageDownloadController extends Notifier<PackProgress> {
   }
 
   AppLocalizations get _l => lookupAppLocalizations(
-    ref.read(settingsProvider).locale ?? const Locale('ar'),
+    ref.read(settingsProvider).resolvedLocale,
   );
 
   Future<void> start() async {
@@ -390,7 +390,7 @@ class EditionDownload extends Notifier<PackProgress> {
       total: state.total,
     );
     final l = lookupAppLocalizations(
-      ref.read(settingsProvider).locale ?? const Locale('ar'),
+      ref.read(settingsProvider).resolvedLocale,
     );
     await ref
         .read(backgroundPacksProvider)

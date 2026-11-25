@@ -2676,5 +2676,7 @@
   },
   "downloadsHeaderOnDevice": "On your device",
   "downloadsHeaderAvailable": "Available to download",
-  "downloadsFilterOnDevice": "On my device"
+  "downloadsFilterOnDevice": "On my device",
+  "homeStartButton": "Start reading",
+  "adhanPreviewMissing": "The chosen muezzin's recording isn't on this device yet. Download it from the adhan library first."
 }

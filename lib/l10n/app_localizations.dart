@@ -11250,6 +11250,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'على جهازي'**
   String get downloadsFilterOnDevice;
+
+  /// Home arch before any reading: the capsule button's label; opens the mushaf at Al-Fatiha
+  ///
+  /// In ar, this message translates to:
+  /// **'ابدأ القراءة'**
+  String get homeStartButton;
+
+  /// No description provided for @adhanPreviewMissing.
+  ///
+  /// In ar, this message translates to:
+  /// **'صوت المؤذن المختار غير محمّل على الجهاز. حمّله من مكتبة الأذان أولًا.'**
+  String get adhanPreviewMissing;
 }
 
 class _AppLocalizationsDelegate

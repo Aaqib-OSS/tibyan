@@ -41,14 +41,61 @@ class AdhanScreen extends ConsumerStatefulWidget {
   /// How late a tap on the alert still starts the full adhan.
   static const startWithin = Duration(minutes: 10);
 
+  /// The scene never stays longer than this, sounding or not.
+  static const maxShown = Duration(minutes: 3);
+
   @override
   ConsumerState<AdhanScreen> createState() => _AdhanScreenState();
 }
 
 class _AdhanScreenState extends ConsumerState<AdhanScreen> {
+  Timer? _limit;
+  ValueNotifier<bool>? _playing;
+  bool _heard = false;
+  bool _closing = false;
+
+  /// Closes the scene when the adhan ends, or after [AdhanScreen.maxShown]
+  /// at the latest, on every platform.
+  void _onPlaying() {
+    final playing = _playing!.value;
+    if (playing) _heard = true;
+    if (!playing && _heard) unawaited(_close());
+  }
+
+  /// Stops the adhan (if any) and leaves, as «إيقاف الأذان» does.
+  Future<void> _close() async {
+    if (_closing || !mounted) return;
+    _closing = true;
+    _limit?.cancel();
+    final native = ref.read(prayerNativeProvider);
+    // The scene leaves even if the platform side fails to answer.
+    try {
+      await native.stop().timeout(const Duration(seconds: 2));
+      await native.leaveLockScreen().timeout(const Duration(seconds: 2));
+    } catch (_) {}
+    if (!mounted) return;
+    final nav = Navigator.of(context);
+    final router = GoRouter.maybeOf(context);
+    if (nav.canPop()) {
+      nav.pop();
+    } else if (router != null) {
+      await openOverHome(router, prayerTimesLocation);
+    }
+  }
+
+  @override
+  void dispose() {
+    _limit?.cancel();
+    _playing?.removeListener(_onPlaying);
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
+    _limit = Timer(AdhanScreen.maxShown, () => unawaited(_close()));
+    _playing = ref.read(prayerNativeProvider).playing..addListener(_onPlaying);
+    _heard = _playing!.value;
     final at = widget.at;
     if (at != null) {
       final late = DateTime.now().difference(at);
@@ -159,19 +206,7 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
                         ),
                         // Always enabled: over the lock screen the app may
                         // not know yet that the service plays.
-                        onPressed: () async {
-                          await native.stop();
-                          await native.leaveLockScreen();
-                          if (!context.mounted) return;
-                          if (context.canPop()) {
-                            context.pop();
-                          } else {
-                            await openOverHome(
-                              GoRouter.of(context),
-                              prayerTimesLocation,
-                            );
-                          }
-                        },
+                        onPressed: _close,
                         child: Text(
                           l.adhanStop,
                           style: const TextStyle(

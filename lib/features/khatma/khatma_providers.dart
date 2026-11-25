@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:ui' show Locale;
 
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -392,7 +391,7 @@ class KhatmaService {
   Future<KhatmahBook> get _book => _ref.read(khatmahBookProvider.future);
 
   AppLocalizations get _l => lookupAppLocalizations(
-    _ref.read(settingsProvider).locale ?? const Locale('ar'),
+    _ref.read(settingsProvider).resolvedLocale,
   );
 
   Day get _today =>
@@ -870,7 +869,7 @@ class KhatmaService {
         statuses.firstOrNull;
     final l = _l;
     final digits = NumberFormatter(
-      _ref.read(settingsProvider).locale ?? const Locale('ar'),
+      _ref.read(settingsProvider).resolvedLocale,
     );
     final today = _today;
     final upcoming = <Day, PageRange>{};

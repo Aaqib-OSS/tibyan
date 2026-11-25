@@ -45,7 +45,7 @@ final prayerAlarmsProvider = Provider<PrayerAlarms>((ref) {
         s,
         ref.read(prayerSettingsProvider),
         lookupAppLocalizations(
-          ref.read(settingsProvider).locale ?? const Locale('ar'),
+          ref.read(settingsProvider).resolvedLocale,
         ),
         audio,
       );
@@ -91,7 +91,7 @@ class PrayerRuntime {
   final _played = <int>{};
 
   AppLocalizations get _l => lookupAppLocalizations(
-    _c.read(settingsProvider).locale ?? const Locale('ar'),
+    _c.read(settingsProvider).resolvedLocale,
   );
 
   /// The running one (screens play the adhan through it).
@@ -199,7 +199,9 @@ class PrayerRuntime {
 
   /// [general]: the general settings, not [prayer]'s own (the general
   /// previews).
-  Future<void> playAdhan(
+  /// Plays the adhan in the app. False when its recording isn't on the
+  /// device, so the caller can say so instead of staying silent.
+  Future<bool> playAdhan(
     PrayerKind prayer, {
     bool? full,
     bool general = false,
@@ -208,7 +210,7 @@ class PrayerRuntime {
     final s = general ? all.copyWith(custom: const {}) : all;
     final alarms = _c.read(prayerAlarmsProvider);
     final files = await alarms.adhanFiles(s, full: full, prayer: prayer);
-    if (files.isEmpty) return;
+    if (files.isEmpty) return false;
     final slug = alarms.slugFor(s, prayer) ?? s.muezzin;
     final l = _l;
     _c.read(prayerNativeProvider).stopLabel = l.adhanStop;
@@ -220,6 +222,7 @@ class PrayerRuntime {
           body: l.adhanByMuezzin(muezzinOf(slug).name(l.localeName == 'ar')),
           volume: s.forPrayer(prayer).adhanVolume,
         );
+    return true;
   }
 
   void dispose() {

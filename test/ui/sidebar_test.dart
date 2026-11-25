@@ -201,4 +201,29 @@ void main() {
     expect(railItemFor('/prayer/tracker'), RailItem.tracker);
     expect(railItemFor('/adhkar'), RailItem.adhkar);
   });
+
+  for (final folded in [false, true]) {
+    testWidgets('logo and home stay put while the list scrolls '
+        '(${folded ? 'folded' : 'open'})', (tester) async {
+      await pump(
+        tester,
+        height: 420,
+        prefs: folded ? {'ui.sidebarCollapsed': true} : const {},
+      );
+      final logo = find.byType(TibyanWordmark).first;
+      final home = find.byKey(const ValueKey('rail-home'));
+      final logoAt = tester.getTopLeft(logo);
+      final homeAt = tester.getTopLeft(home);
+      final last = find.byKey(const ValueKey('rail-adhkar'));
+      final before = tester.getTopLeft(last);
+      await tester.drag(
+        find.byKey(const ValueKey('rail-list')),
+        const Offset(0, -400),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.getTopLeft(last).dy, lessThan(before.dy));
+      expect(tester.getTopLeft(logo), logoAt);
+      expect(tester.getTopLeft(home), homeAt);
+    });
+  }
 }
