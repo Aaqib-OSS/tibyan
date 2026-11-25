@@ -169,9 +169,13 @@ void main() {
                     key: ValueKey('center'),
                     child: TafsirDownloadsSection(),
                   ),
-                  KeyedSubtree(
-                    key: ValueKey('library'),
-                    child: TafsirDownloadsSection(library: true),
+                  // The library scrolls inside its own bounded sheet.
+                  SizedBox(
+                    height: 2000,
+                    child: KeyedSubtree(
+                      key: ValueKey('library'),
+                      child: TafsirDownloadsSection(library: true),
+                    ),
                   ),
                 ],
               ),
@@ -217,6 +221,47 @@ void main() {
     await tester.tap(find.text('حذف'));
     await tester.pumpAndSettle();
     expect(onDevice, findsNothing);
+  });
+
+  testWidgets('the library search field stays pinned while it scrolls', (
+    tester,
+  ) async {
+    await pump(tester);
+    // A short sheet so the list has to scroll.
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          theme: tasmeeTheme(container),
+          locale: const Locale('ar'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const Scaffold(
+            body: SizedBox(
+              height: 300,
+              child: TafsirDownloadsSection(library: true),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final field = find.byKey(const ValueKey('tafsir-library-search'));
+    final y = tester.getTopLeft(field).dy;
+    final headerY = tester.getTopLeft(find.text('التفاسير')).dy;
+    await tester.drag(
+      find.byKey(const ValueKey('tafsir-library-scroll')),
+      const Offset(0, -200),
+    );
+    await tester.pumpAndSettle();
+    expect(field, findsOneWidget);
+    expect(tester.getTopLeft(field).dy, y);
+    // The list itself moved under the field.
+    final header = find.text('التفاسير');
+    expect(
+      header.evaluate().isEmpty || tester.getTopLeft(header).dy < headerY,
+      isTrue,
+    );
   });
 
   testWidgets('the library search and filter', (tester) async {

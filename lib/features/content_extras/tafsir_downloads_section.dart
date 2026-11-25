@@ -403,17 +403,6 @@ class _TafsirDownloadsSectionState
     if (widget.library) {
       children
         ..add(
-          TextField(
-            key: const ValueKey('tafsir-library-search'),
-            decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.search),
-              hintText: l.librarySearchHint,
-            ),
-            onChanged: (v) => setState(() => _query = v),
-          ),
-        )
-        ..add(const SizedBox(height: 8))
-        ..add(
           Wrap(
             spacing: 8,
             children: [
@@ -493,10 +482,36 @@ class _TafsirDownloadsSectionState
         ),
       );
     }
-    return Column(
+    final list = Column(
       key: const ValueKey('tafsir-downloads-section'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: children,
+    );
+    if (!widget.library) return list;
+    // The library's search field stays put while its list scrolls.
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          child: TextField(
+            key: const ValueKey('tafsir-library-search'),
+            decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.search),
+              hintText: l.librarySearchHint,
+            ),
+            onChanged: (v) => setState(() => _query = v),
+          ),
+        ),
+        Flexible(
+          child: SingleChildScrollView(
+            key: const ValueKey('tafsir-library-scroll'),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: list,
+          ),
+        ),
+      ],
     );
   }
 }

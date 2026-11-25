@@ -232,45 +232,55 @@ class _HubState extends State<_Hub> {
       child: _CatalogBuilder(
         builder: (context, catalog) {
           final q = _query(_q);
-          return ListView(
-            padding: const EdgeInsets.all(16),
+          // The search field stays put while the hub scrolls under it.
+          return Column(
             children: [
-              _StorageCard(catalog: catalog),
-              const SizedBox(height: 12),
-              TextField(
-                key: const ValueKey('downloads-search'),
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.search),
-                  hintText: l.downloadsSearchAll,
-                ),
-                onChanged: (v) => setState(() => _q = v),
-              ),
-              const SizedBox(height: 12),
-              _ActiveBanner(catalog: catalog),
-              if (q.isEmpty)
-                _Tiles(catalog: catalog)
-              else
-                _Results(catalog: catalog, query: q),
-              const SizedBox(height: 16),
-              Text(
-                l.downloadInBackgroundNote,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: context.tokens.colors.muted,
-                  fontSize: 13,
-                  height: 1.6,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: TextField(
+                  key: const ValueKey('downloads-search'),
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.search),
+                    hintText: l.downloadsSearchAll,
+                  ),
+                  onChanged: (v) => setState(() => _q = v),
                 ),
               ),
-              const SizedBox(height: 16),
-              FilledButton(
-                onPressed: () {
-                  if (context.canPop()) {
-                    context.pop();
-                  } else {
-                    context.go('/mushaf');
-                  }
-                },
-                child: Text(l.doneLabel),
+              Expanded(
+                child: ListView(
+                  key: const ValueKey('downloads-hub-list'),
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                  children: [
+                    _StorageCard(catalog: catalog),
+                    const SizedBox(height: 12),
+                    _ActiveBanner(catalog: catalog),
+                    if (q.isEmpty)
+                      _Tiles(catalog: catalog)
+                    else
+                      _Results(catalog: catalog, query: q),
+                    const SizedBox(height: 16),
+                    Text(
+                      l.downloadInBackgroundNote,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: context.tokens.colors.muted,
+                        fontSize: 13,
+                        height: 1.6,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    FilledButton(
+                      onPressed: () {
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.go('/mushaf');
+                        }
+                      },
+                      child: Text(l.doneLabel),
+                    ),
+                  ],
+                ),
               ),
             ],
           );
@@ -849,84 +859,101 @@ class _DownloadsSectionScreenState
               ),
             ),
           ],
-          child: CustomScrollView(
-            key: ValueKey('downloads-section-${section.name}'),
-            slivers: [
-              SliverPadding(
+          // The search field stays put; the chips and lists scroll under it.
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-                sliver: SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      TextField(
-                        key: const ValueKey('downloads-section-search'),
-                        controller: _search,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.search),
-                          hintText: l.downloadsSearchSection,
-                        ),
-                        onChanged: (_) => setState(() {}),
-                      ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          ChoiceChip(
-                            key: const ValueKey('downloads-filter-all'),
-                            label: Text(l.libraryFilterAll),
-                            selected: !_onDeviceOnly,
-                            onSelected: (_) =>
-                                setState(() => _onDeviceOnly = false),
-                          ),
-                          ChoiceChip(
-                            key: const ValueKey('downloads-filter-on-device'),
-                            label: Text(l.downloadsFilterOnDevice),
-                            selected: _onDeviceOnly,
-                            onSelected: (_) =>
-                                setState(() => _onDeviceOnly = true),
-                          ),
-                          if (downloadAll != null)
-                            TextButton.icon(
-                              key: ValueKey('downloads-all-${section.name}'),
-                              style: TextButton.styleFrom(
-                                minimumSize: const Size(48, 48),
-                              ),
-                              onPressed: downloadAll,
-                              icon: const Icon(
-                                Icons.download_outlined,
-                                size: 18,
-                              ),
-                              label: Text(l.downloadAll),
+                child: TextField(
+                  key: const ValueKey('downloads-section-search'),
+                  controller: _search,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.search),
+                    hintText: l.downloadsSearchSection,
+                  ),
+                  onChanged: (_) => setState(() {}),
+                ),
+              ),
+              Expanded(
+                child: CustomScrollView(
+                  key: ValueKey('downloads-section-${section.name}'),
+                  slivers: [
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                      sliver: SliverToBoxAdapter(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 4,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                ChoiceChip(
+                                  key: const ValueKey('downloads-filter-all'),
+                                  label: Text(l.libraryFilterAll),
+                                  selected: !_onDeviceOnly,
+                                  onSelected: (_) =>
+                                      setState(() => _onDeviceOnly = false),
+                                ),
+                                ChoiceChip(
+                                  key: const ValueKey(
+                                    'downloads-filter-on-device',
+                                  ),
+                                  label: Text(l.downloadsFilterOnDevice),
+                                  selected: _onDeviceOnly,
+                                  onSelected: (_) =>
+                                      setState(() => _onDeviceOnly = true),
+                                ),
+                                if (downloadAll != null)
+                                  TextButton.icon(
+                                    key: ValueKey(
+                                      'downloads-all-${section.name}',
+                                    ),
+                                    style: TextButton.styleFrom(
+                                      minimumSize: const Size(48, 48),
+                                    ),
+                                    onPressed: downloadAll,
+                                    icon: const Icon(
+                                      Icons.download_outlined,
+                                      size: 18,
+                                    ),
+                                    label: Text(l.downloadAll),
+                                  ),
+                              ],
                             ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                    ...group(
+                      l.downloadsHeaderOnDevice,
+                      'on-device',
+                      here,
+                      installed: true,
+                    ),
+                    if (!_onDeviceOnly)
+                      ...group(
+                        l.downloadsHeaderAvailable,
+                        'available',
+                        there,
+                        lead: q.isEmpty ? runningList : null,
+                      ),
+                    if (here.isEmpty && (_onDeviceOnly || there.isEmpty))
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Text(
+                            l.libraryNoMatch,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                  ],
                 ),
               ),
-              ...group(
-                l.downloadsHeaderOnDevice,
-                'on-device',
-                here,
-                installed: true,
-              ),
-              if (!_onDeviceOnly)
-                ...group(
-                  l.downloadsHeaderAvailable,
-                  'available',
-                  there,
-                  lead: q.isEmpty ? runningList : null,
-                ),
-              if (here.isEmpty && (_onDeviceOnly || there.isEmpty))
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(l.libraryNoMatch, textAlign: TextAlign.center),
-                  ),
-                ),
-              const SliverToBoxAdapter(child: SizedBox(height: 24)),
             ],
           ),
         );
