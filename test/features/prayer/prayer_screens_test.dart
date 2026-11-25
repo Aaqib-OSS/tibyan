@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tibyan/core/downloads/background_downloads.dart';
 import 'package:tibyan/core/ui/look_kit.dart';
 import 'package:tibyan/features/prayer/data/adhan_downloads.dart';
@@ -98,6 +99,45 @@ void main() {
     final s = container.read(prayerSettingsProvider);
     expect(s.soundOf(PrayerKind.asr), AlertSound.silent);
     expect(s.reminderOf(PrayerKind.asr), 10);
+  });
+
+  testWidgets('«إعدادات الأذان» is pinned at the bottom and opens the '
+      'settings', (tester) async {
+    final router = GoRouter(
+      initialLocation: prayerTimesLocation,
+      routes: [
+        GoRoute(
+          path: prayerTimesLocation,
+          builder: (_, _) => const PrayerTimesScreen(),
+          routes: [
+            GoRoute(
+              path: 'settings',
+              builder: (_, _) => const Scaffold(body: Text('settings-dest')),
+            ),
+          ],
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+    await setUpScreen(tester, Router.withConfig(config: router));
+    tester.view.physicalSize = const Size(390, 640);
+    await tester.pump();
+    final card = find.byKey(const ValueKey('prayer-adhan-settings-card'));
+    expect(card.hitTestable(), findsOneWidget);
+    expect(find.text('إعدادات الأذان'), findsOneWidget);
+    final before = tester.getRect(card);
+    expect(before.bottom, greaterThan(640 - 120));
+    await tester.drag(find.byType(ListView).first, const Offset(0, -600));
+    await tester.pump();
+    expect(tester.getRect(card), before);
+    // The list ends above the card, so its last line is not hidden.
+    expect(
+      tester.getRect(find.byType(ListView).first).bottom,
+      lessThanOrEqualTo(before.top),
+    );
+    await tester.tap(card);
+    await settle(tester);
+    expect(find.text('settings-dest'), findsOneWidget);
   });
 
   testWidgets('the times screen fits at 200% text', (tester) async {

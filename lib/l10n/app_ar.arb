@@ -4781,5 +4781,15 @@
   },
   "downloadsHeaderOnDevice": "على جهازك",
   "downloadsHeaderAvailable": "متاح للتنزيل",
-  "downloadsFilterOnDevice": "على جهازي"
+  "downloadsFilterOnDevice": "على جهازي",
+  "adhanSettingsCard": "إعدادات الأذان",
+  "searchScopeTooltip": "النطاق: {scope}",
+  "backAgainToExit": "اضغط رجوع مرة أخرى للخروج",
+  "@searchScopeTooltip": {
+    "placeholders": {
+      "scope": {
+        "type": "String"
+      }
+    }
+  }
 }

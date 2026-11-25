@@ -11250,6 +11250,24 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'على جهازي'**
   String get downloadsFilterOnDevice;
+
+  /// No description provided for @adhanSettingsCard.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعدادات الأذان'**
+  String get adhanSettingsCard;
+
+  /// No description provided for @searchScopeTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'النطاق: {scope}'**
+  String searchScopeTooltip(String scope);
+
+  /// No description provided for @backAgainToExit.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط رجوع مرة أخرى للخروج'**
+  String get backAgainToExit;
 }
 
 class _AppLocalizationsDelegate

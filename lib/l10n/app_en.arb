@@ -2676,5 +2676,15 @@
   },
   "downloadsHeaderOnDevice": "On your device",
   "downloadsHeaderAvailable": "Available to download",
-  "downloadsFilterOnDevice": "On my device"
+  "downloadsFilterOnDevice": "On my device",
+  "adhanSettingsCard": "Adhan settings",
+  "searchScopeTooltip": "Scope: {scope}",
+  "@searchScopeTooltip": {
+    "placeholders": {
+      "scope": {
+        "type": "String"
+      }
+    }
+  },
+  "backAgainToExit": "Press back again to exit"
 }
