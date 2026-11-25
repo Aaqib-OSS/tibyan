@@ -68,7 +68,7 @@ List<WhatsNewGroup> whatsNewGroups(AppLocalizations l) => [
       ),
       (icon: Icons.speed_outlined, title: l.wn42Speed, body: l.wn42SpeedBody),
       (
-        icon: Icons.health_and_safety_outlined,
+        icon: Icons.volunteer_activism_outlined,
         title: l.wn42Crash,
         body: l.wn42CrashBody,
       ),

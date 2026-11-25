@@ -14,7 +14,10 @@ import 'package:tibyan/core/theme/interface_style.dart';
 import 'package:tibyan/core/theme/theme_registry.dart';
 import 'package:tibyan/core/theme/theme_tokens.dart';
 import 'package:tibyan/features/hifz/hifz_providers.dart';
+import 'package:tibyan/core/ui/look_kit.dart';
+import 'package:tibyan/core/ui/surah_name.dart';
 import 'package:tibyan/features/home/home_screen.dart';
+import 'package:tibyan/features/home/next_prayer_card.dart';
 import 'package:tibyan/features/khatma/khatma_providers.dart';
 import 'package:tibyan/features/mushaf/mushaf_providers.dart';
 import 'package:tibyan/l10n/app_localizations.dart';
@@ -155,6 +158,70 @@ void main() {
           });
         }
       }
+    }
+  }
+
+  for (final size in const [Size(1440, 900), Size(1280, 800)]) {
+    for (final scale in const [1.0, 1.5]) {
+      final tag = '${size.width.toInt()}x${size.height.toInt()} x$scale';
+      testWidgets('wide home: columns end level with the sections: $tag', (
+        tester,
+      ) async {
+        for (final style in InterfaceStyle.values) {
+          // A fresh ProviderScope per style.
+          await tester.pumpWidget(const SizedBox());
+          await pump(
+            tester,
+            size: size,
+            scale: scale,
+            style: style,
+            elderly: false,
+            english: false,
+          );
+          expect(tester.takeException(), isNull, reason: '${style.name} $tag');
+          if (scale != 1.0) continue;
+          final grid = tester.getRect(
+            find.byKey(const ValueKey('home-sections')),
+          );
+          final prayer = tester.getRect(find.byType(NextPrayerCard));
+          expect(
+            (prayer.bottom - grid.bottom).abs(),
+            lessThan(1),
+            reason: '${style.name} $tag bottom',
+          );
+          if (style != InterfaceStyle.makhtuta) {
+            final arch = tester.getRect(find.byType(HeroArch).first);
+            expect(
+              (arch.top - grid.top).abs(),
+              lessThan(1),
+              reason: '${style.name} $tag top',
+            );
+            // The arch keeps the column's full width.
+            final strip = tester.getRect(find.byType(NextPrayerCard));
+            expect(
+              (arch.width - strip.width).abs(),
+              lessThan(1),
+              reason: '${style.name} arch full width',
+            );
+            // The button under the surah, both centred in the arch.
+            final button = tester.getRect(
+              find.byKey(const ValueKey('home-continue-button')),
+            );
+            final name = tester.getRect(find.byType(SurahNameText).first);
+            expect(button.top, greaterThan(name.bottom), reason: style.name);
+            expect(
+              (button.center.dx - arch.center.dx).abs(),
+              lessThan(2),
+              reason: '${style.name} button centred',
+            );
+            expect(
+              (name.center.dx - arch.center.dx).abs(),
+              lessThan(2),
+              reason: '${style.name} surah centred',
+            );
+          }
+        }
+      });
     }
   }
 }

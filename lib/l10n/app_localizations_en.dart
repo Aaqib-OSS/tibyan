@@ -6697,4 +6697,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backAgainToExit => 'Press back again to exit';
+
+  @override
+  String get homeStartButton => 'Start reading';
+
+  @override
+  String get adhanPreviewMissing =>
+      'The chosen muezzin\'s recording isn\'t on this device yet. Download it from the adhan library first.';
 }

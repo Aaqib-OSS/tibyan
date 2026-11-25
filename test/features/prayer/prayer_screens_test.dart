@@ -192,6 +192,80 @@ void main() {
     expect(container.read(prayerSettingsProvider).length, AdhanLength.short);
   });
 
+  testWidgets('while the adhan sounds, its play buttons become «stop»', (
+    tester,
+  ) async {
+    final (container, _) = await setUpScreen(
+      tester,
+      const PrayerSettingsScreen(),
+    );
+    final native = container.read(prayerNativeProvider);
+    final preview = find.byKey(const ValueKey('prayer-volume-preview'));
+    await tester.scrollUntilVisible(preview, 200);
+    expect(find.byKey(const ValueKey('prayer-test-adhan')), findsOneWidget);
+    expect(find.byIcon(Icons.volume_up_outlined), findsOneWidget);
+
+    native.playing.value = true;
+    await tester.pump();
+    expect(find.byIcon(Icons.stop_circle_outlined), findsWidgets);
+    expect(find.byKey(const ValueKey('prayer-stop-adhan')), findsOneWidget);
+    expect(find.byKey(const ValueKey('prayer-test-adhan')), findsNothing);
+
+    native.playing.value = false;
+    await tester.pump();
+    expect(find.byKey(const ValueKey('prayer-test-adhan')), findsOneWidget);
+  });
+
+  Future<ProviderContainer> openAdhanScene(WidgetTester tester) async {
+    final (container, _) = await setUpScreen(
+      tester,
+      Builder(
+        builder: (context) => Center(
+          child: TextButton(
+            key: const ValueKey('open-scene'),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const AdhanScreen(prayer: PrayerKind.maghrib),
+              ),
+            ),
+            child: const Text('open'),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.byKey(const ValueKey('open-scene')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.byType(AdhanScreen), findsOneWidget);
+    return container;
+  }
+
+  testWidgets('the adhan scene closes itself when the adhan ends', (
+    tester,
+  ) async {
+    final container = await openAdhanScene(tester);
+    final native = container.read(prayerNativeProvider);
+    native.playing.value = true;
+    await tester.pump();
+    expect(find.byType(AdhanScreen), findsOneWidget);
+    native.playing.value = false;
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(seconds: 1));
+    }
+    expect(find.byType(AdhanScreen), findsNothing);
+  });
+
+  testWidgets('the adhan scene never stays more than three minutes', (
+    tester,
+  ) async {
+    await openAdhanScene(tester);
+    await tester.pump(const Duration(minutes: 2, seconds: 59));
+    expect(find.byType(AdhanScreen), findsOneWidget);
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.byType(AdhanScreen), findsNothing);
+  });
+
   testWidgets('the library: every muezzin with its licence; download and '
       'choose', (tester) async {
     final (container, fake) = await setUpScreen(
@@ -315,9 +389,9 @@ void main() {
     await settle(tester);
     await tester.tap(find.byKey(const ValueKey('prayer-mode-custom')));
     await settle(tester);
-    await tester.tap(find.byKey(const ValueKey('prayer-own-muezzin')));
-    await settle(tester);
-    await tester.tap(find.text('محمد صديق المنشاوي').last);
+    final minshawi = find.byKey(const ValueKey('prayer-own-muezzin-minshawi'));
+    await tester.ensureVisible(minshawi);
+    await tester.tap(minshawi);
     await settle(tester);
     await tester.tap(find.byKey(const ValueKey('prayer-own-length-short')));
     await settle(tester);
@@ -338,6 +412,28 @@ void main() {
       container.read(prayerSettingsProvider).customOf(PrayerKind.maghrib),
       isNull,
     );
+  });
+
+  testWidgets('«جرّب» in the per-prayer sheet becomes «stop» while the '
+      'adhan sounds', (tester) async {
+    final (container, _) = await setUpScreen(
+      tester,
+      const PrayerSettingsScreen(),
+    );
+    final row = find.byKey(const ValueKey('prayer-adhan-row-maghrib'));
+    await tester.scrollUntilVisible(row, 200);
+    await tester.tap(row);
+    await settle(tester);
+    await tester.tap(find.byKey(const ValueKey('prayer-mode-custom')));
+    await settle(tester);
+    expect(find.byKey(const ValueKey('prayer-own-try')), findsOneWidget);
+    container.read(prayerNativeProvider).playing.value = true;
+    await tester.pump();
+    expect(find.byKey(const ValueKey('prayer-own-try')), findsNothing);
+    expect(find.byKey(const ValueKey('prayer-own-stop')), findsOneWidget);
+    container.read(prayerNativeProvider).playing.value = false;
+    await tester.pump();
+    expect(find.byKey(const ValueKey('prayer-own-try')), findsOneWidget);
   });
 
   testWidgets('«جرّب» in the per-prayer sheet shows the toast', (tester) async {

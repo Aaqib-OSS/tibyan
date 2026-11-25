@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/ui/responsive.dart';
 import 'core/router/app_router.dart';
 import 'core/router/keyboard_dismiss.dart';
+import 'core/settings/app_settings.dart' show resolveAppLocale;
 import 'core/settings/settings_controller.dart';
 import 'core/theme/app_theme.dart';
 import 'core/ui/mac_menu.dart';
@@ -53,7 +54,7 @@ class TibyanApp extends ConsumerWidget {
             .follow(
               style: settings.interfaceStyle,
               mode: mode,
-              l: lookupAppLocalizations(settings.locale ?? const Locale('ar')),
+              l: lookupAppLocalizations(resolveAppLocale(settings.locale)),
             ),
       );
     });

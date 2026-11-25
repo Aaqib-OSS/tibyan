@@ -1,4 +1,3 @@
-import 'dart:ui' show Locale;
 
 import '../../../core/settings/app_settings.dart';
 import '../../../l10n/app_localizations.dart';
@@ -33,7 +32,7 @@ Future<void> syncKahfReminder(
     await scheduler.cancelOnce(kahfReminderIdBase + i);
   }
   if (!settings.kahfReminder || !await scheduler.hasPermission()) return;
-  final l = lookupAppLocalizations(settings.locale ?? const Locale('ar'));
+  final l = lookupAppLocalizations(settings.resolvedLocale);
   final times = nextWeeklyTimes(
     now ?? DateTime.now(),
     weekday: DateTime.friday,

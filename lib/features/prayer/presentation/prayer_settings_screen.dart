@@ -302,15 +302,44 @@ class PrayerSettingsScreen extends ConsumerWidget {
                                 ctrl.update((x) => x.copyWith(adhanVolume: v)),
                           ),
                         ),
-                        IconButton(
-                          key: const ValueKey('prayer-volume-preview'),
-                          tooltip: l.adhanVolumePreview,
-                          onPressed: () => PrayerRuntime.instance?.playAdhan(
-                            PrayerKind.maghrib,
-                            full: false,
-                            general: true,
+                        // Becomes «stop» while the adhan sounds.
+                        ValueListenableBuilder<bool>(
+                          valueListenable: ref
+                              .watch(prayerNativeProvider)
+                              .playing,
+                          builder: (context, playing, _) => IconButton(
+                            key: const ValueKey('prayer-volume-preview'),
+                            tooltip: playing
+                                ? l.adhanStop
+                                : l.adhanVolumePreview,
+                            onPressed: () async {
+                              if (playing) {
+                                await ref.read(prayerNativeProvider).stop();
+                                return;
+                              }
+                              final messenger = ScaffoldMessenger.maybeOf(
+                                context,
+                              );
+                              final ok = await PrayerRuntime.instance
+                                  ?.playAdhan(
+                                    PrayerKind.maghrib,
+                                    full: false,
+                                    general: true,
+                                  );
+                              if (ok == false) {
+                                messenger?.showSnackBar(
+                                  appToast(
+                                    content: Text(l.adhanPreviewMissing),
+                                  ),
+                                );
+                              }
+                            },
+                            icon: Icon(
+                              playing
+                                  ? Icons.stop_circle_outlined
+                                  : Icons.volume_up_outlined,
+                            ),
                           ),
-                          icon: const Icon(Icons.volume_up_outlined),
                         ),
                       ],
                     ),
@@ -343,32 +372,54 @@ class PrayerSettingsScreen extends ConsumerWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-                      child: OutlinedButton.icon(
-                        key: const ValueKey('prayer-test-adhan'),
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(48),
-                        ),
-                        icon: const Icon(Icons.play_circle_outline),
-                        label: Text(l.adhanTest),
-                        onPressed: () async {
-                          final messenger = ScaffoldMessenger.maybeOf(context);
-                          final router = GoRouter.of(context);
-                          await ref
-                              .read(prayerAlarmsProvider)
-                              .testAdhan(
-                                s.copyWith(custom: const {}),
-                                l,
-                                showScene: (loc) => unawaited(router.push(loc)),
-                                playInApp: () async =>
-                                    PrayerRuntime.instance?.playAdhan(
-                                      PrayerKind.maghrib,
-                                      general: true,
+                      // While the adhan sounds, the same button stops it.
+                      child: ValueListenableBuilder<bool>(
+                        valueListenable: ref
+                            .watch(prayerNativeProvider)
+                            .playing,
+                        builder: (context, playing, _) => playing
+                            ? OutlinedButton.icon(
+                                key: const ValueKey('prayer-stop-adhan'),
+                                style: OutlinedButton.styleFrom(
+                                  minimumSize: const Size.fromHeight(48),
+                                ),
+                                icon: const Icon(Icons.stop_circle_outlined),
+                                label: Text(l.adhanStop),
+                                onPressed: () =>
+                                    ref.read(prayerNativeProvider).stop(),
+                              )
+                            : OutlinedButton.icon(
+                                key: const ValueKey('prayer-test-adhan'),
+                                style: OutlinedButton.styleFrom(
+                                  minimumSize: const Size.fromHeight(48),
+                                ),
+                                icon: const Icon(Icons.play_circle_outline),
+                                label: Text(l.adhanTest),
+                                onPressed: () async {
+                                  final messenger = ScaffoldMessenger.maybeOf(
+                                    context,
+                                  );
+                                  final router = GoRouter.of(context);
+                                  await ref
+                                      .read(prayerAlarmsProvider)
+                                      .testAdhan(
+                                        s.copyWith(custom: const {}),
+                                        l,
+                                        showScene: (loc) =>
+                                            unawaited(router.push(loc)),
+                                        playInApp: () async =>
+                                            PrayerRuntime.instance?.playAdhan(
+                                              PrayerKind.maghrib,
+                                              general: true,
+                                            ),
+                                      );
+                                  messenger?.showSnackBar(
+                                    appToast(
+                                      content: Text(l.adhanTestScheduled),
                                     ),
-                              );
-                          messenger?.showSnackBar(
-                            appToast(content: Text(l.adhanTestScheduled)),
-                          );
-                        },
+                                  );
+                                },
+                              ),
                       ),
                     ),
                     header(l.prayerPerPrayerTitle),

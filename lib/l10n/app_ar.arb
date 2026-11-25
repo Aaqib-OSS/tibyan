@@ -4791,5 +4791,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "homeStartButton": "ابدأ القراءة",
+  "@homeStartButton": {
+    "description": "Home arch before any reading: the capsule button's label; opens the mushaf at Al-Fatiha"
+  },
+  "adhanPreviewMissing": "صوت المؤذن المختار غير محمّل على الجهاز. حمّله من مكتبة الأذان أولًا."
 }

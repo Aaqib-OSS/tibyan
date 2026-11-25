@@ -6757,4 +6757,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get backAgainToExit => 'اضغط رجوع مرة أخرى للخروج';
+
+  @override
+  String get homeStartButton => 'ابدأ القراءة';
+
+  @override
+  String get adhanPreviewMissing =>
+      'صوت المؤذن المختار غير محمّل على الجهاز. حمّله من مكتبة الأذان أولًا.';
 }

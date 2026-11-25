@@ -1,3 +1,5 @@
+import 'dart:ui' show PlatformDispatcher;
+
 import 'package:flutter/widgets.dart';
 
 import '../theme/app_theme.dart';
@@ -606,4 +608,20 @@ class AppSettings {
     LanguageSetting.ar => const Locale('ar'),
     LanguageSetting.en => const Locale('en'),
   };
+
+  /// The language the app shows, as the UI resolves it: the chosen one,
+  /// else the device's first Arabic or English, else Arabic (the first
+  /// supported locale). Texts built outside the widget tree (notifications,
+  /// widgets, the tray) use this so they match the app.
+  Locale get resolvedLocale => resolveAppLocale(locale);
+}
+
+/// [chosen], else the device's first Arabic or English, else Arabic.
+Locale resolveAppLocale(Locale? chosen, {List<Locale>? device}) {
+  if (chosen != null) return chosen;
+  for (final l in device ?? PlatformDispatcher.instance.locales) {
+    if (l.languageCode == 'ar') return const Locale('ar');
+    if (l.languageCode == 'en') return const Locale('en');
+  }
+  return const Locale('ar');
 }

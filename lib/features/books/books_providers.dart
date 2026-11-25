@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 
@@ -226,7 +225,7 @@ class BookDownloads extends Notifier<Map<String, PackProgress>> {
 
   Future<void> start(BookPackSpec spec) async {
     final l = lookupAppLocalizations(
-      ref.read(settingsProvider).locale ?? const Locale('ar'),
+      ref.read(settingsProvider).resolvedLocale,
     );
     state = {
       ...state,

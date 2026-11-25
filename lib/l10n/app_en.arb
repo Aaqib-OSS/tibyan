@@ -2686,5 +2686,7 @@
       }
     }
   },
-  "backAgainToExit": "Press back again to exit"
+  "backAgainToExit": "Press back again to exit",
+  "homeStartButton": "Start reading",
+  "adhanPreviewMissing": "The chosen muezzin's recording isn't on this device yet. Download it from the adhan library first."
 }

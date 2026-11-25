@@ -122,11 +122,14 @@ class _AdhanLibraryScreenState extends ConsumerState<AdhanLibraryScreen> {
       );
   }
 
+  /// The row shows «stop» from the real playing state (see build), so a
+  /// late «stopped» from the previous sound can't leave a wrong icon.
   void _onPlaying() {
-    if (!_native.playing.value && _previewing != null && mounted) {
-      setState(() => _previewing = null);
-    }
+    if (mounted) setState(() {});
   }
+
+  bool _isPreviewing(String slug) =>
+      _previewing == slug && _native.playing.value;
 
   @override
   void dispose() {
@@ -141,7 +144,7 @@ class _AdhanLibraryScreenState extends ConsumerState<AdhanLibraryScreen> {
   /// playback or cancels the download.
   Future<void> _preview(Muezzin m) async {
     final native = ref.read(prayerNativeProvider);
-    if (_previewing == m.slug) {
+    if (_isPreviewing(m.slug)) {
       setState(() => _previewing = null);
       await native.stop();
       return;
@@ -217,7 +220,7 @@ class _AdhanLibraryScreenState extends ConsumerState<AdhanLibraryScreen> {
                         AdhanLibraryRow(
                           key: ValueKey('adhan-row-${m.slug}'),
                           muezzin: m,
-                          previewing: _previewing == m.slug,
+                          previewing: _isPreviewing(m.slug),
                           waiting: _waiting == m.slug,
                           onPreview: () => _preview(m),
                         ),
